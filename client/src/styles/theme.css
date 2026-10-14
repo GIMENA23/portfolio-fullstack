@@ -1,0 +1,86 @@
+/* 🎨 DUEÑO: Integrante A (Diseño)
+ * Variables de diseño del Manual de Marca. Los demás USAN estas variables,
+ * no escriben colores a mano. Cuando A defina la paleta, cambia solo este archivo
+ * y todo el sitio se actualiza.
+ */
+:root {
+  /* Paleta (reemplazar con los #HEX del manual) */
+  --color-primary: #2e75b6;
+  --color-secondary: #1f3a5f;
+  --color-accent: #f2a541;
+  --color-bg: #ffffff;
+  --color-surface: #f5f7fa;
+  --color-text: #1b1f24;
+  --color-muted: #6b7280;
+  --color-success: #2e9e5b;
+  --color-error: #d64545;
+
+  /* Tipografía (reemplazar con las fuentes del manual) */
+  --font-heading: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Espaciado y forma */
+  --radius: 12px;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  --transition: 200ms ease;
+
+  /* Bootstrap toma estos valores */
+  --bs-primary: var(--color-primary);
+  --bs-body-font-family: var(--font-body);
+  --bs-body-color: var(--color-text);
+  --bs-body-bg: var(--color-bg);
+}
+
+/* Modo oscuro (A puede ajustarlo) */
+[data-theme='dark'] {
+  --color-bg: #0f1419;
+  --color-surface: #182029;
+  --color-text: #e6e9ee;
+  --color-muted: #9aa4b2;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--color-primary);
+  --bs-btn-border-color: var(--color-primary);
+}
+
+/* Respeta a quienes prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Paneles internos */
+.panel-sidebar {
+  min-height: 100vh;
+  background: var(--color-secondary);
+}
+.panel-sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+}
+.panel-sidebar .nav-link.active,
+.panel-sidebar .nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Marcador de páginas pendientes */
+.placeholder-box {
+  border: 2px dashed #c7cdd6;
+  border-radius: var(--radius);
+  padding: 2rem;
+  background: var(--color-surface);
+}

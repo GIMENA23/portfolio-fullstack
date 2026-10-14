@@ -1,0 +1,22 @@
+# Quién revisa cada parte. Reemplazar @coordinadora, @usuarioA… por los usuarios de GitHub reales.
+# GitHub pide automáticamente la revisión del dueño cuando alguien toca sus archivos.
+
+# Base del proyecto (cualquier cambio acá lo revisa la coordinadora)
+*                                   @coordinadora
+
+# A — Diseño y animaciones
+/client/src/styles/                 @usuarioA
+/client/src/animations/             @usuarioA
+/docs/                              @usuarioA
+
+# B — Sitio público
+/client/src/pages/*.jsx             @usuarioB
+/client/src/components/             @usuarioB
+/client/src/components/home/        @usuarioB @usuarioA
+
+# C — Backend
+/server/                            @usuarioC
+
+# D — Paneles
+/client/src/pages/operator/         @usuarioD
+/client/src/pages/admin/            @usuarioD
