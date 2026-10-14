@@ -1,22 +1,22 @@
-# Quién revisa cada parte. Reemplazar @coordinadora, @usuarioA… por los usuarios de GitHub reales.
+# Quién revisa cada parte. Reemplazar @GIMENA23, @GIMENA23… por los usuarios de GitHub reales.
 # GitHub pide automáticamente la revisión del dueño cuando alguien toca sus archivos.
 
 # Base del proyecto (cualquier cambio acá lo revisa la coordinadora)
-*                                   @coordinadora
+*                                   @GIMENA23
 
 # A — Diseño y animaciones
-/client/src/styles/                 @usuarioA
-/client/src/animations/             @usuarioA
-/docs/                              @usuarioA
+/client/src/styles/                 @GIMENA23
+/client/src/animations/             @GIMENA23
+/docs/                              @GIMENA23
 
 # B — Sitio público
-/client/src/pages/*.jsx             @usuarioB
-/client/src/components/             @usuarioB
-/client/src/components/home/        @usuarioB @usuarioA
+/client/src/pages/*.jsx             @bernardopdc
+/client/src/components/             @bernardopdc
+/client/src/components/home/        @bernardopdc @GIMENA23
 
 # C — Backend
-/server/                            @usuarioC
+/server/                            @EzeJcs02
 
 # D — Paneles
-/client/src/pages/operator/         @usuarioD
-/client/src/pages/admin/            @usuarioD
+/client/src/pages/operator/         @FRVega05
+/client/src/pages/admin/            @FRVega05
