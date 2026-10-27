@@ -36,14 +36,7 @@ export const mockInquiries = [
     message: '¿Tenés disponibilidad para un proyecto que empieza en diciembre?',
     status: 'respondida',
     createdAt: '2026-10-17T18:47:00Z',
-    replies: [
-      {
-        _id: 'r1',
-        text: 'Hola Sofía, sí, tengo disponibilidad desde el 1 de diciembre. ¿Coordinamos una llamada?',
-        operator: 'operador',
-        sentAt: '2026-10-18T09:15:00Z',
-      },
-    ],
+    replies: [],
   },
   {
     _id: 'mock4',
@@ -69,3 +62,9 @@ export const mockInquiries = [
     replies: [],
   },
 ]
+// Guarda los cambios hechos en el detalle (respuesta, estado) para que la bandeja los vea.
+// Solo en memoria: al recargar la página (F5) vuelven los datos originales.
+export function actualizarMock(id, cambios) {
+  const i = mockInquiries.findIndex((c) => c._id === id)
+  if (i !== -1) mockInquiries[i] = { ...mockInquiries[i], ...cambios }
+}

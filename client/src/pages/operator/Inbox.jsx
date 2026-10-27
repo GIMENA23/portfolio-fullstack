@@ -11,18 +11,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { inquiriesApi } from '../../services/api.js'
 import { mockInquiries } from './mockInquiries.js'
-
-const TIPOS = { general: 'General', cotizacion: 'Cotización', asesoria: 'Asesoría' }
-
-const ESTADOS = {
-  nueva: { label: 'Nueva', color: 'primary' },
-  en_proceso: { label: 'En proceso', color: 'warning' },
-  respondida: { label: 'Respondida', color: 'success' },
-  cerrada: { label: 'Cerrada', color: 'secondary' },
-}
-
-const formatoFecha = (iso) =>
-  new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })
+import { TIPOS, ESTADOS, formatoFecha } from './inquiryLabels.js'
 
 export default function Inbox() {
   const navigate = useNavigate()
