@@ -1,0 +1,39 @@
+/* 🎨 DUEÑO: Integrante A (Animaciones) — estilos de los componentes animados */
+
+.anim-palabra { display: inline-block; will-change: transform, opacity; }
+
+/* GuardaLoader */
+.anim-loader { display: flex; flex-direction: column; gap: 8px; padding: 24px 0; }
+.anim-loader-barra { height: 8px; background: var(--pc-guarda-fina); }
+.anim-loader-texto {
+  font-family: var(--pc-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pc-texto-suave);
+}
+
+/* CodigoQueSeEscribe */
+.anim-codigo { margin: 0; background: #160f10; color: #efe9e1; border: 1px solid #3a2e2e; }
+.anim-codigo-barra {
+  display: flex; justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 1px solid #3a2e2e;
+  font-family: var(--pc-font-mono); font-size: 0.75rem; color: #b3a79f;
+}
+.anim-codigo-barra span:first-child { color: #e3b04b; letter-spacing: 2px; }
+.anim-codigo pre {
+  margin: 0; padding: 18px 20px; min-height: 10.5em;
+  font-family: var(--pc-font-mono); font-size: 0.9rem; line-height: 1.6;
+  white-space: pre-wrap; color: #efe9e1;
+}
+.anim-cursor {
+  display: inline-block; width: 0.55em; height: 1.1em;
+  vertical-align: text-bottom; background: #e3b04b; margin-left: 1px;
+}
+.anim-cursor-parpadea { animation: anim-parpadeo 1s steps(1) infinite; }
+@keyframes anim-parpadeo { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-cursor-parpadea { animation: none; }
+}
