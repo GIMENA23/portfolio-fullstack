@@ -9,6 +9,9 @@ import './styles/theme.css'
 
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { aplicarModoGuardado } from './animations/modoNoche.js'
+
+aplicarModoGuardado() // modo claro/noche recordado
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -11,7 +11,11 @@
 //   <CodigoQueSeEscribe />                     → bloque de código del inicio que se escribe solo
 //   <EnviadoLottie />                          → tilde animado al enviar un formulario (Lottie)
 //   <NumeroAnimado valor={779} />              → KPIs del dashboard que cuentan (anime.js)
-//   reduceMovimiento()                         → true si el sistema pide menos movimiento
+//   <BotonModoNoche />                         → botón ☀/☾ (data-bs-theme en <html> + localStorage)
+//   aplicarModoGuardado(), useModoNoche()      → arrancar con el modo recordado / leerlo en un componente
+//   <RutaAnimada />                            → reemplaza al <Outlet /> de un layout: anima el cambio de página
+//   opcionesGrafico(), estiloDataset(), useColoresGrafico() → opciones de Chart.js con la marca (no importa chart.js)
+//   reduceMovimiento()                       → true si el sistema pide menos movimiento
 //
 // Todas respetan «reducir movimiento» del sistema operativo.
 // Demo: con `npm run dev` abrir http://localhost:5173/demo-animaciones.html
@@ -27,6 +31,10 @@ export { default as GuardaLoader } from './componentes/GuardaLoader.jsx'
 export { default as CodigoQueSeEscribe } from './componentes/CodigoQueSeEscribe.jsx'
 export { default as EnviadoLottie } from './componentes/EnviadoLottie.jsx'
 export { default as NumeroAnimado } from './componentes/NumeroAnimado.jsx'
+export { default as BotonModoNoche } from './componentes/BotonModoNoche.jsx'
+export { default as RutaAnimada } from './componentes/RutaAnimada.jsx'
+export { aplicarModoGuardado, aplicarTema, alternarTema, useModoNoche } from './modoNoche.js'
+export { opcionesGrafico, estiloDataset, useColoresGrafico } from './graficos.js'
 
 /**
  * (De la base) Hace aparecer una lista de elementos al entrar en pantalla.
