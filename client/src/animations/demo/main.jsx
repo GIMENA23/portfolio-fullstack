@@ -4,6 +4,9 @@ import { createRoot } from 'react-dom/client'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../../styles/theme.css'
 import Demo from './Demo.jsx'
+import { aplicarModoGuardado } from '../modoNoche.js'
+
+aplicarModoGuardado()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

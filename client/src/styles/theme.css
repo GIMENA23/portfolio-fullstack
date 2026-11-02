@@ -170,6 +170,8 @@
   --bs-secondary-rgb: 179, 167, 159;
   --bs-body-color-rgb: 239, 233, 225;
   --bs-body-bg-rgb: 22, 15, 16;
+  --bs-secondary-bg: var(--pc-lana-clara);
+  --bs-tertiary-bg: var(--pc-lana-clara);
   --bs-link-color: var(--pc-texto);
   --bs-link-color-rgb: 239, 233, 225;
   --bs-link-hover-color-rgb: 229, 84, 91;
@@ -460,6 +462,44 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
   font-weight: 600;
   background: var(--pc-blanco);
   box-shadow: inset 3px 0 0 var(--pc-carmin);
+}
+
+/* Modo noche: correcciones acotadas (no se tocan las clases globales de Bootstrap) */
+.navbar-brand .text-white { color: var(--pc-sobre-carmin) !important; }
+.navbar .badge.text-bg-light,
+.panel-sidebar .badge.text-bg-light { background-color: var(--pc-lana) !important; color: var(--pc-texto) !important; }
+.panel-sidebar a.text-white { color: var(--pc-texto) !important; }
+.panel-sidebar .btn-outline-light {
+  --bs-btn-color: var(--pc-texto);
+  --bs-btn-border-color: var(--pc-linea);
+  --bs-btn-hover-color: var(--pc-lana);
+  --bs-btn-hover-bg: var(--pc-texto);
+  --bs-btn-hover-border-color: var(--pc-texto);
+}
+
+/* Responsive: tablas con scroll horizontal y objetivos táctiles cómodos */
+.table-responsive { -webkit-overflow-scrolling: touch; }
+@media (max-width: 767.98px) {
+  .table-responsive > .table { min-width: 34rem; }
+
+  /* Panel en celular: la barra lateral pasa a ser una franja superior con el menú en una fila deslizable */
+  .panel-sidebar {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: var(--pc-borde);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem;
+  }
+  .panel-sidebar > * { margin: 0 !important; }
+  .panel-sidebar > hr { display: none; }
+  .panel-sidebar > nav {
+    order: 5; flex: 1 0 100%;
+    flex-wrap: nowrap; overflow-x: auto; gap: 0 !important;
+  }
+  .panel-sidebar .nav-link { flex: 0 0 auto; white-space: nowrap; }
+  .panel-sidebar .nav-link.active { box-shadow: inset 0 -3px 0 var(--pc-carmin); }
+}
+@media (pointer: coarse) {
+  .btn:not(.btn-sm) { min-height: 44px; }
 }
 
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */

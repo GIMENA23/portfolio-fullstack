@@ -37,3 +37,10 @@
 @media (prefers-reduced-motion: reduce) {
   .anim-cursor-parpadea { animation: none; }
 }
+
+/* Botón de modo noche */
+.boton-noche { min-width: 44px; min-height: 44px; font-size: 1.125rem; line-height: 1; }
+
+/* Contenido de cada ruta (RutaAnimada) y contenedor de gráficos */
+.ruta-animada { min-width: 0; }
+.grafico { position: relative; height: 280px; min-height: 220px; }

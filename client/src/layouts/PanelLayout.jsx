@@ -1,6 +1,7 @@
 // ⚙️ BASE DEL PROYECTO — estructura común de los paneles (barra lateral + contenido).
 // OperatorLayout y AdminLayout la usan con su propio menú.
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { BotonModoNoche, RutaAnimada } from '../animations/index.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function PanelLayout({ title, links }) {
@@ -31,9 +32,10 @@ export default function PanelLayout({ title, links }) {
           >
             Cerrar sesión
           </button>
+          <BotonModoNoche className="mt-2 ms-2" />
         </aside>
         <main className="col-12 col-md-9 col-xl-10 p-4">
-          <Outlet />
+          <RutaAnimada />
         </main>
       </div>
     </div>

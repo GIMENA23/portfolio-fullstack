@@ -1,12 +1,17 @@
 // 🎨 DUEÑO: Integrante A — Página de prueba de las animaciones (no forma parte del sitio).
 import { useEffect, useRef, useState } from 'react'
+import { Link, MemoryRouter, Route, Routes } from 'react-router-dom'
 import {
+  BotonModoNoche,
   CodigoQueSeEscribe,
   EnviadoLottie,
   GuardaLoader,
   NumeroAnimado,
+  RutaAnimada,
   TituloAnimado,
+  opcionesGrafico,
   tejerAlVer,
+  useColoresGrafico,
   useReveal,
 } from '../index.js'
 
@@ -24,14 +29,11 @@ export default function Demo() {
   const [clave, setClave] = useState(0)
   const [cargando, setCargando] = useState(true)
   const [enviado, setEnviado] = useState(false)
-  const [noche, setNoche] = useState(false)
+  const colores = useColoresGrafico()
   const reveal = useReveal()
   const guarda = useRef(null)
 
   useEffect(() => tejerAlVer(guarda.current), [])
-  useEffect(() => {
-    document.documentElement.setAttribute('data-bs-theme', noche ? 'dark' : 'light')
-  }, [noche])
   useEffect(() => {
     if (!cargando) return undefined
     const t = setTimeout(() => setCargando(false), 2500)
@@ -46,9 +48,7 @@ export default function Demo() {
           <h2 className="mb-0">Animaciones</h2>
         </div>
         <div className="d-flex gap-2">
-          <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => setNoche(!noche)}>
-            {noche ? '☀ Modo claro' : '☾ Modo noche'}
-          </button>
+          <BotonModoNoche />
           <button type="button" className="btn btn-primary btn-sm" onClick={() => { setClave(clave + 1); setCargando(true); setEnviado(false) }}>
             ↻ Repetir todo
           </button>
@@ -113,6 +113,38 @@ export default function Demo() {
               </div>
             ))}
           </div>
+        </Bloque>
+
+        <Bloque n={7} titulo="Modo noche · data-bs-theme + localStorage" uso="<BotonModoNoche />  (botón de arriba; recarga la página y se acuerda)">
+          <p className="mb-0">El botón ☀/☾ cambia <code>data-bs-theme</code> en <code>&lt;html&gt;</code> y guarda la elección.</p>
+        </Bloque>
+
+        <Bloque n={8} titulo="Transición entre rutas · Web Animations API" uso="<main><RutaAnimada /></main>  (en vez de <Outlet />)">
+          <MemoryRouter>
+            <nav className="d-flex gap-3 mb-3">
+              <Link to="/">Inicio</Link>
+              <Link to="/proyectos">Proyectos</Link>
+              <Link to="/usuarios">Usuarios</Link>
+            </nav>
+            <Routes>
+              <Route element={<RutaAnimada scroll={false} />}>
+                <Route index element={<div className="kpi">Pantalla de inicio</div>} />
+                <Route path="proyectos" element={<div className="kpi kpi-atencion">Pantalla de proyectos</div>} />
+                <Route path="usuarios" element={<div className="kpi">Pantalla de usuarios</div>} />
+              </Route>
+            </Routes>
+          </MemoryRouter>
+        </Bloque>
+
+        <Bloque n={9} titulo="Gráficos que crecen · colores del modo" uso="const c = useColoresGrafico();  <Bar options={opcionesGrafico('barras', c)} />">
+          <div className="d-flex flex-wrap gap-2 mb-3">
+            {[['serie', colores.serie], ['actual', colores.actual], ...colores.tipos.map((t, i) => [`tipo ${i + 1}`, t])].map(([n, col]) => (
+              <span key={n} className="small d-inline-flex align-items-center gap-2">
+                <span style={{ width: 18, height: 18, background: col, display: 'inline-block' }} /> {n}
+              </span>
+            ))}
+          </div>
+          <pre className="small mb-0 p-3 border" style={{ overflow: 'auto' }}>{JSON.stringify(opcionesGrafico('barras', colores).scales.y, null, 2)}</pre>
         </Bloque>
       </div>
 
