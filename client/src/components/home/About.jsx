@@ -1,52 +1,26 @@
-// 🎨 DUEÑO: Integrante B — página 404 (clase 7).
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+// 🎨 DUEÑO: Integrante B — sección «Sobre mí» del inicio.
+import { useReveal } from '../../animations'
 
-export default function NotFound() {
-  const location = useLocation()
-  const navigate = useNavigate()
+export default function About() {
+  const revealRef = useReveal()
 
   return (
-    <div className="container py-5 my-4">
+    <section id="sobre-mi" ref={revealRef} className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-md-8 col-lg-6 text-center">
-          <div className="card border-0 shadow-sm p-4 p-md-5">
-            <div className="card-body">
-              <span className="badge rounded-pill text-bg-light border px-3 py-2 mb-3 text-secondary">
-                Error HTTP 404
-              </span>
-
-              <p
-                className="display-1 fw-bold mb-2"
-                style={{ color: 'var(--color-primary, #0d6efd)', lineHeight: 1 }}
-              >
-                404
-              </p>
-
-              <h1 className="h3 fw-bold mb-3">Página no encontrada</h1>
-
-              <p className="text-secondary mb-4">
-                La ruta <code className="px-2 py-1 rounded bg-light">{location.pathname}</code> no existe o fue movida a otra dirección.
-              </p>
-
-              <div className="d-flex flex-wrap gap-2 justify-content-center">
-                <button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  className="btn btn-outline-secondary px-4"
-                >
-                  ← Volver atrás
-                </button>
-                <Link to="/" className="btn btn-primary px-4">
-                  Ir al inicio
-                </Link>
-                <Link to="/proyectos" className="btn btn-outline-primary px-4">
-                  Ver proyectos
-                </Link>
-              </div>
-            </div>
-          </div>
+        <div className="col-lg-8 text-center text-lg-start">
+          <p className="rotulo mb-2">Sobre mí</p>
+          <h2 className="mb-3">Martina Arce</h2>
+          <p className="lead text-secondary mb-3">
+            Soy desarrolladora fullstack y vivo en Salta, Argentina. Construyo productos web de punta a punta: desde el diseño de la interfaz hasta la API y la base de datos.
+          </p>
+          <p className="text-secondary mb-4">
+            Trabajo con React, Node.js y MongoDB, cuidando que cada pantalla se vea bien en el celular y en la compu, y que sea fácil de usar.
+          </p>
+          <a href="mailto:hola@arce.dev" className="btn btn-outline-primary">
+            hola@arce.dev
+          </a>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

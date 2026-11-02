@@ -17,7 +17,7 @@ export default function NotFound() {
 
               <p
                 className="display-1 fw-bold mb-2"
-                style={{ color: 'var(--color-primary, #0d6efd)', lineHeight: 1 }}
+                style={{ color: 'var(--pc-carmin)', lineHeight: 1 }}
               >
                 404
               </p>

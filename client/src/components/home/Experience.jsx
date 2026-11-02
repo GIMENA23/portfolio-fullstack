@@ -8,9 +8,9 @@ const DEFAULT_GITHUB_USER = 'octocat'
 const TIMELINE = [
   {
     id: 1,
-    period: '2025 — Presente',
-    role: 'Desarrollador Fullstack Freelance',
-    place: 'Proyectos Independientes',
+    period: '[AÑO] — Presente',
+    role: 'Desarrolladora Fullstack Freelance',
+    place: '[EMPRESA]',
     type: 'Trabajo',
     description:
       'Diseño y desarrollo de aplicaciones web completas utilizando el stack MERN (MongoDB, Express, React y Node.js), autenticación JWT y despliegue en la nube.',
@@ -18,9 +18,9 @@ const TIMELINE = [
   },
   {
     id: 2,
-    period: '2024 — 2025',
-    role: 'Desarrollador Frontend',
-    place: 'Prácticas Académicas & Colaborativas',
+    period: '[AÑO] — [AÑO]',
+    role: 'Desarrolladora Frontend',
+    place: '[EMPRESA]',
     type: 'Trabajo',
     description:
       'Construcción de interfaces responsivas, consumo de APIs REST, validación de formularios y optimización de experiencia de usuario.',
@@ -136,7 +136,7 @@ export default function Experience() {
         </p>
       </div>
 
-      <div className="row g-5">
+      <div className="row gy-5 gx-lg-5">
         {/* Columna izquierda: Línea de tiempo */}
         <div className="col-lg-7">
           <h3 className="h5 fw-bold mb-4 d-flex align-items-center gap-2">
@@ -159,7 +159,7 @@ export default function Experience() {
                     height: '14px',
                     marginLeft: '-1.5rem',
                     marginTop: '1.25rem',
-                    backgroundColor: 'var(--color-primary, #0d6efd)',
+                    backgroundColor: 'var(--pc-carmin)',
                   }}
                 />
 

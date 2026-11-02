@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer
       className="border-top mt-auto pt-5 pb-4"
-      style={{ backgroundColor: 'var(--color-surface, #f8f9fa)' }}
+      style={{ backgroundColor: 'var(--pc-lana-clara)' }}
     >
       <div className="container">
         <div className="row g-4 pb-4 border-bottom">
@@ -17,10 +17,10 @@ export default function Footer() {
               to="/"
               className="h5 fw-bold text-decoration-none text-reset d-inline-block mb-2"
             >
-              Portfolio Fullstack
+              arce.dev
             </Link>
             <p className="text-secondary small mb-0" style={{ maxWidth: '380px' }}>
-              Desarrollo de aplicaciones web modernas, escalables y seguras de punta a punta con React, Node.js y MongoDB.
+              Construyo productos web de punta a punta. Desarrolladora fullstack en Salta, Argentina.
             </p>
           </div>
 
@@ -80,6 +80,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="mailto:hola@arce.dev" className="text-decoration-none text-secondary">
+                  ✉️ hola@arce.dev
+                </a>
+              </li>
+              <li>
                 <Link to="/contacto" className="text-decoration-none text-secondary">
                   ✉️ Enviar consulta
                 </Link>
@@ -90,7 +95,7 @@ export default function Footer() {
 
         {/* Barra inferior de derechos y cátedra */}
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 pt-3 small text-muted">
-          <span>© {YEAR} Portfolio Fullstack · Todos los derechos reservados.</span>
+          <span>© {YEAR} arce.dev · Martina Arce · Todos los derechos reservados.</span>
           <span>TFI Lenguajes IV · UCASAL</span>
         </div>
       </div>
