@@ -179,7 +179,7 @@ export default function Login() {
       </form>
 
       <span className="small text-secondary text-center">
-        Cuentas de prueba: admin@portfolio.test, operador@portfolio.test o usuario@portfolio.test · contraseña Portfolio2026
+        Cuenta de prueba de usuario: usuario@portfolio.test · Portfolio2026. Las de administrador y operador se entregan por separado.
       </span>
 
       <div className="demo-roles">
@@ -189,7 +189,6 @@ export default function Login() {
           <button type="button" className="rol-btn rol-operador" onClick={() => fillEmailOnly('operador@portfolio.test')}>Operador</button>
           <button type="button" className="rol-btn rol-usuario" onClick={() => fillDemoUser('usuario@portfolio.test')}>Usuario</button>
         </div>
-        <span className="small text-secondary">Las contraseñas de admin y operador se entregan por separado.</span>
       </div>
     </AuthLayout>
   )
