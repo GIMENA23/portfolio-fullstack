@@ -379,7 +379,8 @@ export default function ProjectsAdmin() {
           <div className="admin-modo d-flex justify-content-between align-items-start gap-2">
             <div style={{ minWidth: 0 }}>
               <span className="admin-modo-badge">{editandoId ? 'EDITANDO' : 'NUEVO'}</span>
-              <h2 className="mb-0 text-truncate">{editandoId ? `Editando: ${form.title || '…'}` : 'Nuevo proyecto'}</h2>
+              <h2 className="mb-0">{editandoId ? `Editando · ${form.title || '…'}` : 'Nuevo proyecto'}</h2>
+              <span className="admin-modo-sub">{editandoId ? 'Los cambios se ven en el sitio al guardar.' : 'Completá los campos con * para poder crearlo.'}</span>
             </div>
             <button type="button" className="btn-close" onClick={cerrarForm} aria-label="Cerrar formulario" disabled={guardando} />
           </div>

@@ -908,18 +908,16 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
   display: flex; flex-direction: column; gap: 6px; color: var(--pc-texto-suave);
 }
 .admin-form { border-radius: var(--pc-radio); }
-.admin-modo { padding: 14px 16px; border-bottom: var(--pc-borde); }
-.admin-modo h2 { font-size: 1.125rem; margin-top: 4px; }
+.admin-modo { padding: 20px 20px 0; }
+.admin-modo h2 { font-size: 1.25rem; font-weight: 700; text-transform: none; letter-spacing: 0; line-height: 1.2; margin: 6px 0 0; overflow-wrap: anywhere; }
+.admin-modo-sub { display: block; margin-top: 4px; font-size: 0.8125rem; color: var(--pc-texto-suave); }
 .admin-modo-badge {
   display: inline-block; font-family: var(--pc-font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; padding: 2px 8px;
 }
-.modo-nuevo { border-top: 4px solid var(--pc-exito); }
-.modo-nuevo .admin-modo { background: var(--pc-fondo-exito); }
-.modo-nuevo .admin-modo-badge { background: var(--pc-exito); color: var(--pc-lana-clara); }
-.modo-editando { border-top: 4px solid var(--pc-dorado); }
-.modo-editando .admin-modo { background: var(--pc-negro); color: #efe9e1; }
-.modo-editando .admin-modo-badge { background: var(--pc-dorado); color: var(--pc-negro); }
-.modo-editando .btn-close { filter: invert(1); }
+.modo-nuevo { border-top: 3px solid var(--pc-carmin); background: var(--pc-blanco); }
+.modo-nuevo .admin-modo-badge { background: var(--pc-carmin); color: var(--pc-sobre-carmin); }
+.modo-editando { border-top: 3px solid var(--pc-linea); background: var(--pc-blanco); }
+.modo-editando .admin-modo-badge { background: var(--pc-lana); color: var(--pc-texto); border: var(--pc-borde); }
 .foto-mini { width: 64px; height: 48px; padding: 4px 6px; }
 .foto-mini > span { font-size: 1.125rem !important; }
 
