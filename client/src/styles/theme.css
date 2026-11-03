@@ -1018,6 +1018,34 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 [data-bs-theme='dark'] .pagination .page-item.active .page-link { background: var(--pc-carmin); border-color: var(--pc-carmin); color: var(--pc-sobre-carmin); }
 .pagination .page-item.disabled .page-link { opacity: 0.4; background: transparent; color: var(--pc-texto-suave); border-color: var(--pc-linea); }
 
+/* Listas desplegables (estado, tipo, rol…) con los colores del tema */
+.form-select {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23160f10' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  cursor: pointer;
+  transition: border-color var(--pc-dur-rapida) ease, box-shadow var(--pc-dur-rapida) ease;
+}
+[data-bs-theme='dark'] .form-select {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23efe9e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+.form-select:hover:not(:disabled) { border-color: var(--pc-texto); }
+.form-select:disabled { background-color: var(--pc-lana); color: var(--pc-texto-suave); cursor: not-allowed; opacity: 0.8; }
+.form-select option { background: var(--pc-blanco); color: var(--pc-texto); }
+@supports (appearance: base-select) {
+  /* Chrome/Edge recientes: la lista que se despliega también usa el tema */
+  .form-select, .form-select::picker(select) { appearance: base-select; }
+  .form-select { background-image: none; padding-right: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
+  .form-select::picker-icon { content: '▾'; font-size: 1.125rem; line-height: 1; color: var(--pc-carmin); transition: transform var(--pc-dur-rapida) ease; }
+  .form-select:open::picker-icon { transform: rotate(180deg); }
+  .form-select::picker(select) {
+    background: var(--pc-blanco); border: 1.5px solid var(--pc-texto); border-radius: 0; padding: 4px; margin-top: 4px; box-shadow: none;
+  }
+  .form-select option { display: flex; align-items: center; min-height: 40px; padding: 8px 12px; background: transparent; color: var(--pc-texto); font-size: 0.9375rem; }
+  .form-select option::checkmark { display: none; }
+  .form-select option:hover, .form-select option:focus { background: var(--pc-lana-clara); }
+  .form-select option:checked { background: var(--pc-lana); font-weight: 600; box-shadow: inset 3px 0 0 var(--pc-carmin); }
+  .form-select option:disabled { color: var(--pc-texto-suave); }
+}
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
