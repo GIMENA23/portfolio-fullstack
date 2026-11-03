@@ -961,6 +961,11 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .perfil-preview-stack { background: var(--pc-lana); padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 6px; }
 .perfil-preview-chip { font-family: var(--pc-font-mono); font-size: 0.6875rem; padding: 3px 7px; background: var(--pc-lana-clara); border: var(--pc-borde); }
 
+/* Tablas del admin que entran en pantalla sin scroll horizontal */
+.tabla-ajustada { width: 100%; table-layout: auto; }
+.tabla-ajustada th, .tabla-ajustada td { padding-inline: 8px; }
+.tabla-ajustada select.form-select-sm { min-width: 0; width: 100%; max-width: 150px; padding-right: 1.75rem; }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }

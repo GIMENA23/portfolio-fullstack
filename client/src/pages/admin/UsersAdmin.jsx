@@ -7,8 +7,7 @@ import { mockUsers } from './mockAdmin.js'
 const ROLES = { user: 'Usuario', operator: 'Operador', admin: 'Administrador' }
 const POR_PAGINA = 8
 
-const formatoFecha = (iso) =>
-  iso ? new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' }) : 'Nunca'
+const formatoFecha = (iso) => (iso ? new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : 'Nunca')
 
 export default function UsersAdmin() {
   const { user: yo } = useAuth()
@@ -172,15 +171,15 @@ export default function UsersAdmin() {
 
       {!loading && visibles.length > 0 && (
         <div className="table-responsive">
-          <table className="table align-middle">
+          <table className="table align-middle tabla-ajustada">
             <thead>
               <tr>
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Rol</th>
-                <th className="d-none d-lg-table-cell">Alta</th>
-                <th className="d-none d-md-table-cell">Últ. acceso</th>
-                <th className="d-none d-md-table-cell text-end">Accesos</th>
+                <th className="d-none d-xl-table-cell">Alta</th>
+                <th className="d-none d-lg-table-cell">Últ. acceso</th>
+                <th className="d-none d-lg-table-cell text-end">Accesos</th>
                 <th>Estado</th>
                 <th className="text-end"><span className="visually-hidden">Acciones</span></th>
               </tr>
@@ -191,12 +190,12 @@ export default function UsersAdmin() {
                 const ocupado = ocupadoId === u._id
                 return (
                   <tr key={u._id} className={u.active ? '' : 'opacity-75'}>
-                    <td style={{ minWidth: '10rem' }}>
+                    <td>
                       <div className="fw-semibold">{u.name}</div>
                       <span className="rotulo text-secondary" style={{ fontSize: '0.625rem' }}>{u.provider === 'google' ? 'GOOGLE' : 'EMAIL'}</span>
                     </td>
-                    <td className="small text-break" style={{ minWidth: '11rem' }}>{u.email}</td>
-                    <td style={{ minWidth: '9.5rem' }}>
+                    <td className="small text-break">{u.email}</td>
+                    <td>
                       <select
                         className="form-select form-select-sm"
                         value={u.role}
@@ -212,9 +211,9 @@ export default function UsersAdmin() {
                         ))}
                       </select>
                     </td>
-                    <td className="d-none d-lg-table-cell small text-nowrap">{formatoFecha(u.createdAt)}</td>
-                    <td className="d-none d-md-table-cell small text-nowrap">{formatoFecha(u.lastLogin)}</td>
-                    <td className="d-none d-md-table-cell text-end">{u.loginCount ?? 0}</td>
+                    <td className="d-none d-xl-table-cell small text-nowrap">{formatoFecha(u.createdAt)}</td>
+                    <td className="d-none d-lg-table-cell small text-nowrap">{formatoFecha(u.lastLogin)}</td>
+                    <td className="d-none d-lg-table-cell text-end">{u.loginCount ?? 0}</td>
                     <td>
                       <button
                         type="button"
@@ -229,9 +228,9 @@ export default function UsersAdmin() {
                         <span aria-hidden="true">{u.active ? '✓' : '–'}</span> {u.active ? 'ACTIVA' : 'DESACTIVADA'}
                       </button>
                     </td>
-                    <td className="text-end text-nowrap">
+                    <td className="text-end">
                       {propio ? null : confirmarId === u._id ? (
-                        <div className="d-flex flex-column flex-sm-row gap-1 justify-content-end align-items-center">
+                        <div className="d-flex flex-column gap-1 align-items-end">
                           <span className="small">¿Eliminar a {u.name}?</span>
                           <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(u)} disabled={ocupado}>
                             Eliminar
