@@ -935,6 +935,32 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 /* Contacto: el título corta en dos líneas («Contame tu / proyecto.») */
 .titulo-contacto { font-size: clamp(1.75rem, 8vw, 4rem); max-width: 14em; }
 
+/* ───── Mi perfil (Perfil.dc.html): tarjetas blancas, chips y vista previa ───── */
+.perfil-card { background: var(--pc-blanco); border: var(--pc-borde); border-radius: var(--pc-radio); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.perfil-card h2 { font-size: 1.125rem; font-weight: 700; text-transform: none; letter-spacing: 0; margin: 0; }
+.perfil-par { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 12px; }
+.perfil-avatar {
+  width: 72px; height: 72px; border-radius: var(--pc-radio-pill); display: grid; place-items: center;
+  background: var(--pc-carmin); color: var(--pc-sobre-carmin); font-family: var(--pc-font-titulo); font-weight: 800; font-size: 1.5rem;
+}
+.perfil-chip {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--pc-font-mono); font-size: 0.8125rem;
+  padding: 5px 6px 5px 10px; background: var(--pc-lana); border: var(--pc-borde);
+}
+.perfil-chip button { width: 24px; height: 24px; border: 0; background: transparent; color: var(--pc-texto-suave); cursor: pointer; }
+.perfil-chip button:hover { color: var(--pc-carmin); }
+.perfil-exp { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 10px 12px; border: var(--pc-borde); }
+.perfil-exp .linea-fecha { white-space: nowrap; }
+@media (max-width: 575.98px) { .perfil-exp { grid-template-columns: minmax(0, 1fr) auto; } .perfil-exp .linea-fecha { grid-column: 1 / -1; } }
+.perfil-preview { border: var(--pc-borde); overflow: hidden; }
+.perfil-preview-hero { padding: 24px 20px; display: flex; flex-direction: column; gap: 10px; }
+.perfil-preview-hero strong {
+  font-family: var(--pc-font-titulo); font-weight: 800; font-size: 1.625rem; line-height: 0.95; text-transform: uppercase; overflow-wrap: break-word;
+}
+[data-bs-theme='dark'] .perfil-preview-hero { background: var(--pc-lana-clara); }
+.perfil-preview-stack { background: var(--pc-lana); padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 6px; }
+.perfil-preview-chip { font-family: var(--pc-font-mono); font-size: 0.6875rem; padding: 3px 7px; background: var(--pc-lana-clara); border: var(--pc-borde); }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
