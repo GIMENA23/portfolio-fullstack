@@ -1,45 +1,50 @@
-// ⚙️ BASE DEL PROYECTO — colección "inquiries" (consultas del formulario)
-// Las respuestas del operador se guardan ANIDADAS dentro de cada consulta
-// (objetos anidados, clase 9 de MongoDB).
-import mongoose from 'mongoose'
-
-export const INQUIRY_TYPES = ['general', 'cotizacion', 'asesoria']
-export const INQUIRY_STATUS = ['nueva', 'en_proceso', 'respondida', 'cerrada']
+import mongoose from 'mongoose';
+import { nextSequence } from './Counter.js';
+import { jsonOptions } from '../utils/serialize.js';
 
 const replySchema = new mongoose.Schema(
   {
-    text: { type: String, required: true, minlength: 10 },
-    operator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    text: { type: String, required: true, trim: true, minlength: 20, maxlength: 5000 },
+    operatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    operatorName: { type: String, required: true },
     sentAt: { type: Date, default: Date.now },
   },
-  { _id: true },
-)
+  { _id: false },
+);
+
+const attachmentSchema = new mongoose.Schema(
+  {
+    url: { type: String, required: true },
+    name: { type: String, required: true },
+    size: { type: Number, required: true, max: 2 * 1024 * 1024 },
+    mime: { type: String, enum: ['application/pdf', 'image/jpeg', 'image/png'], required: true },
+  },
+  { _id: false },
+);
 
 const inquirySchema = new mongoose.Schema(
   {
-    name: { type: String, required: [true, 'El nombre es obligatorio'], trim: true, maxlength: 60 },
-    email: {
-      type: String,
-      required: [true, 'El email es obligatorio'],
-      lowercase: true,
-      trim: true,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Email inválido'],
-    },
-    phone: { type: String, trim: true, match: [/^\d{7,15}$/, 'Teléfono inválido (solo números, 7 a 15 dígitos)'] },
-    type: { type: String, enum: INQUIRY_TYPES, required: [true, 'El tipo de consulta es obligatorio'] },
-    subject: { type: String, required: [true, 'El asunto es obligatorio'], trim: true, maxlength: 120 },
-    message: {
-      type: String,
-      required: [true, 'El mensaje es obligatorio'],
-      trim: true,
-      minlength: [10, 'El mensaje debe tener al menos 10 caracteres'],
-      maxlength: [1000, 'El mensaje no puede superar 1000 caracteres'],
-    },
-    status: { type: String, enum: INQUIRY_STATUS, default: 'nueva' },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // si la envió alguien logueado
-    replies: { type: [replySchema], default: [] },
+    // Correlativo para mostrar "N.º 0031". Se asigna solo al crear.
+    number: { type: Number, unique: true },
+    name: { type: String, required: true, trim: true, minlength: 3, maxlength: 60 },
+    email: { type: String, required: true, trim: true, lowercase: true },
+    phone: { type: String, match: /^\d{10}$/ },
+    type: { type: String, enum: ['general', 'cotizacion', 'asesoria'], required: true },
+    budget: { type: String, enum: ['chico', 'medio', 'grande'], default: null },
+    subject: { type: String, required: true, trim: true, minlength: 5, maxlength: 120 },
+    message: { type: String, required: true, trim: true, minlength: 20, maxlength: 1000 },
+    attachment: { type: attachmentSchema, default: null },
+    status: { type: String, enum: ['nueva', 'en_proceso', 'respondida', 'cerrada'], default: 'nueva' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, index: true },
+    replies: [replySchema],
+    // Se completa cuando la persona elimina su cuenta: la consulta queda sin nombre, email ni vínculo.
+    anonymizedAt: { type: Date, default: null },
   },
-  { timestamps: true },
-)
+  { timestamps: true, toJSON: jsonOptions },
+);
 
-export default mongoose.model('Inquiry', inquirySchema)
+inquirySchema.pre('validate', async function assignNumber() {
+  if (this.isNew && !this.number) this.number = await nextSequence('inquiry');
+});
+
+export const Inquiry = mongoose.model('Inquiry', inquirySchema);

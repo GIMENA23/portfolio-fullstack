@@ -1,15 +1,13 @@
-// ⚙️ BASE DEL PROYECTO — colección "visits" (contador de visitas)
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const visitSchema = new mongoose.Schema(
-  {
-    path: { type: String, required: true, maxlength: 200 },
-    sessionId: { type: String, maxlength: 64 },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, // null = anónimo
-  },
-  { timestamps: { createdAt: true, updatedAt: false } },
-)
+const visitSchema = new mongoose.Schema({
+  path: { type: String, required: true, maxlength: 200 },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  sessionId: { type: String, required: true, maxlength: 100 },
+  createdAt: { type: Date, default: Date.now, index: true },
+});
 
-visitSchema.index({ createdAt: 1 })
+// Una visita por sesión y página: recargar no suma. Al ser único, dos pedidos simultáneos tampoco duplican.
+visitSchema.index({ sessionId: 1, path: 1 }, { unique: true });
 
-export default mongoose.model('Visit', visitSchema)
+export const Visit = mongoose.model('Visit', visitSchema);
