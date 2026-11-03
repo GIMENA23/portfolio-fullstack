@@ -1003,6 +1003,21 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .servicio-fila.activa { border-color: var(--pc-linea); box-shadow: inset 4px 0 0 var(--pc-carmin); }
 .servicio-info strong { font-size: 1.25rem; font-weight: 700; }
 
+/* Paginación: botones cuadrados como los filtros (activo en negro; en noche, carmín) */
+.pagination { gap: 6px; --bs-pagination-border-radius: 0; }
+.pagination .page-item .page-link,
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+  min-width: 40px; min-height: 40px; margin: 0; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--pc-linea); border-radius: 0; background: transparent; color: var(--pc-texto);
+  font-weight: 600; font-size: 0.875rem; box-shadow: none;
+}
+.pagination .page-link:hover { border-color: var(--pc-texto); background: transparent; color: var(--pc-texto); }
+.pagination .page-link:focus-visible { outline: 3px solid var(--pc-dorado); outline-offset: 2px; box-shadow: none; }
+.pagination .page-item.active .page-link { background: var(--pc-negro); border-color: var(--pc-negro); color: #efe9e1; }
+[data-bs-theme='dark'] .pagination .page-item.active .page-link { background: var(--pc-carmin); border-color: var(--pc-carmin); color: var(--pc-sobre-carmin); }
+.pagination .page-item.disabled .page-link { opacity: 0.4; background: transparent; color: var(--pc-texto-suave); border-color: var(--pc-linea); }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
