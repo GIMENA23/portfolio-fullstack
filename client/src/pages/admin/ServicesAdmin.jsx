@@ -266,7 +266,7 @@ export default function ServicesAdmin() {
           <span className="rotulo">{servicios.length} SERVICIOS · EL ORDEN ES EL DEL SITIO</span>
           <h1 className="h2 mb-0">Servicios</h1>
         </div>
-        <a href="/servicios" className="small fw-semibold">Ver en el sitio ↗</a>
+        <a href="/servicios" target="_blank" rel="noreferrer" className="btn btn-outline-secondary">Ver en el sitio ↗</a>
         {!formAbierto && (
           <button type="button" className="btn btn-primary" onClick={abrirNuevo} disabled={loading}>
             + Nuevo servicio
@@ -291,62 +291,41 @@ export default function ServicesAdmin() {
             <div className="alert alert-light border">Todavía no hay servicios cargados.</div>
           )}
           {!loading && servicios.length > 0 && (
-            <div className="table-responsive">
-              <table className="table align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th style={{ width: 72 }}>Orden</th>
-                    <th>Servicio</th>
-                    <th className="d-none d-lg-table-cell">Precio desde</th>
-                    <th>Visible</th>
-                    <th className="text-end">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {servicios.map((s, idx) => (
-                    <tr key={s._id} className={editandoId === s._id ? 'table-active' : ''}>
-                      <td>
-                        <div className="d-flex gap-1">
-                          <button type="button" className="btn btn-sm btn-outline-secondary px-2" onClick={() => mover(s, -1)} disabled={idx === 0} aria-label={`Subir ${s.name}`}>▲</button>
-                          <button type="button" className="btn btn-sm btn-outline-secondary px-2" onClick={() => mover(s, 1)} disabled={idx === servicios.length - 1} aria-label={`Bajar ${s.name}`}>▼</button>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-start gap-2">
-                          <span className={`servicio-icono tono-${s.color || TONOS[idx % TONOS.length][0]}`} style={{ width: 32, height: 32 }} aria-hidden="true" />
-                          <div>
-                            <div className="fw-semibold">{s.name}</div>
-                            <div className="small text-muted">{s.description}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="d-none d-lg-table-cell text-nowrap">{formatoPrecio(s.priceFrom)}</td>
-                      <td>
-                        <span className={`estado ${s.visible === false ? 'estado-cerrada' : 'estado-respondida'}`}>
-                          <span aria-hidden="true">{s.visible === false ? '–' : '✓'}</span> {s.visible === false ? 'Oculto' : 'Visible'}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="d-flex flex-wrap justify-content-end align-items-center gap-1">
-                          {confirmarId === s._id ? (
-                            <>
-                              <span className="small text-nowrap">¿Eliminar «{s.name}»?</span>
-                              <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(s._id)} disabled={eliminando}>Eliminar</button>
-                              <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setConfirmarId(null)} disabled={eliminando}>Cancelar</button>
-                            </>
-                          ) : (
-                            <>
-                              <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => abrirEditar(s)}>Editar</button>
-                              <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => setConfirmarId(s._id)} aria-label={`Eliminar ${s.name}`}>Eliminar</button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ol className="lista-servicios">
+              {servicios.map((s, idx) => (
+                <li key={s._id} className={`servicio-fila ${editandoId === s._id ? 'activa' : ''}`}>
+                  <div className="orden-btns">
+                    <button type="button" onClick={() => mover(s, -1)} disabled={idx === 0} aria-label={`Subir ${s.name}`}>▲</button>
+                    <button type="button" onClick={() => mover(s, 1)} disabled={idx === servicios.length - 1} aria-label={`Bajar ${s.name}`}>▼</button>
+                  </div>
+                  <span className={`servicio-cuadro tono-${s.color || TONOS[idx % TONOS.length][0]}`} aria-hidden="true" />
+                  <div className="servicio-info">
+                    <strong>{s.name}</strong>
+                    <span>{s.description}</span>
+                  </div>
+                  <span className="servicio-precio">
+                    {s.priceFrom ? `desde ${formatoPrecio(s.priceFrom)}` : 'a consultar'}
+                  </span>
+                  <span className={`estado ${s.visible === false ? 'estado-cerrada' : 'estado-respondida'}`}>
+                    <span aria-hidden="true">{s.visible === false ? '–' : '✓'}</span> {s.visible === false ? 'oculto' : 'visible'}
+                  </span>
+                  <div className="d-flex flex-wrap align-items-center gap-1">
+                    {confirmarId === s._id ? (
+                      <>
+                        <span className="small">¿Eliminar «{s.name}»?</span>
+                        <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(s._id)} disabled={eliminando}>Eliminar</button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setConfirmarId(null)} disabled={eliminando}>Cancelar</button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => abrirEditar(s)}>Editar</button>
+                        <button type="button" className="btn btn-sm btn-eliminar" onClick={() => setConfirmarId(s._id)} aria-label={`Eliminar ${s.name}`}>Eliminar</button>
+                      </>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
           )}
         </div>
         <aside className="admin-split-lateral">

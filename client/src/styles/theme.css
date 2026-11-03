@@ -975,6 +975,22 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .segmentado button.on { background: var(--pc-lana); color: var(--pc-texto); box-shadow: inset 0 -3px 0 var(--pc-carmin); }
 .kpi-nota { font-size: 0.75rem; color: var(--pc-texto-suave); margin-top: 2px; }
 
+/* Servicios (admin): lista de tarjetas con orden ▲▼ (ServiciosAdmin.dc.html) */
+.lista-servicios { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.servicio-fila { background: var(--pc-blanco); border: var(--pc-borde); border-radius: var(--pc-radio); padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.servicio-fila.activa { border-color: var(--pc-carmin); box-shadow: inset 3px 0 0 var(--pc-carmin); }
+.orden-btns { display: flex; flex-direction: column; gap: 2px; }
+.orden-btns button { width: 32px; height: 28px; padding: 0; background: transparent; color: var(--pc-texto); border: 1px solid var(--pc-linea); font-size: 0.75rem; cursor: pointer; }
+.orden-btns button:hover:not(:disabled) { border-color: var(--pc-texto); }
+.orden-btns button:disabled { opacity: 0.35; cursor: not-allowed; }
+.servicio-cuadro { width: 44px; height: 44px; flex: none; background: var(--tono, var(--pc-carmin)); }
+.servicio-info { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.servicio-info strong { font-family: var(--pc-font-titulo); font-size: 1.0625rem; }
+.servicio-info span { font-size: 0.875rem; color: var(--pc-texto-suave); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.servicio-fila .servicio-precio { text-transform: none; white-space: nowrap; }
+.btn-eliminar { background: transparent; color: var(--pc-error); border: 1.5px solid var(--pc-linea); font-weight: 600; }
+.btn-eliminar:hover { border-color: var(--pc-error); color: var(--pc-error); background: transparent; }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
