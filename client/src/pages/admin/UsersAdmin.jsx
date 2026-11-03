@@ -21,7 +21,6 @@ export default function UsersAdmin() {
   const [busqueda, setBusqueda] = useState('')
   const [filtros, setFiltros] = useState({ q: '', role: '', page: 1 })
   const [ocupadoId, setOcupadoId] = useState(null)
-  const [confirmarId, setConfirmarId] = useState(null)
 
   const pedir = (nuevos) => {
     if (!usandoMock) setLoading(true)
@@ -98,26 +97,6 @@ export default function UsersAdmin() {
     }
   }
 
-  const eliminar = async (u) => {
-    setOcupadoId(u._id)
-    setError('')
-    try {
-      await usersApi.remove(u._id)
-      mostrarAviso(`Se eliminó a ${u.name}.`)
-    } catch (err) {
-      if (err.status !== 501) {
-        setError(err.message)
-        setOcupadoId(null)
-        setConfirmarId(null)
-        return
-      }
-      mostrarAviso(`Se eliminó a ${u.name} (solo en pantalla).`)
-    }
-    setUsuarios((lista) => lista.filter((x) => x._id !== u._id))
-    setOcupadoId(null)
-    setConfirmarId(null)
-  }
-
   const irAPagina = (page) => pedir({ ...filtros, page })
 
   return (
@@ -181,7 +160,6 @@ export default function UsersAdmin() {
                 <th className="d-none d-lg-table-cell">Últ. acceso</th>
                 <th className="d-none d-lg-table-cell text-end">Accesos</th>
                 <th>Estado</th>
-                <th className="text-end"><span className="visually-hidden">Acciones</span></th>
               </tr>
             </thead>
             <tbody>
@@ -227,28 +205,6 @@ export default function UsersAdmin() {
                       >
                         <span aria-hidden="true">{u.active ? '✓' : '–'}</span> {u.active ? 'ACTIVA' : 'DESACTIVADA'}
                       </button>
-                    </td>
-                    <td className="text-end">
-                      {propio ? null : confirmarId === u._id ? (
-                        <div className="d-flex flex-column gap-1 align-items-end">
-                          <span className="small">¿Eliminar a {u.name}?</span>
-                          <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(u)} disabled={ocupado}>
-                            Eliminar
-                          </button>
-                          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setConfirmarId(null)} disabled={ocupado}>
-                            Cancelar
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-link text-danger px-1"
-                          onClick={() => setConfirmarId(u._id)}
-                          aria-label={`Eliminar a ${u.name}`}
-                        >
-                          Eliminar
-                        </button>
-                      )}
                     </td>
                   </tr>
                 )
