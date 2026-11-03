@@ -180,7 +180,7 @@ export default function Contact() {
             <EnviadoLottie />
             <h2 className="sec-titulo mb-0" style={{ color: 'inherit' }}>¡Consulta enviada!</h2>
             <p className="mb-0" style={{ color: 'var(--pc-noche-suave)' }}>
-              Recibimos tu consulta. Te respondemos por email en menos de 48 h hábiles.
+              Te llegó una copia a tu email (revisá también spam). Te respondemos en menos de 48 h hábiles.
             </p>
             <div className="align-self-stretch"><GuardaTejida fina alCargar delay={200} /></div>
             <button type="button" className="btn btn-outline-light" onClick={reiniciar}>Enviar otra consulta</button>
