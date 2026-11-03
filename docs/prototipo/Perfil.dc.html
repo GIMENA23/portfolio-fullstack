@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mi perfil · Administrador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#F8F4EE}
+a{color:#160F10}a:hover{color:#9B1B22}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.in{animation:up .5s cubic-bezier(.2,.7,.2,1) both}
+.field{transition:border-color .2s,box-shadow .2s}
+.field:focus{outline:none;border-color:#160F10;box-shadow:0 0 0 3px #E3B04B}
+.btn{transition:background-color .2s}
+.btn:hover{background-color:#9B1B22}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* Barra lateral fija y adaptable (corrección del profesor) */
+.panel-lateral{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;overscroll-behavior:contain;z-index:40}
+.panel-check{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.panel-toggle{display:none}
+@media (max-width: 900px){
+  .panel-lateral{flex:1 0 100% !important;max-width:none !important;height:auto;max-height:100vh;border-right:0 !important;border-bottom:1px solid #D8CEC2}
+  .panel-lateral > div:first-child{flex-direction:row !important;align-items:center;flex-wrap:wrap;padding:12px 64px 12px 16px !important}
+  .panel-toggle{display:flex;position:absolute;top:10px;right:12px;width:44px;height:44px;align-items:center;justify-content:center;background:#160F10;cursor:pointer}
+  .panel-check:focus-visible + .panel-toggle{outline:3px solid #E3B04B;outline-offset:2px}
+  .panel-toggle .x{display:none}
+  .panel-lateral nav,.panel-lateral .panel-usuario{display:none !important}
+  .panel-check:checked ~ nav,.panel-check:checked ~ .panel-usuario{display:flex !important}
+  .panel-check:checked ~ .panel-toggle .x{display:block}
+  .panel-check:checked ~ .panel-toggle .h{display:none}
+  .panel-lateral nav a{min-height:44px}
+  main{padding:20px 16px !important}
+  h1{font-size:clamp(24px,7vw,30px) !important}
+}
+</style>
+</helmet>
+<div style="min-height: 1500px; display: flex; flex-wrap: wrap; background: #F8F4EE; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+  <aside class="panel-lateral" style="flex: 1 1 240px; max-width: 260px; background: #EFE9E1; color: #160F10; border-right: 1px solid #D8CEC2; display: flex; flex-direction: column;">
+    <div style="padding: 20px 20px 14px; display: flex; flex-direction: column; gap: 10px;">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #160F10;">
+        <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 18px;">arce.dev</span>
+      </a>
+      <span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 3px 8px; background: #9B1B22; color: #FFF4EC;">PANEL ADMINISTRADOR</span>
+    </div>
+    <input type="checkbox" id="panel-abrir" class="panel-check" aria-label="Abrir o cerrar el menú del panel"><label for="panel-abrir" class="panel-toggle" title="Menú"><svg class="h" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></label>
+    <div aria-hidden="true" style="height: 8px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+    <nav aria-label="Panel" style="padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CONTENIDO Y MÉTRICAS</span>
+      <a href="Dashboard.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"></path></svg><span style="flex-grow: 1;">Dashboard</span></a>
+      <a href="ProyectosAdmin.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3z"></path></svg><span style="flex-grow: 1;">Proyectos y demos</span></a>
+      <a href="ServiciosAdmin.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path></svg><span style="flex-grow: 1;">Servicios</span></a>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CUENTAS</span>
+      <a href="Usuarios.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8"></path></svg><span style="flex-grow: 1;">Usuarios</span></a>
+      <a href="Perfil.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #160F10; background: #FFFFFF; box-shadow: inset 3px 0 0 #9B1B22; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B1B22" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg><span style="flex-grow: 1;">Mi perfil</span></a>
+    </nav>
+    <div class="panel-usuario" style="margin-top: auto; margin: auto 12px 14px; background: #FFFFFF; border: 1px solid #D8CEC2; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 10px; align-items: center; min-width: 0;">
+        <span style="width: 40px; height: 40px; flex: none; border-radius: 999px; background: #9B1B22; color: #FFF4EC; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 14px;">AP</span>
+        <div style="display: flex; flex-direction: column; min-width: 0; line-height: 1.3;">
+          <strong style="font-size: 14px;">Admin Portfolio</strong>
+          <span style="font-size: 12px; color: #5E5550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">admin@portfolio.test</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #9B1B22; margin-top: 2px;">ADMINISTRADOR</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+        <a href="Main.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1.5px solid #D8CEC2; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#160F10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>Ver sitio</a>
+        <a href="Login.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; background: #160F10; color: #EFE9E1; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"></path></svg>Salir</a>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px;">
+      <div><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #9B1B22;">LO QUE EDITES ACÁ SE VE EN EL SITIO</span><h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 30px; text-transform: uppercase;">Mi perfil</h1></div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <sc-if value="{{saved}}" hint-placeholder-val="{{false}}"><span role="status" class="in" style="color: #4F6B3E; font-weight: 600;">✓ Perfil actualizado</span></sc-if>
+        <sc-if value="{{showSummary}}" hint-placeholder-val="{{false}}"><span role="alert" style="color: #B93A0C; font-weight: 600;">⚠ No se guardó: revisá {{errCount}} campo(s)</span></sc-if>
+        <button type="button" class="btn" onClick="{{save}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background-color: #160F10; color: #EFE9E1; border: 0; padding: 12px 20px; cursor: pointer;">Guardar cambios</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+      <div style="flex: 3 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+
+        <section style="background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+          <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 18px;">Datos personales</h2>
+          <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <span style="width: 72px; height: 72px; border-radius: 999px; background: #9B1B22; color: #FFF4EC; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 24px;">{{initials}}</span>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <label for="pf-foto" style="font-weight: 600; font-size: 14px;">Foto de perfil</label>
+              <input id="pf-foto" type="file" accept=".jpg,.jpeg,.png,.webp" onChange="{{onFoto}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 13px; max-width: 280px;">
+              <span style="font-size: 12px; color: #5E5550;">JPG, PNG o WebP · cuadrada · máx. 2 MB</span>
+              <sc-if value="{{fotoMsgShow}}" hint-placeholder-val="{{ false }}"><span style="{{fotoMsgStyle}}">{{fotoMsg}}</span></sc-if>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+            <label for="pf-nombre" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">Nombre
+              <input id="pf-nombre" class="field" value="{{p.name}}" onChange="{{set.name}}" style="{{st.name}}"><sc-if value="{{sh.name}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{er.name}}</span></sc-if>
+            </label>
+            <label for="pf-titulo" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">Título profesional
+              <input id="pf-titulo" class="field" value="{{p.title}}" onChange="{{set.title}}" style="{{st.title}}"><sc-if value="{{sh.title}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{er.title}}</span></sc-if>
+            </label>
+          </div>
+          <label for="pf-frase" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600;">Frase del inicio <span style="font-weight: 400; font-size: 12px; color: #5E5550;">Título grande del hero · {{p.phraseLen}} / 60</span>
+            <input id="pf-frase" class="field" value="{{p.phrase}}" onChange="{{set.phrase}}" style="{{phraseStyle}}">
+            <sc-if value="{{phraseErr}}" hint-placeholder-val="{{false}}"><span style="font-weight: 500; font-size: 12px; color: #B93A0C;">⚠ Escribí una frase de 1 a 60 caracteres para que entre en el hero.</span></sc-if>
+          </label>
+          <label for="pf-bio" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600;">Presentación <span style="font-weight: 400; font-size: 12px; color: #5E5550;">Sección Perfil · {{bioLen}} / 400</span>
+            <textarea id="pf-bio" class="field" rows="3" value="{{p.bio}}" onChange="{{set.bio}}" style="{{st.bio}}"></textarea>
+            <sc-if value="{{sh.bio}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{er.bio}}</span></sc-if>
+          </label>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+            <label for="pf-email" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">Email público
+              <input id="pf-email" class="field" value="{{p.email}}" onChange="{{set.email}}" style="{{st.email}}"><sc-if value="{{sh.email}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{er.email}}</span></sc-if>
+            </label>
+            <label for="pf-ubic" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">Ubicación
+              <input id="pf-ubic" class="field" value="{{p.ubic}}" onChange="{{set.ubic}}" style="{{st.ubic}}"><sc-if value="{{sh.ubic}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{er.ubic}}</span></sc-if>
+            </label>
+            <label for="pf-gh" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">GitHub
+              <input id="pf-gh" class="field" value="{{p.gh}}" onChange="{{set.gh}}" style="{{st.gh}}"><sc-if value="{{sh.gh}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{er.gh}}</span></sc-if>
+            </label>
+            <label for="pf-li" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">LinkedIn
+              <input id="pf-li" class="field" value="{{p.li}}" onChange="{{set.li}}" style="{{st.li}}"><sc-if value="{{sh.li}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{er.li}}</span></sc-if>
+            </label>
+          </div>
+        </section>
+
+        <section style="background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 18px;">Stack</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <sc-for list="{{stack}}" as="t" hint-placeholder-count="8">
+              <span style="display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 6px 5px 10px; background: #EFE9E1; border: 1px solid #D8CEC2;">{{t.name}}<button type="button" onClick="{{t.remove}}" aria-label="Quitar {{t.name}}" style="width: 22px; height: 22px; border: 0; background: transparent; cursor: pointer; color: #5E5550;">✕</button></span>
+            </sc-for>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <label for="pf-tec" style="position: absolute; left: -9999px;">Nueva tecnología</label>
+            <input id="pf-tec" class="field" value="{{newTech}}" onChange="{{setNewTech}}" placeholder="Agregar tecnología, ej.: TypeScript" style="flex: 1 1 220px; min-width: 0; font-family: 'Instrument Sans', sans-serif; font-size: 15px; padding: 9px 12px; border: 1.5px solid #D8CEC2; border-radius: 4px;">
+            <button type="button" onClick="{{addTech}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 14px; background: transparent; border: 1.5px solid #160F10; padding: 8px 14px; cursor: pointer;">+ Agregar</button>
+          </div>
+          <sc-if value="{{techMsgShow}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 12px; color: #B93A0C;">⚠ {{techMsg}}</span></sc-if>
+        </section>
+
+        <section style="background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+            <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 18px;">Experiencia</h2>
+            <button type="button" onClick="{{addExp}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 14px; background: transparent; border: 1.5px solid #160F10; padding: 7px 12px; cursor: pointer;">+ Agregar experiencia</button>
+          </div>
+          <sc-for list="{{exp}}" as="e" hint-placeholder-count="3">
+            <div style="display: grid; grid-template-columns: 140px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid #EEE7DE;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550;">{{e.period}}</span>
+              <div style="min-width: 0;"><strong>{{e.role}}</strong><div style="font-size: 13px; color: #5E5550;">{{e.detail}}</div></div>
+              <button type="button" onClick="{{e.remove}}" aria-label="Quitar {{e.role}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 13px; background: transparent; color: #B93A0C; border: 1.5px solid #D8CEC2; padding: 6px 10px; cursor: pointer;">Quitar</button>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+
+      <aside aria-label="Vista previa" style="flex: 2 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550;">VISTA PREVIA EN EL SITIO</span>
+        <div style="border: 1px solid #D8CEC2; overflow: hidden;">
+          <div style="background: #9B1B22; color: #FFF4EC; padding: 24px 20px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #E3B04B;">{{p.titleUpper}}</span>
+            <strong style="font-family: Syne, sans-serif; font-weight: 800; font-size: 30px; line-height: 0.95; text-transform: uppercase; overflow-wrap: anywhere;">{{p.phrase}}</strong>
+            <span style="font-size: 13px; opacity: 0.9;">Soy {{p.name}}.</span>
+          </div>
+          <div aria-hidden="true" style="height: 8px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+          <div style="background: #EFE9E1; padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <sc-for list="{{stack}}" as="t" hint-placeholder-count="8">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 7px; background: #F8F4EE; border: 1px solid #D8CEC2;">{{t.name}}</span>
+            </sc-for>
+          </div>
+        </div>
+        <a href="Main.dc.html" style="font-weight: 600; font-size: 14px;">Ver el inicio completo ↗</a>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: 'Martina Arce', title: 'Desarrolladora Fullstack', phrase: 'Productos web de punta a punta.', saved: false, newTech: '', tried: false, techMsg: '', foto: null,
+      bio: 'Trabajo con pymes, startups y estudios que necesitan un sistema web completo: el backend que guarda y protege los datos, la API que los ordena y la interfaz que la gente usa todos los días.',
+      email: 'hola@arce.dev', ubic: 'Salta, Argentina · remoto', gh: 'https://github.com/martinaarce', li: 'https://linkedin.com/in/martinaarce',
+      stack: ['React', 'React Router', 'Vite', 'Bootstrap', 'Node.js', 'Express', 'MongoDB', 'JWT'],
+      exp: [
+        { period: '[AÑO] — HOY', role: 'Desarrolladora fullstack independiente', detail: 'Sistemas a medida para pymes de Salta y Jujuy.' },
+        { period: '[AÑO] — [AÑO]', role: 'Desarrolladora backend · [EMPRESA]', detail: 'APIs REST y bases de datos.' },
+        { period: '[AÑO] — [AÑO]', role: 'Ingeniería en Informática · UCASAL', detail: 'Formación en desarrollo de software.' },
+      ],
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const set = (k) => (e) => this.setState({ [k]: e.target.value, saved: false });
+    const initials = s.name.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('') || '··';
+    const phraseErr = s.phrase.length > 60 || !s.phrase.trim();
+    const er = {};
+    const req = (k, label, min, max) => { const v = s[k].trim(); if (!v) er[k] = label + ' es obligatorio.'; else if (v.length < min) er[k] = 'Mínimo ' + min + ' caracteres.'; else if (v.length > max) er[k] = 'Máximo ' + max + ' caracteres.'; };
+    req('name', 'El nombre', 3, 60); req('title', 'El título', 5, 60); req('bio', 'La presentación', 40, 400); req('ubic', 'La ubicación', 3, 60);
+    if (!er.name && !/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' ]+$/.test(s.name.trim())) er.name = 'Usá solo letras y espacios.';
+    if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(s.email.trim())) er.email = 'Email no válido. Ejemplo: hola@arce.dev';
+    if (!/^https:\/\/(www\.)?github\.com\/[A-Za-z0-9-]+\/?$/.test(s.gh.trim())) er.gh = 'Tiene que ser https://github.com/tu-usuario';
+    if (!/^https:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9-]+\/?$/.test(s.li.trim())) er.li = 'Tiene que ser https://linkedin.com/in/tu-usuario';
+    const sh = {}, st = {};
+    ['name', 'title', 'bio', 'email', 'ubic', 'gh', 'li'].forEach((k) => {
+      sh[k] = !!er[k];
+      st[k] = "font-family: 'Instrument Sans', sans-serif; font-size: 15px; padding: 10px 12px; border: 1.5px solid " + (sh[k] ? '#B93A0C' : '#D8CEC2') + "; border-radius: 4px; min-width: 0; resize: vertical;";
+    });
+    const errCount = Object.keys(er).length + (phraseErr ? 1 : 0);
+    return {
+      p: { name: s.name, title: s.title, titleUpper: s.title.toUpperCase() + ' — SALTA', phrase: s.phrase, phraseLen: s.phrase.length, bio: s.bio, email: s.email, ubic: s.ubic, gh: s.gh, li: s.li },
+      set: { name: set('name'), title: set('title'), phrase: set('phrase'), bio: set('bio'), email: set('email'), ubic: set('ubic'), gh: set('gh'), li: set('li') },
+      er: Object.assign({ name: '', title: '', bio: '', email: '', ubic: '', gh: '', li: '' }, er), sh, st, errCount, bioLen: s.bio.length,
+      showSummary: s.tried && errCount > 0,
+      onFoto: (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        let bad = '';
+        if (!/^image\/(jpeg|png|webp)$/.test(f.type)) bad = 'Formato no permitido: solo JPG, PNG o WebP.';
+        else if (f.size > 2 * 1024 * 1024) bad = 'La imagen pesa ' + (f.size / 1048576).toFixed(1) + ' MB. El máximo es 2 MB.';
+        this.setState({ foto: { name: f.name, bad }, saved: false });
+      },
+      fotoMsgShow: !!s.foto,
+      fotoMsg: s.foto ? (s.foto.bad ? '⚠ ' + s.foto.bad : '✓ ' + s.foto.name + ' lista para subir') : '',
+      fotoMsgStyle: 'font-size: 12px; font-weight: 600; color: ' + (s.foto && s.foto.bad ? '#B93A0C' : '#4F6B3E') + ';',
+      techMsgShow: !!s.techMsg, techMsg: s.techMsg,
+      initials, phraseErr,
+      phraseStyle: 'font-family: Instrument Sans, sans-serif; font-size: 15px; padding: 10px 12px; border-radius: 4px; border: 1.5px solid ' + (phraseErr ? '#B93A0C' : '#D8CEC2') + ';',
+      stack: s.stack.map((name, i) => ({ name, remove: () => this.setState({ stack: s.stack.filter((_, j) => j !== i), saved: false }) })),
+      newTech: s.newTech,
+      setNewTech: (e) => this.setState({ newTech: e.target.value, techMsg: '' }),
+      addTech: () => {
+        const t = s.newTech.trim();
+        if (!t) { this.setState({ techMsg: 'Escribí el nombre de la tecnología.' }); return; }
+        if (t.length > 24) { this.setState({ techMsg: 'Máximo 24 caracteres.' }); return; }
+        if (s.stack.some((x) => x.toLowerCase() === t.toLowerCase())) { this.setState({ techMsg: t + ' ya está en el stack.' }); return; }
+        if (s.stack.length >= 16) { this.setState({ techMsg: 'Máximo 16 tecnologías.' }); return; }
+        this.setState({ stack: [...s.stack, t], newTech: '', saved: false, techMsg: '' });
+      },
+      exp: s.exp.map((e, i) => ({ ...e, remove: () => this.setState({ exp: s.exp.filter((_, j) => j !== i), saved: false }) })),
+      addExp: () => this.setState({ exp: [{ period: '[AÑO] — [AÑO]', role: 'Nuevo puesto', detail: 'Describí qué hiciste.' }, ...s.exp], saved: false }),
+      saved: s.saved,
+      save: () => { if (errCount > 0) { this.setState({ tried: true, saved: false }); return; } this.setState({ saved: true, tried: false }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ingresar · arce.dev</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#EFE9E1}
+a{color:#160F10}a:hover{color:#9B1B22}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-wrap: wrap; background: #EFE9E1; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.6;">
+
+  <div style="flex: 1 1 520px; min-width: 0; background: #9B1B22; color: #FFF4EC; display: flex; flex-direction: column;">
+    <div style="flex-grow: 1; padding: 40px 56px; display: flex; flex-direction: column; justify-content: space-between; gap: 48px;">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #FFF4EC;">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#160F10"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#E3B04B">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 20px;">arce.dev</span>
+      </a>
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.06em; color: #E3B04B;">ACCESO A PROYECTOS Y DEMOS</span>
+        <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 64px; line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">Entrá para ver las demos.</h1>
+        <p style="margin: 0; max-width: 28em; opacity: 0.94;">Con tu cuenta ves el detalle de cada proyecto, el código y las demos interactivas.</p>
+      </div>
+      <span style="font-size: 14px; opacity: 0.85;">Gratis · sin tarjeta · solo tu email</span>
+    </div>
+    <div aria-hidden="true" style="height: 22px; background: linear-gradient(#160F10 0 6px, transparent 6px 8px, #160F10 8px 14px, transparent 14px 16px, #160F10 16px), #E3B04B;"></div>
+  </div>
+
+  <div style="flex: 1 1 520px; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 48px 32px;">
+    <form style="width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 18px;">
+      <div role="tablist" aria-label="Ingresar o registrarse" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid #D8CEC2;">
+        <button type="button" role="tab" aria-selected="true" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 16px; padding: 12px; background: transparent; border: 0; border-bottom: 3px solid #9B1B22; color: #160F10; cursor: pointer;">Ingresar</button>
+        <a href="Registro.dc.html" role="tab" aria-selected="false" style="text-align: center; font-weight: 600; font-size: 16px; padding: 12px; color: #5E5550; text-decoration: none;">Crear cuenta</a>
+      </div>
+      <a href="MainUsuario.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; font-size: 15px; padding: 13px; background: #FFFFFF; color: #160F10; border: 1.5px solid #D8CEC2; text-decoration: none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#160F10" stroke-width="2"></circle><path d="M12 7v10M7 12h10" stroke="#160F10" stroke-width="2"></path></svg>
+        Continuar con Google
+      </a>
+      <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550;"><span style="flex-grow: 1; height: 1px; background: #D8CEC2;"></span>O CON TU EMAIL<span style="flex-grow: 1; height: 1px; background: #D8CEC2;"></span></div>
+      <sc-if value="{{showGeneral}}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="display: flex; gap: 10px; align-items: flex-start; border: 1.5px solid #B93A0C; background: #FBEDE6; color: #B93A0C; padding: 10px 12px; font-size: 14px; font-weight: 600;"><span aria-hidden="true">⚠</span><span>{{general}}</span></div>
+      </sc-if>
+      <label for="l-email" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Email
+        <input id="l-email" type="email" autocomplete="email" value="{{email}}" onChange="{{onEmail}}" onBlur="{{blurEmail}}" aria-invalid="{{emailInvalid}}" aria-describedby="l-email-err" style="{{emailStyle}}">
+        <sc-if value="{{showEmailErr}}" hint-placeholder-val="{{ false }}"><span id="l-email-err" style="font-size: 13px; font-weight: 600; color: #B93A0C;">⚠ {{emailErr}}</span></sc-if>
+      </label>
+      <label for="l-pass" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Contraseña
+        <div style="display: flex; gap: 0;">
+          <input id="l-pass" type="{{passType}}" autocomplete="current-password" value="{{pass}}" onChange="{{onPass}}" onBlur="{{blurPass}}" aria-invalid="{{passInvalid}}" aria-describedby="l-pass-err" style="{{passStyle}}">
+          <button type="button" onClick="{{togglePass}}" aria-label="Mostrar u ocultar contraseña" style="font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 0 14px; min-width: 76px; border: 1.5px solid #D8CEC2; border-left: 0; background: #F8F4EE; color: #160F10; cursor: pointer;">{{passToggle}}</button>
+        </div>
+        <sc-if value="{{showPassErr}}" hint-placeholder-val="{{ false }}"><span id="l-pass-err" style="font-size: 13px; font-weight: 600; color: #B93A0C;">⚠ {{passErr}}</span></sc-if>
+      </label>
+      <a href="Recuperar.dc.html" style="align-self: flex-end; font-size: 14px; font-weight: 600; margin-top: -8px;">¿Olvidaste tu contraseña?</a>
+      <sc-if value="{{ready}}" hint-placeholder-val="{{ true }}">
+        <a href="{{target}}" style="text-align: center; background: #160F10; color: #EFE9E1; padding: 14px; font-weight: 600; font-size: 15px; text-decoration: none;">Ingresar como {{roleLabel}}</a>
+      </sc-if>
+      <sc-if value="{{notReady}}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{submit}}" style="font-family: 'Instrument Sans', sans-serif; background: #160F10; color: #EFE9E1; padding: 14px; font-weight: 600; font-size: 15px; border: 0; cursor: pointer;">Ingresar</button>
+      </sc-if>
+      <span style="font-size: 13px; color: #5E5550; text-align: center;">Cuentas de prueba: admin@portfolio.test, operador@portfolio.test o cualquier email · contraseña Portfolio2026</span>
+      <div style="border: 1px dashed #D8CEC2; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550;">PROTOTIPO · ENTRAR COMO</span>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">
+          <a href="Dashboard.dc.html" style="text-align: center; padding: 8px 4px; font-size: 13px; font-weight: 600; text-decoration: none; background: #9B1B22; color: #FFF4EC;">Administrador</a>
+          <a href="Bandeja.dc.html" style="text-align: center; padding: 8px 4px; font-size: 13px; font-weight: 600; text-decoration: none; background: #160F10; color: #E3B04B;">Operador</a>
+          <a href="Cuenta.dc.html" style="text-align: center; padding: 8px 4px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1.5px solid #160F10;">Usuario</a>
+        </div>
+      </div>
+      <a href="Main.dc.html" style="text-align: center; font-size: 15px;">← Volver al sitio</a>
+    </form>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { email: 'admin@portfolio.test', pass: 'Portfolio2026', tE: false, tP: false, tried: false, fails: 0, show: false, wrong: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const email = s.email.trim().toLowerCase();
+    const reEmail = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+    let emailErr = '';
+    if (!email) emailErr = 'Ingresá tu email.';
+    else if (!reEmail.test(email)) emailErr = 'El email no es válido. Ejemplo: nombre@correo.com';
+    let passErr = '';
+    if (!s.pass) passErr = 'Ingresá tu contraseña.';
+    else if (s.pass.length < 8) passErr = 'La contraseña tiene al menos 8 caracteres.';
+    const formatOk = !emailErr && !passErr;
+    const credOk = s.pass === 'Portfolio2026';
+    const locked = s.fails >= 5;
+    const ready = formatOk && credOk && !locked;
+    let target = 'MainUsuario.dc.html', roleLabel = 'usuario';
+    if (email === 'admin@portfolio.test') { target = 'Dashboard.dc.html'; roleLabel = 'administrador'; }
+    else if (email === 'operador@portfolio.test') { target = 'Bandeja.dc.html'; roleLabel = 'operador'; }
+    const showEmailErr = !!emailErr && (s.tE || s.tried);
+    const showPassErr = !!passErr && (s.tP || s.tried);
+    const field = (bad) => "flex: 1; min-width: 0; font-family: 'Instrument Sans', sans-serif; font-size: 16px; padding: 11px 12px; border: 1.5px solid " + (bad ? '#B93A0C' : '#D8CEC2') + "; border-radius: 4px; background: #FFFFFF; color: #160F10;";
+    let general = '';
+    if (locked) general = 'Demasiados intentos. Esperá 15 minutos o recuperá tu contraseña.';
+    else if (s.wrong) general = 'Email o contraseña incorrectos (' + s.fails + ' de 5 intentos).';
+    return {
+      email: s.email, pass: s.pass,
+      onEmail: (e) => this.setState({ email: e.target.value, wrong: false }),
+      onPass: (e) => this.setState({ pass: e.target.value, wrong: false }),
+      blurEmail: () => this.setState({ tE: true }),
+      blurPass: () => this.setState({ tP: true }),
+      emailErr, passErr, showEmailErr, showPassErr,
+      emailInvalid: showEmailErr ? 'true' : 'false', passInvalid: showPassErr ? 'true' : 'false',
+      emailStyle: field(showEmailErr).replace('flex: 1; ', ''), passStyle: field(showPassErr),
+      passType: s.show ? 'text' : 'password', passToggle: s.show ? 'Ocultar' : 'Mostrar',
+      togglePass: () => this.setState({ show: !s.show }),
+      ready, notReady: !ready, target, roleLabel,
+      showGeneral: !!general, general,
+      submit: () => {
+        if (!formatOk) { this.setState({ tried: true }); return; }
+        if (!locked) this.setState({ tried: true, wrong: true, fails: s.fails + 1 });
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

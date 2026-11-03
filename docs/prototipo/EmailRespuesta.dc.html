@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Email · respuesta del operador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>body{margin:0;background:#E4DCD1}a{color:#9B1B22}</style>
+</helmet>
+<div style="width: 760px; min-height: 1060px; box-sizing: border-box; background: #E4DCD1; padding: 32px 80px; font-family: 'Instrument Sans', Arial, sans-serif; color: #160F10;">
+  <div style="background: #FFFFFF; border: 1px solid #D8CEC2; padding: 14px 18px; font-size: 13px; line-height: 1.7; margin-bottom: 16px;">
+    <div><span style="color: #5E5550; display: inline-block; width: 64px;">De</span>Martina Arce · arce.dev &lt;hola@arce.dev&gt;</div>
+    <div><span style="color: #5E5550; display: inline-block; width: 64px;">Para</span>martin@correo.com</div>
+    <div><span style="color: #5E5550; display: inline-block; width: 64px;">Asunto</span><strong>Re: Sistema de turnos para mi consultorio</strong></div>
+  </div>
+
+  <div style="width: 600px; background: #EFE9E1;">
+    <div style="padding: 20px 32px; display: flex; align-items: center; gap: 10px;">
+      <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+      <span style="font-family: Syne, Arial, sans-serif; font-weight: 800; font-size: 18px;">arce.dev</span>
+    </div>
+    <div aria-hidden="true" style="height: 14px; background: linear-gradient(#160F10 0 4px, transparent 4px 5px, #160F10 5px 9px, transparent 9px 10px, #160F10 10px), #E3B04B;"></div>
+    <div style="padding: 32px; font-size: 16px; line-height: 1.65; background: #F8F4EE;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #9B1B22; margin-bottom: 14px;">RESPUESTA A TU CONSULTA N.º 0031</div>
+      <p style="margin: 0 0 14px;">Hola Martín:</p>
+      <p style="margin: 0 0 14px;">Gracias por escribir. Un sistema de turnos con recordatorios por email es justo el tipo de proyecto que hago. Te propongo:</p>
+      <ul style="margin: 0 0 14px; padding-left: 20px;">
+        <li>Reserva online por día y profesional, desde la compu o el celular.</li>
+        <li>Recordatorio automático por email 24 horas antes.</li>
+        <li>Panel para el consultorio con agenda, feriados y pacientes.</li>
+      </ul>
+      <p style="margin: 0 0 14px;">El tiempo estimado es de [X] semanas y el costo desde [$ PRECIO]. ¿Te queda bien una videollamada de 20 minutos esta semana para ajustar los detalles?</p>
+      <p style="margin: 0;">Saludos,<br><strong>Martina Arce</strong><br><span style="color: #5E5550; font-size: 14px;">Desarrolladora Fullstack · arce.dev</span></p>
+    </div>
+    <div style="padding: 20px 32px; font-size: 14px; border-top: 1px solid #D8CEC2;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; margin-bottom: 8px;">TU MENSAJE ORIGINAL · 15/10/2026</div>
+      <div style="border-left: 3px solid #D8CEC2; padding-left: 12px; color: #5E5550;">Necesito que mis pacientes saquen turno online y reciban un recordatorio por email.</div>
+    </div>
+    <div style="padding: 0 32px 28px;">
+      <a href="Contacto.dc.html" style="display: inline-block; background: #160F10; color: #EFE9E1; padding: 12px 20px; font-weight: 600; text-decoration: none;">Responder</a>
+      <a href="Cuenta.dc.html" style="display: inline-block; margin-left: 10px; padding: 11px 18px; border: 1.5px solid #160F10; color: #160F10; font-weight: 600; text-decoration: none;">Ver en mi cuenta</a>
+    </div>
+    <div style="background: #160F10; color: #B3A79F; padding: 20px 32px; font-size: 12px; line-height: 1.6;">
+      Martina Arce · Desarrolladora Fullstack · Salta, Argentina<br>
+      Respondé este email para seguir la conversación. Queda guardado en el historial de tu consulta.
+    </div>
+  </div>
+  <p style="width: 600px; font-size: 12px; color: #5E5550; margin: 14px 0 0;">Lo envía el operador desde la bandeja (POST /api/inquiries/:id/reply). La respuesta se guarda anidada en la consulta y el estado pasa a «respondida».</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":760,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

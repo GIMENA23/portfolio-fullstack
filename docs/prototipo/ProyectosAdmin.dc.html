@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Proyectos y demos · Administrador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#F8F4EE}
+a{color:#160F10}a:hover{color:#9B1B22}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.in{animation:up .5s cubic-bezier(.2,.7,.2,1) both}
+.slide{animation:slide .4s cubic-bezier(.2,.7,.2,1) both}
+.field{transition:border-color .2s,box-shadow .2s}
+.field:focus{outline:none;border-color:#160F10;box-shadow:0 0 0 3px #E3B04B}
+.btn{transition:background-color .2s}
+.btn:hover{background-color:#9B1B22}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* Barra lateral fija y adaptable (corrección del profesor) */
+.panel-lateral{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;overscroll-behavior:contain;z-index:40}
+.panel-check{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.panel-toggle{display:none}
+@media (max-width: 900px){
+  .panel-lateral{flex:1 0 100% !important;max-width:none !important;height:auto;max-height:100vh;border-right:0 !important;border-bottom:1px solid #D8CEC2}
+  .panel-lateral > div:first-child{flex-direction:row !important;align-items:center;flex-wrap:wrap;padding:12px 64px 12px 16px !important}
+  .panel-toggle{display:flex;position:absolute;top:10px;right:12px;width:44px;height:44px;align-items:center;justify-content:center;background:#160F10;cursor:pointer}
+  .panel-check:focus-visible + .panel-toggle{outline:3px solid #E3B04B;outline-offset:2px}
+  .panel-toggle .x{display:none}
+  .panel-lateral nav,.panel-lateral .panel-usuario{display:none !important}
+  .panel-check:checked ~ nav,.panel-check:checked ~ .panel-usuario{display:flex !important}
+  .panel-check:checked ~ .panel-toggle .x{display:block}
+  .panel-check:checked ~ .panel-toggle .h{display:none}
+  .panel-lateral nav a{min-height:44px}
+  main{padding:20px 16px !important}
+  h1{font-size:clamp(24px,7vw,30px) !important}
+}
+</style>
+</helmet>
+<div style="min-height: 1100px; display: flex; flex-wrap: wrap; background: #F8F4EE; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+  <aside class="panel-lateral" style="flex: 1 1 240px; max-width: 260px; background: #EFE9E1; color: #160F10; border-right: 1px solid #D8CEC2; display: flex; flex-direction: column;">
+    <div style="padding: 20px 20px 14px; display: flex; flex-direction: column; gap: 10px;">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #160F10;">
+        <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 18px;">arce.dev</span>
+      </a>
+      <span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 3px 8px; background: #9B1B22; color: #FFF4EC;">PANEL ADMINISTRADOR</span>
+    </div>
+    <input type="checkbox" id="panel-abrir" class="panel-check" aria-label="Abrir o cerrar el menú del panel"><label for="panel-abrir" class="panel-toggle" title="Menú"><svg class="h" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></label>
+    <div aria-hidden="true" style="height: 8px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+    <nav aria-label="Panel" style="padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CONTENIDO Y MÉTRICAS</span>
+      <a href="Dashboard.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"></path></svg><span style="flex-grow: 1;">Dashboard</span></a>
+      <a href="ProyectosAdmin.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #160F10; background: #FFFFFF; box-shadow: inset 3px 0 0 #9B1B22; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B1B22" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3z"></path></svg><span style="flex-grow: 1;">Proyectos y demos</span></a>
+      <a href="ServiciosAdmin.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path></svg><span style="flex-grow: 1;">Servicios</span></a>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CUENTAS</span>
+      <a href="Usuarios.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8"></path></svg><span style="flex-grow: 1;">Usuarios</span></a>
+      <a href="Perfil.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg><span style="flex-grow: 1;">Mi perfil</span></a>
+    </nav>
+    <div class="panel-usuario" style="margin-top: auto; margin: auto 12px 14px; background: #FFFFFF; border: 1px solid #D8CEC2; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 10px; align-items: center; min-width: 0;">
+        <span style="width: 40px; height: 40px; flex: none; border-radius: 999px; background: #9B1B22; color: #FFF4EC; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 14px;">AP</span>
+        <div style="display: flex; flex-direction: column; min-width: 0; line-height: 1.3;">
+          <strong style="font-size: 14px;">Admin Portfolio</strong>
+          <span style="font-size: 12px; color: #5E5550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">admin@portfolio.test</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #9B1B22; margin-top: 2px;">ADMINISTRADOR</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+        <a href="Main.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1.5px solid #D8CEC2; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#160F10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>Ver sitio</a>
+        <a href="Login.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; background: #160F10; color: #EFE9E1; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"></path></svg>Salir</a>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px;">
+      <div><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #9B1B22;">{{count}} PROYECTOS · {{visibleCount}} VISIBLES</span><h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 30px; text-transform: uppercase;">Proyectos y demos</h1></div>
+      <button type="button" class="btn" onClick="{{newProject}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background-color: #160F10; color: #EFE9E1; border: 0; padding: 12px 20px; cursor: pointer;">+ Nuevo proyecto</button>
+    </div>
+
+    <sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+      <div role="status" class="in" style="background: #FFFFFF; border: 1.5px solid #4F6B3E; padding: 12px 16px; display: flex; gap: 10px; align-items: center; color: #4F6B3E; font-weight: 600;">✓ {{toast}}</div>
+    </sc-if>
+
+    <sc-if value="{{confirming}}" hint-placeholder-val="{{false}}">
+      <div role="alertdialog" aria-label="Confirmar eliminación" class="in" style="background: #FFFFFF; border: 1.5px solid #B93A0C; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+        <span style="color: #B93A0C; font-weight: 600;">⚠ ¿Eliminar «{{toDelete}}»? Se borra del sitio y no se puede deshacer.</span>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" onClick="{{cancelDelete}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 14px; background: transparent; border: 1.5px solid #160F10; padding: 8px 14px; cursor: pointer;">Cancelar</button>
+          <button type="button" onClick="{{confirmDelete}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 14px; background: #B93A0C; color: #FFFFFF; border: 0; padding: 9px 14px; cursor: pointer;">Eliminar</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+      <div style="flex: 3 1 520px; min-width: 0; overflow-x: auto; background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px;">
+        <div style="min-width: 600px;">
+          <div style="display: grid; grid-template-columns: 56px minmax(0, 1.6fr) minmax(0, 1.2fr) 90px 150px; gap: 12px; padding: 10px 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; border-bottom: 2px solid #D8CEC2;">
+            <span></span><span>PROYECTO</span><span>STACK</span><span>VISIBLE</span><span>ACCIONES</span>
+          </div>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <div style="{{r.rowStyle}}">
+              <span style="{{r.thumb}}"></span>
+              <span style="font-weight: 600;">{{r.title}}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550;">{{r.stack}}</span>
+              <span style="{{r.visStyle}}">{{r.vis}}</span>
+              <span style="display: flex; gap: 6px;">
+                <button type="button" onClick="{{r.edit}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 13px; background: transparent; border: 1.5px solid #160F10; padding: 6px 10px; cursor: pointer;">Editar</button>
+                <button type="button" onClick="{{r.remove}}" aria-label="Eliminar {{r.title}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 13px; background: transparent; color: #B93A0C; border: 1.5px solid #D8CEC2; padding: 6px 10px; cursor: pointer;">Eliminar</button>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="flex: 2 1 380px; min-width: 0;">
+        <sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+          <div class="in" style="border: 2px dashed #D8CEC2; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; color: #5E5550;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9B1B22" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="16"></rect><path d="M3 9h18M8 14h8"></path></svg>
+            <strong style="color: #160F10; font-family: Syne, sans-serif; font-size: 18px;">Ningún proyecto seleccionado</strong>
+            <span>Tocá «Editar» en un proyecto de la tabla o creá uno nuevo.</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{hasForm}}" hint-placeholder-val="{{true}}">
+          <form aria-label="{{heading}}" class="slide" style="{{formStyle}}">
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                <span style="{{badgeStyle}}">{{badge}}</span>
+                <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 20px; overflow-wrap: anywhere;">{{heading}}</h2>
+                <span style="font-size: 12px; color: #5E5550;">{{sub}}</span>
+              </div>
+              <button type="button" onClick="{{close}}" aria-label="Cerrar formulario" style="width: 36px; height: 36px; flex: none; background: transparent; border: 1.5px solid #D8CEC2; cursor: pointer; font-size: 16px;">✕</button>
+            </div>
+
+            <label for="pa-titulo" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600;">Título *
+              <input id="pa-titulo" class="field" value="{{d.title}}" onChange="{{set.title}}" placeholder="Ej.: Gestor de turnos" style="{{inp.title}}">
+              <sc-if value="{{err.title}}" hint-placeholder-val="{{false}}"><span style="font-weight: 500; font-size: 12px; color: #B93A0C;">⚠ {{err.title}}</span></sc-if>
+            </label>
+            <label for="pa-resumen" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600;">Resumen * <span style="font-weight: 400; font-size: 12px; color: #5E5550;">Se ve en la tarjeta · {{d.summaryLen}} / 200</span>
+              <textarea id="pa-resumen" class="field" rows="2" value="{{d.summary}}" onChange="{{set.summary}}" placeholder="Una línea que explique qué resuelve" style="{{inp.summary}}"></textarea>
+              <sc-if value="{{err.summary}}" hint-placeholder-val="{{false}}"><span style="font-weight: 500; font-size: 12px; color: #B93A0C;">⚠ {{err.summary}}</span></sc-if>
+            </label>
+            <label for="pa-stack" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600;">Tecnologías * <span style="font-weight: 400; font-size: 12px; color: #5E5550;">Separadas por coma</span>
+              <input id="pa-stack" class="field" value="{{d.stack}}" onChange="{{set.stack}}" placeholder="React, Node, MongoDB" style="{{inp.stack}}">
+              <sc-if value="{{err.stack}}" hint-placeholder-val="{{false}}"><span style="font-weight: 500; font-size: 12px; color: #B93A0C;">⚠ {{err.stack}}</span></sc-if>
+            </label>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+              <label for="pa-demo" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">URL de la demo
+                <input id="pa-demo" class="field" value="{{d.demo}}" onChange="{{set.demo}}" placeholder="https://…" style="{{inp.demo}}">
+                <sc-if value="{{err.demo}}" hint-placeholder-val="{{false}}"><span style="font-weight: 500; font-size: 12px; color: #B93A0C;">⚠ {{err.demo}}</span></sc-if>
+              </label>
+              <label for="pa-repo" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0;">Repositorio
+                <input id="pa-repo" class="field" value="{{d.repo}}" onChange="{{set.repo}}" placeholder="https://github.com/…" style="{{inp.repo}}">
+                <sc-if value="{{err.repo}}" hint-placeholder-val="{{false}}"><span style="font-weight: 500; font-size: 12px; color: #B93A0C;">⚠ {{err.repo}}</span></sc-if>
+              </label>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <span style="font-weight: 600;">Imágenes <span style="font-weight: 400; font-size: 12px; color: #5E5550;">JPG, PNG o WebP · máx. 2 MB cada una · hasta 5</span></span>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <sc-for list="{{d.images}}" as="im" hint-placeholder-count="2">
+                  <span style="width: 72px; height: 52px; background: {{im}};"></span>
+                </sc-for>
+                <span style="width: 72px; height: 52px; border: 2px dashed #D8CEC2; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #5E5550;" aria-hidden="true">+</span>
+                <span style="font-size: 13px; color: #5E5550;">{{imgHint}}</span>
+              </div>
+            </div>
+
+            <label for="pa-visible" style="display: flex; gap: 10px; align-items: center; font-weight: 600;">
+              <input id="pa-visible" type="checkbox" checked="{{d.visible}}" onChange="{{toggleVisible}}" style="width: 18px; height: 18px; accent-color: #160F10;">
+              Visible en el sitio <span style="font-weight: 400; font-size: 13px; color: #5E5550;">{{visHint}}</span>
+            </label>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+              <button type="button" class="btn" onClick="{{save}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background-color: #160F10; color: #EFE9E1; border: 0; padding: 12px 20px; cursor: pointer;">{{saveLabel}}</button>
+              <button type="button" onClick="{{close}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background: transparent; border: 1.5px solid #D8CEC2; padding: 11px 18px; cursor: pointer;">Cancelar</button>
+              <sc-if value="{{hasErrors}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; color: #B93A0C; font-weight: 500;">Revisá los campos marcados.</span></sc-if>
+            </div>
+          </form>
+        </sc-if>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mode: 'edit', sel: 0, confirm: null, toast: '', errors: {},
+      draft: null,
+      items: [
+        { title: 'Gestor de turnos', summary: 'Reservas online con roles y avisos por email.', stack: 'React, Node, MongoDB', demo: 'https://turnos.arce.dev', repo: 'https://github.com/arce/turnos', images: ['#9B1B22', '#160F10', '#8A5A35'], visible: true, updated: 'hace 2 días' },
+        { title: 'Dashboard de ventas', summary: 'Métricas con filtros por fecha y gráficos.', stack: 'React, Chart.js', demo: 'https://ventas.arce.dev', repo: 'https://github.com/arce/ventas', images: ['#160F10', '#5E5550'], visible: true, updated: 'hace 1 semana' },
+        { title: 'Tienda online', summary: 'Carrito, pagos y control de stock.', stack: 'Express, MongoDB', demo: 'https://tienda.arce.dev', repo: 'https://github.com/arce/tienda', images: ['#8A5A35'], visible: true, updated: 'hace 2 semanas' },
+        { title: 'Clima en vivo', summary: 'Pronóstico con una API externa.', stack: 'Fetch, Chart.js', demo: 'https://clima.arce.dev', repo: 'https://github.com/arce/clima', images: ['#4F6B3E', '#7A5A12'], visible: true, updated: 'hace 3 semanas' },
+        { title: 'Blog con CMS', summary: 'Editor y panel de publicación.', stack: 'React, Express', demo: '', repo: 'https://github.com/arce/blog', images: ['#7A5A12'], visible: false, updated: 'hace 1 mes' },
+        { title: 'Landing animada', summary: 'Animaciones al hacer scroll.', stack: 'anime.js', demo: 'https://landing.arce.dev', repo: 'https://github.com/arce/landing', images: ['#5E5550'], visible: true, updated: 'hace 1 mes' },
+      ],
+    };
+  }
+  blank() { return { title: '', summary: '', stack: '', demo: '', repo: '', images: [], visible: false }; }
+  validate(d) {
+    const e = {};
+    const url = /^https:\/\/\S+\.\S+/;
+    if (d.title.trim().length < 3) e.title = 'Escribí un título de al menos 3 caracteres.';
+    if (!d.summary.trim()) e.summary = 'El resumen es obligatorio.';
+    else if (d.summary.length > 200) e.summary = 'Máximo 200 caracteres.';
+    if (!d.stack.trim()) e.stack = 'Indicá al menos una tecnología.';
+    if (d.demo && !url.test(d.demo)) e.demo = 'Tiene que empezar con https://';
+    if (d.repo && !url.test(d.repo)) e.repo = 'Tiene que empezar con https://';
+    return e;
+  }
+  renderVals() {
+    const { items, sel, mode, confirm, toast, errors } = this.state;
+    const current = mode === 'edit' && items[sel] ? items[sel] : null;
+    const d = this.state.draft || (mode === 'new' ? this.blank() : current || this.blank());
+    const setField = (k) => (ev) => this.setState({ draft: { ...d, [k]: ev.target.value }, errors: { ...errors, [k]: undefined }, toast: '' });
+    const inputBase = 'font-family: Instrument Sans, sans-serif; font-size: 15px; padding: 10px 12px; border-radius: 4px; background: #FFFFFF; color: #160F10; resize: vertical; min-width: 0; border: 1.5px solid ';
+    const inp = {};
+    ['title', 'summary', 'stack', 'demo', 'repo'].forEach((k) => { inp[k] = inputBase + (errors[k] ? '#B93A0C;' : '#D8CEC2;'); });
+    const rowBase = 'display: grid; grid-template-columns: 56px minmax(0, 1.6fr) minmax(0, 1.2fr) 90px 150px; gap: 12px; padding: 10px 16px; align-items: center; border-bottom: 1px solid #EEE7DE; font-size: 14px;';
+    const rows = items.map((it, i) => ({
+      ...it,
+      thumb: 'width: 56px; height: 40px; background: ' + (it.images[0] || '#D8CEC2') + ';',
+      vis: it.visible ? '✓ sí' : '– borrador',
+      visStyle: 'font-family: JetBrains Mono, monospace; font-size: 12px; color: ' + (it.visible ? '#4F6B3E' : '#5E5550') + ';',
+      rowStyle: rowBase + (mode === 'edit' && sel === i ? ' background: #EFE9E1; box-shadow: inset 3px 0 0 #9B1B22;' : ''),
+      edit: () => this.setState({ mode: 'edit', sel: i, draft: null, errors: {}, toast: '' }),
+      remove: () => this.setState({ confirm: i, toast: '' }),
+    }));
+    const isNew = mode === 'new';
+    const hasErrors = Object.values(errors).some(Boolean);
+    const save = () => {
+      const e = this.validate(d);
+      if (Object.keys(e).length) { this.setState({ errors: e, draft: d }); return; }
+      if (isNew) {
+        const created = { ...d, images: d.images.length ? d.images : ['#D8CEC2'], updated: 'recién' };
+        this.setState({ items: [created, ...items], mode: 'edit', sel: 0, draft: null, errors: {}, toast: 'Proyecto creado como ' + (d.visible ? 'visible.' : 'borrador.') });
+      } else {
+        this.setState({ items: items.map((it, i) => (i === sel ? { ...d, updated: 'recién' } : it)), draft: null, errors: {}, toast: 'Cambios guardados.' });
+      }
+    };
+    return {
+      rows,
+      count: items.length,
+      visibleCount: items.filter((x) => x.visible).length,
+      isEmpty: mode === 'none',
+      hasForm: mode !== 'none',
+      d: { ...d, summaryLen: d.summary.length },
+      inp,
+      err: errors,
+      hasErrors,
+      set: { title: setField('title'), summary: setField('summary'), stack: setField('stack'), demo: setField('demo'), repo: setField('repo') },
+      toggleVisible: () => this.setState({ draft: { ...d, visible: !d.visible } }),
+      heading: isNew ? 'Nuevo proyecto' : 'Editando · ' + (current ? current.title : ''),
+      sub: isNew ? 'Completá los campos con * para poder crearlo.' : 'Última modificación: ' + (current ? current.updated : ''),
+      badge: isNew ? 'NUEVO' : 'EDITANDO',
+      badgeStyle: 'align-self: flex-start; font-family: JetBrains Mono, monospace; font-size: 11px; letter-spacing: 0.06em; padding: 2px 8px; ' + (isNew ? 'background: #9B1B22; color: #FFF4EC;' : 'background: #EFE9E1; color: #160F10; border: 1px solid #D8CEC2;'),
+      formStyle: 'background: #FFFFFF; border: 1px solid #D8CEC2; border-top: 3px solid ' + (isNew ? '#9B1B22' : '#D8CEC2') + '; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 14px;',
+      imgHint: d.images.length ? d.images.length + ' de 5 imágenes' : 'Todavía no hay imágenes',
+      visHint: d.visible ? '· se muestra en Proyectos' : '· queda como borrador',
+      saveLabel: isNew ? 'Crear proyecto' : 'Guardar cambios',
+      save,
+      newProject: () => this.setState({ mode: 'new', draft: this.blank(), errors: {}, toast: '' }),
+      close: () => this.setState({ mode: 'none', draft: null, errors: {} }),
+      toast,
+      confirming: confirm !== null,
+      toDelete: confirm !== null && items[confirm] ? items[confirm].title : '',
+      cancelDelete: () => this.setState({ confirm: null }),
+      confirmDelete: () => this.setState({ items: items.filter((_, i) => i !== confirm), confirm: null, mode: 'none', draft: null, toast: 'Proyecto eliminado.' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Crear cuenta · arce.dev</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#EFE9E1}
+a{color:#160F10}a:hover{color:#9B1B22}
+</style>
+</helmet>
+<div style="min-height: 1000px; display: flex; flex-wrap: wrap; background: #EFE9E1; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.6;">
+
+  <div style="flex: 1 1 520px; min-width: 0; background: #160F10; color: #EFE9E1; display: flex; flex-direction: column;">
+    <div style="flex-grow: 1; padding: 40px 56px; display: flex; flex-direction: column; justify-content: space-between; gap: 48px;">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #EFE9E1;">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 20px;">arce.dev</span>
+      </a>
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.06em; color: #E3B04B;">CUENTA GRATUITA</span>
+        <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 64px; line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">Creá tu cuenta.</h1>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px;">
+          <li style="display: flex; gap: 10px;"><span style="color: #E3B04B;">◆</span>Detalle completo de cada proyecto</li>
+          <li style="display: flex; gap: 10px;"><span style="color: #E3B04B;">◆</span>Demos interactivas para probar</li>
+          <li style="display: flex; gap: 10px;"><span style="color: #E3B04B;">◆</span>Acceso al código fuente</li>
+        </ul>
+      </div>
+      <span style="font-size: 14px; color: #B3A79F;">Solo usamos tu email para tu cuenta.</span>
+    </div>
+    <div aria-hidden="true" style="height: 22px; background: linear-gradient(#160F10 0 6px, transparent 6px 8px, #160F10 8px 14px, transparent 14px 16px, #160F10 16px), #E3B04B;"></div>
+  </div>
+
+  <div style="flex: 1 1 520px; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 48px 32px;">
+    <form style="width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 16px;">
+      <div role="tablist" aria-label="Ingresar o registrarse" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid #D8CEC2;">
+        <a href="Login.dc.html" role="tab" aria-selected="false" style="text-align: center; font-weight: 600; font-size: 16px; padding: 12px; color: #5E5550; text-decoration: none;">Ingresar</a>
+        <a href="Registro.dc.html" role="tab" aria-selected="true" style="text-align: center; font-weight: 600; font-size: 16px; padding: 12px; color: #160F10; text-decoration: none; border-bottom: 3px solid #9B1B22;">Crear cuenta</a>
+      </div>
+      <a href="ProyectosUsuario.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; font-size: 15px; padding: 13px; background: #FFFFFF; color: #160F10; border: 1.5px solid #D8CEC2; text-decoration: none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#160F10" stroke-width="2"></circle><path d="M12 7v10M7 12h10" stroke="#160F10" stroke-width="2"></path></svg>
+        Registrarme con Google
+      </a>
+      <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550;"><span style="flex-grow: 1; height: 1px; background: #D8CEC2;"></span>O CON TU EMAIL<span style="flex-grow: 1; height: 1px; background: #D8CEC2;"></span></div>
+      <label for="r-nombre" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Nombre y apellido
+        <input id="r-nombre" autocomplete="name" value="{{nombre}}" onChange="{{onNombre}}" onBlur="{{blurNombre}}" aria-describedby="r-nombre-err" style="{{nombreStyle}}">
+        <sc-if value="{{showNombreErr}}" hint-placeholder-val="{{ false }}"><span id="r-nombre-err" style="font-size: 13px; font-weight: 600; color: #B93A0C;">⚠ {{nombreErr}}</span></sc-if>
+      </label>
+      <label for="r-email" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Email
+        <input id="r-email" type="email" autocomplete="email" value="{{email}}" onChange="{{onEmail}}" onBlur="{{blurEmail}}" aria-describedby="r-email-err" style="{{emailStyle}}">
+        <sc-if value="{{showEmailErr}}" hint-placeholder-val="{{ false }}"><span id="r-email-err" style="font-size: 13px; font-weight: 600; color: #B93A0C;">⚠ {{emailErr}}</span></sc-if>
+      </label>
+      <label for="r-pass" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Contraseña
+        <input id="r-pass" type="text" value="{{pass}}" onChange="{{onPass}}" aria-describedby="r-reglas" style="font-family: 'JetBrains Mono', monospace; font-size: 15px; padding: 11px 12px; border: 1.5px solid #160F10; border-radius: 4px; background: #FFFFFF; color: #160F10;">
+      </label>
+      <ul id="r-reglas" aria-live="polite" style="margin: -4px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; font-size: 13px;">
+        <sc-for list="{{rules}}" as="r" hint-placeholder-count="4">
+          <li style="{{r.style}}">{{r.text}}</li>
+        </sc-for>
+      </ul>
+      <label for="r-pass2" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Repetir contraseña
+        <input id="r-pass2" type="password" autocomplete="new-password" value="{{pass2}}" onChange="{{onPass2}}" onBlur="{{blurPass2}}" aria-describedby="r-pass2-err" style="{{pass2Style}}">
+        <sc-if value="{{showPass2Err}}" hint-placeholder-val="{{ false }}"><span id="r-pass2-err" style="font-size: 13px; font-weight: 600; color: #B93A0C;">⚠ {{pass2Err}}</span></sc-if>
+        <sc-if value="{{pass2Ok}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; font-weight: 600; color: #4F6B3E;">✓ Las contraseñas coinciden</span></sc-if>
+      </label>
+      <label style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; font-weight: 500;">
+        <input type="checkbox" checked="{{terms}}" onChange="{{onTerms}}" style="width: 20px; height: 20px; margin-top: 2px; accent-color: #160F10;">
+        <span>Acepto que mis datos se usen solo para gestionar mi cuenta.</span>
+      </label>
+      <sc-if value="{{showTermsErr}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; font-weight: 600; color: #B93A0C; margin-top: -8px;">⚠ Tenés que aceptar para crear la cuenta.</span></sc-if>
+      <sc-if value="{{ready}}" hint-placeholder-val="{{ false }}">
+        <a href="ProyectosUsuario.dc.html" style="text-align: center; padding: 14px; font-weight: 600; font-size: 15px; text-decoration: none; background: #160F10; color: #EFE9E1;">Crear cuenta y ver proyectos →</a>
+      </sc-if>
+      <sc-if value="{{notReady}}" hint-placeholder-val="{{ true }}">
+        <button type="button" onClick="{{submit}}" style="font-family: 'Instrument Sans', sans-serif; padding: 14px; font-weight: 600; font-size: 15px; border: 0; background: #160F10; color: #EFE9E1; cursor: pointer;">Crear cuenta</button>
+      </sc-if>
+      <sc-if value="{{showSummary}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600; color: #B93A0C; text-align: center;">⚠ Revisá {{errCount}} campo(s) marcados en rojo.</span></sc-if>
+      <span style="font-size: 13px; color: #5E5550; text-align: center;">¿Ya tenés cuenta? <a href="Login.dc.html">Ingresá</a></span>
+    </form>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1150}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { nombre: 'Valentina Ríos', email: 'valentina@correo.com', pass: 'valentina2026', pass2: '', terms: false, t: {}, tried: false }; }
+  renderVals() {
+    const s = this.state;
+    const p = s.pass;
+    const touch = (k) => () => this.setState({ t: Object.assign({}, s.t, { [k]: true }) });
+    const show = (k, err) => !!err && (s.t[k] || s.tried);
+    const field = (bad, mono) => "font-family: " + (mono ? "'JetBrains Mono', monospace; font-size: 15px" : "'Instrument Sans', sans-serif; font-size: 16px") + "; padding: 11px 12px; border: 1.5px solid " + (bad ? '#B93A0C' : '#D8CEC2') + "; border-radius: 4px; background: #FFFFFF; color: #160F10;";
+    const nombre = s.nombre.trim();
+    let nombreErr = '';
+    if (!nombre) nombreErr = 'Ingresá tu nombre y apellido.';
+    else if (nombre.length < 3) nombreErr = 'Mínimo 3 letras.';
+    else if (nombre.length > 60) nombreErr = 'Máximo 60 caracteres.';
+    else if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' ]+$/.test(nombre)) nombreErr = 'Usá solo letras y espacios.';
+    else if (nombre.indexOf(' ') < 0) nombreErr = 'Escribí nombre y apellido.';
+    const email = s.email.trim().toLowerCase();
+    let emailErr = '';
+    if (!email) emailErr = 'Ingresá tu email.';
+    else if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) emailErr = 'El email no es válido. Ejemplo: nombre@correo.com';
+    else if (email === 'admin@portfolio.test' || email === 'operador@portfolio.test') emailErr = 'Ese email ya tiene una cuenta. ¿Querés ingresar?';
+    let pass2Err = '';
+    if (!s.pass2) pass2Err = 'Repetí la contraseña.';
+    else if (s.pass2 !== p) pass2Err = 'Las contraseñas no coinciden.';
+    const checks = [
+      ['8 caracteres o más', p.length >= 8],
+      ['Una mayúscula', /[A-Z]/.test(p)],
+      ['Una minúscula', /[a-z]/.test(p)],
+      ['Un número', /\d/.test(p)],
+    ];
+    const rules = checks.map(([t, ok]) => ({ text: (ok ? '✓ ' : '✕ ') + t, style: 'font-weight: 500; color: ' + (ok ? '#4F6B3E' : '#B93A0C') + ';' }));
+    const passOk = checks.every((c) => c[1]);
+    const errs = [nombreErr, emailErr, passOk ? '' : 'x', pass2Err, s.terms ? '' : 'x'].filter(Boolean);
+    const ready = errs.length === 0;
+    return {
+      nombre: s.nombre, email: s.email, pass: p, pass2: s.pass2, terms: s.terms,
+      onNombre: (e) => this.setState({ nombre: e.target.value }),
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onPass: (e) => this.setState({ pass: e.target.value }),
+      onPass2: (e) => this.setState({ pass2: e.target.value }),
+      onTerms: (e) => this.setState({ terms: e.target.checked }),
+      blurNombre: touch('nombre'), blurEmail: touch('email'), blurPass2: touch('pass2'),
+      nombreErr, emailErr, pass2Err,
+      showNombreErr: show('nombre', nombreErr), showEmailErr: show('email', emailErr), showPass2Err: show('pass2', pass2Err),
+      pass2Ok: !pass2Err && passOk,
+      showTermsErr: s.tried && !s.terms,
+      nombreStyle: field(show('nombre', nombreErr)), emailStyle: field(show('email', emailErr)), pass2Style: field(show('pass2', pass2Err)),
+      rules, ready, notReady: !ready,
+      showSummary: s.tried && !ready, errCount: errs.length,
+      submit: () => this.setState({ tried: true }),
+    };
+  }
+}
+</script>
+</body>
+</html>
