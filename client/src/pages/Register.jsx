@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import AuthLayout from '../components/AuthLayout.jsx'
+import BotonGoogle from '../components/BotonGoogle.jsx'
 import PasswordReglas from '../components/PasswordReglas.jsx'
 import { passwordValida } from '../components/passwordReglas.js'
 
@@ -12,7 +13,7 @@ const NOMBRE_REGEX = /^[\p{L}' ]+$/u
 const BENEFICIOS = ['Detalle completo de cada proyecto', 'Demos interactivas para probar', 'Acceso al código fuente']
 
 export default function Register() {
-  const { register } = useAuth()
+  const { register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({ nombre: '', email: '', password: '', confirmPassword: '', terms: false })
@@ -87,6 +88,19 @@ export default function Register() {
     }
   }
 
+  const onGoogle = async (credential) => {
+    setError('')
+    setSending(true)
+    try {
+      await loginWithGoogle(credential)
+      navigate('/proyectos', { replace: true })
+    } catch (err) {
+      setError(err.message || 'No se pudo continuar con Google.')
+    } finally {
+      setSending(false)
+    }
+  }
+
   const coincide = form.confirmPassword && form.confirmPassword === form.password && passwordValida(form.password)
 
   return (
@@ -107,10 +121,7 @@ export default function Register() {
         </ul>
       }
     >
-      <button type="button" className="btn btn-google" onClick={() => setError('El registro con Google todavía no está disponible.')}>
-        {/* TODO (C): registro con Google (Google Identity Services) → loginWithGoogle(credential) */}
-        Registrarme con Google
-      </button>
+      <BotonGoogle texto="signup_with" onCredential={onGoogle} onError={setError} disabled={sending} />
       <div className="separador-o">O CON TU EMAIL</div>
 
       <form onSubmit={onSubmit} noValidate className="d-flex flex-column gap-3">
