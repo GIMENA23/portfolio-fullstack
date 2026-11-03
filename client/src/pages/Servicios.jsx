@@ -141,7 +141,7 @@ export default function Servicios() {
       </div>
 
       <section ref={refPasos} className="sec-inner d-flex flex-column gap-4" style={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
-        <h2 className="h3" data-reveal>Cómo trabajo</h2>
+        <h2 className="sec-titulo-chico" data-reveal>Cómo trabajo</h2>
         <ol className="pasos" data-reveal>
           {PASOS.map(([titulo, texto], i) => (
             <li key={titulo}>
@@ -154,7 +154,7 @@ export default function Servicios() {
       </section>
 
       <section ref={refFaq} className="sec-inner d-flex flex-column gap-2" style={{ paddingTop: '3rem' }} aria-labelledby="faq-titulo">
-        <h2 id="faq-titulo" className="h3 mb-2" data-reveal>Preguntas frecuentes</h2>
+        <h2 id="faq-titulo" className="sec-titulo-chico mb-2" data-reveal>Preguntas frecuentes</h2>
         {PREGUNTAS.map(([q, a], i) => {
           const abierto = abierta === i
           return (
