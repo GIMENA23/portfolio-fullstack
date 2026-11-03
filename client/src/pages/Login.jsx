@@ -1,6 +1,6 @@
 // 🎨 DUEÑO: Integrante B (pantalla) · C (login con Google)
 // Pantalla dividida del prototipo (Login.dc.html). Funciona con email y contraseña.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import AuthLayout from '../components/AuthLayout.jsx'
@@ -19,6 +19,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const passwordRef = useRef(null)
 
   const validate = () => {
     const errors = {}
@@ -85,6 +86,14 @@ export default function Login() {
     setError('')
   }
 
+  // Admin y operador: solo el email; la contraseña se entrega por separado
+  const fillEmailOnly = (email) => {
+    setForm({ email, password: '' })
+    setFieldErrors({})
+    setError('')
+    passwordRef.current?.focus()
+  }
+
   const onGoogle = async (credential) => {
     setError('')
     setSending(true)
@@ -140,6 +149,7 @@ export default function Login() {
           <div className="input-group has-validation">
             <input
               id="password"
+              ref={passwordRef}
               name="password"
               type={showPassword ? 'text' : 'password'}
               className={`form-control ${fieldErrors.password ? 'is-invalid' : ''}`}
@@ -169,14 +179,14 @@ export default function Login() {
       </form>
 
       <span className="small text-secondary text-center">
-        Cuentas de prueba: admin@portfolio.test, operador@portfolio.test o usuario@portfolio.test · contraseña Portfolio2026
+        Cuenta de prueba de usuario: usuario@portfolio.test · Portfolio2026. Las de administrador y operador se entregan por separado.
       </span>
 
       <div className="demo-roles">
         <span className="rotulo text-secondary" style={{ fontSize: '0.6875rem' }}>PROTOTIPO · ENTRAR COMO</span>
         <div className="grid">
-          <button type="button" className="rol-btn rol-admin" onClick={() => fillDemoUser('admin@portfolio.test')}>Administrador</button>
-          <button type="button" className="rol-btn rol-operador" onClick={() => fillDemoUser('operador@portfolio.test')}>Operador</button>
+          <button type="button" className="rol-btn rol-admin" onClick={() => fillEmailOnly('admin@portfolio.test')}>Administrador</button>
+          <button type="button" className="rol-btn rol-operador" onClick={() => fillEmailOnly('operador@portfolio.test')}>Operador</button>
           <button type="button" className="rol-btn rol-usuario" onClick={() => fillDemoUser('usuario@portfolio.test')}>Usuario</button>
         </div>
       </div>
