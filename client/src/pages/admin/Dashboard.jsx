@@ -36,10 +36,10 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarEleme
 const TIPOS = { general: 'General', cotizacion: 'Cotización', asesoria: 'Asesoría' }
 
 const KPIS = [
-  { clave: 'visits', label: 'Visitas al sitio' },
-  { clave: 'users', label: 'Usuarios registrados' },
-  { clave: 'logins', label: 'Accesos autenticados' },
-  { clave: 'inquiries', label: 'Consultas recibidas' },
+  { clave: 'visits', label: 'Visitas al sitio', nota: 'Contador general del sitio' },
+  { clave: 'users', label: 'Usuarios registrados', nota: 'Cuentas creadas en el sitio' },
+  { clave: 'logins', label: 'Accesos autenticados', nota: 'Ingresos con cuenta' },
+  { clave: 'inquiries', label: 'Consultas recibidas', nota: 'En el período elegido' },
 ]
 
 const hoy = () => new Date().toISOString().slice(0, 10)
@@ -161,6 +161,7 @@ export default function Dashboard() {
     setRango(nuevo)
   }
 
+  const dias = Math.max(1, Math.round((new Date(`${rango.hasta}T12:00:00`) - new Date(`${rango.desde}T12:00:00`)) / 86400000) + 1)
   const totalVisitas = visitas.reduce((s, v) => s + v.total, 0)
   const datosVisitas = visitas.map((v) => ({
     etiqueta: rango.agrupar === 'semana' ? `Sem. ${fechaCorta(v.fecha)}` : fechaCorta(v.fecha),
@@ -189,51 +190,56 @@ export default function Dashboard() {
               <div className="kpi-valor">
                 {resumen ? <NumeroAnimado valor={k.clave === 'inquiries' && tipo ? (porTipo.find((t) => t.tipo === tipo)?.total ?? 0) : (resumen[k.clave] ?? 0)} delay={i * 120} /> : '—'}
               </div>
-              <div className="kpi-label mt-2">{k.label}</div>
+              <div className="kpi-label mt-2">{k.clave === 'visits' ? `Visitas · ${dias} días` : k.clave === 'inquiries' && tipo ? `Consultas · ${TIPOS[tipo]}` : k.label}</div>
+              <div className="kpi-nota">{k.nota}</div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Filtro de fechas */}
-      <div className="card mb-4">
-        <div className="card-body">
-          <div className="row g-2 align-items-end">
-            <div className="col-6 col-md-4">
+      {/* Consulta parametrizada (como en Dashboard.dc.html) */}
+      <section className="card mb-4" aria-label="Consulta parametrizada">
+        <div className="card-body d-flex flex-column gap-3">
+          <div className="filtros-dashboard">
+            <div>
               <label htmlFor="desde" className="form-label">Desde</label>
-              <input id="desde" name="desde" type="date" max={hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.desde} onChange={cambiarRango} />
+              <input id="desde" name="desde" type="date" max={rango.hasta < hoy() ? rango.hasta : hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.desde} onChange={cambiarRango} />
             </div>
-            <div className="col-6 col-md-4">
+            <div>
               <label htmlFor="hasta" className="form-label">Hasta</label>
-              <input id="hasta" name="hasta" type="date" max={hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.hasta} onChange={cambiarRango} />
+              <input id="hasta" name="hasta" type="date" min={rango.desde} max={hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.hasta} onChange={cambiarRango} />
             </div>
-            <div className="col-12 col-md-4">
-              <label htmlFor="agrupar" className="form-label">Visitas por</label>
-              <select id="agrupar" name="agrupar" className="form-select" value={rango.agrupar} onChange={cambiarRango}>
-                <option value="dia">Día</option>
-                <option value="semana">Semana</option>
+            <div>
+              <label htmlFor="tipo" className="form-label">Tipo de consulta</label>
+              <select id="tipo" className="form-select" value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                <option value="">Todas</option>
+                {Object.entries(TIPOS).map(([valor, label]) => (
+                  <option key={valor} value={valor}>{label}</option>
+                ))}
               </select>
             </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center gap-2 mt-3" role="group" aria-label="Tipo de consulta">
-            <span className="small fw-semibold me-1">Tipo de consulta</span>
-            {[['', 'Todas'], ...Object.entries(TIPOS)].map(([valor, label]) => (
-              <button key={valor || 'todas'} type="button" aria-pressed={tipo === valor} className={`filtro ${tipo === valor ? 'on' : ''}`} onClick={() => setTipo(valor)}>
-                {label}
+            <div role="group" aria-label="Agrupar por">
+              <span className="form-label d-block">Agrupar por</span>
+              <div className="segmentado">
+                {[['dia', 'Día'], ['semana', 'Semana']].map(([valor, label]) => (
+                  <button key={valor} type="button" aria-pressed={rango.agrupar === valor} className={rango.agrupar === valor ? 'on' : ''} onClick={() => cambiarRango({ target: { name: 'agrupar', value: valor } })}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="align-self-end">
+              <button type="button" className="btn btn-outline-primary" onClick={() => { setTipo(''); setErrorRango(''); setRango({ desde: haceDias(13), hasta: hoy(), agrupar: 'dia' }) }}>
+                Limpiar filtros
               </button>
-            ))}
+            </div>
           </div>
-          {errorRango && <div className="text-danger small fw-semibold mt-2">⚠ {errorRango}</div>}
-          <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
-            <code className="small text-secondary" style={{ overflowWrap: 'anywhere' }}>
-              GET /api/stats/visits?desde={rango.desde}&amp;hasta={rango.hasta}&amp;agrupar={rango.agrupar} · GET /api/stats/inquiries-by-type?desde={rango.desde}&amp;hasta={rango.hasta}
-            </code>
-            <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => { setTipo(''); setRango({ desde: haceDias(13), hasta: hoy(), agrupar: 'dia' }) }}>
-              Limpiar filtros
-            </button>
-          </div>
+          {errorRango && <div className="campo-error">⚠ {errorRango}</div>}
+          <code className="small text-secondary" style={{ overflowWrap: 'anywhere' }}>
+            GET /api/stats/visits?desde={rango.desde}&amp;hasta={rango.hasta}&amp;agrupar={rango.agrupar} · GET /api/stats/inquiries-by-type?desde={rango.desde}&amp;hasta={rango.hasta}&amp;tipo={tipo || 'todas'}
+          </code>
         </div>
-      </div>
+      </section>
 
       {/* Gráficos */}
       {loading ? (

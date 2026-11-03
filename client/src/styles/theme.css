@@ -966,6 +966,15 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .tabla-ajustada th, .tabla-ajustada td { padding-inline: 8px; }
 .tabla-ajustada select.form-select-sm { min-width: 0; width: 100%; max-width: 150px; padding-right: 1.75rem; }
 
+/* Dashboard: filtros en una fila y selector segmentado (Día / Semana) */
+.filtros-dashboard { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-start; }
+.filtros-dashboard > div { min-width: 0; }
+.filtros-dashboard input, .filtros-dashboard select { min-width: 150px; }
+.segmentado { display: inline-flex; border: 1.5px solid var(--pc-linea); }
+.segmentado button { min-height: 40px; padding: 0 14px; border: 0; background: var(--pc-blanco); color: var(--pc-texto-suave); font-weight: 600; font-size: 0.8125rem; }
+.segmentado button.on { background: var(--pc-lana); color: var(--pc-texto); box-shadow: inset 0 -3px 0 var(--pc-carmin); }
+.kpi-nota { font-size: 0.75rem; color: var(--pc-texto-suave); margin-top: 2px; }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
