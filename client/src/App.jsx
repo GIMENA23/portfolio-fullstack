@@ -16,6 +16,9 @@ import ProjectDetail from './pages/ProjectDetail.jsx'
 import Contact from './pages/Contact.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
+import Servicios from './pages/Servicios.jsx'
+import Cuenta from './pages/Cuenta.jsx'
+import Recuperar from './pages/Recuperar.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 // Operador (D)
@@ -27,6 +30,7 @@ import Dashboard from './pages/admin/Dashboard.jsx'
 import ProjectsAdmin from './pages/admin/ProjectsAdmin.jsx'
 import ServicesAdmin from './pages/admin/ServicesAdmin.jsx'
 import UsersAdmin from './pages/admin/UsersAdmin.jsx'
+import ProfileAdmin from './pages/admin/ProfileAdmin.jsx'
 
 export default function App() {
   useTrackVisits()
@@ -45,7 +49,17 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="servicios" element={<Servicios />} />
         <Route path="contacto" element={<Contact />} />
+        <Route
+          path="cuenta"
+          element={
+            <ProtectedRoute>
+              <Cuenta />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="recuperar" element={<Recuperar />} />
         <Route path="login" element={<Login />} />
         <Route path="registro" element={<Register />} />
       </Route>
@@ -76,6 +90,7 @@ export default function App() {
         <Route path="proyectos" element={<ProjectsAdmin />} />
         <Route path="servicios" element={<ServicesAdmin />} />
         <Route path="usuarios" element={<UsersAdmin />} />
+        <Route path="perfil" element={<ProfileAdmin />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
