@@ -2,7 +2,7 @@
 
 Revisión del 27/10/2026. Se miró cada ruta de la API con la mentalidad de quien quiere romperla y se escribieron pruebas de ataque ([test/security.test.js](test/security.test.js) y [test/security-limits.test.js](test/security-limits.test.js)). Cada hallazgo se reprodujo con una prueba que fallaba **antes** del arreglo y pasa ahora.
 
-**Resultado:** 16 hallazgos corregidos (2 altos, 7 medios, 7 bajos) y 10 riesgos que quedan por decisión del equipo (abajo). `npm audit` da 0 vulnerabilidades, en producción y en desarrollo. Los tests pasan: 270.
+**Resultado:** 16 hallazgos corregidos (2 altos, 7 medios, 7 bajos) y 9 riesgos que quedan por decisión del equipo (abajo). `npm audit` da 0 vulnerabilidades, en producción y en desarrollo. Los tests pasan: 271.
 
 ## Hallazgos corregidos
 
@@ -47,8 +47,7 @@ Revisión del 27/10/2026. Se miró cada ruta de la API con la mentalidad de quie
 6. **`admin@portfolio.test` es un administrador con email público.** El bloqueo por IP lo protege de la fuerza bruta, pero conviene cambiar la contraseña (volver a correr el seed con otra `SEED_PASSWORD`) o desactivar la cuenta cuando termine la evaluación.
 7. **«Eliminar mi cuenta» pide escribir `ELIMINAR`, no la contraseña:** quien robe una sesión puede borrar la cuenta. Es el flujo del prototipo.
 8. **Al eliminar una cuenta, sus consultas se anonimizan, no se borran:** quedan el asunto y el mensaje (pueden contener datos personales que la persona escribió) y, si había un adjunto, el archivo sigue en Cloudinary aunque la consulta ya no lo muestre. Se decidió así para no alterar la bandeja del operador ni las estadísticas.
-9. **Cambiar la contraseña desde Mi cuenta no pide la actual.** El formulario del sitio manda solo la contraseña nueva (`PATCH /api/auth/me { password }`), así que el servidor la acepta sin la actual (si el sitio la manda, se comprueba). Quien robe una sesión puede cambiarla y dejar afuera a la persona. El arreglo es agregar el campo «contraseña actual» al formulario de `Cuenta.jsx` y mandar `currentPassword`; en el servidor ya se valida.
-10. **`DELETE /api/auth/me` no exige `confirm: "ELIMINAR"`**: el sitio pide escribirlo en pantalla pero no lo manda. Si se manda, tiene que ser correcto. Mismo riesgo que el 7.
+9. **`DELETE /api/auth/me` no exige `confirm: "ELIMINAR"`**: el sitio pide escribirlo en pantalla pero no lo manda. Si se manda, tiene que ser correcto. Mismo riesgo que el 7. (Cambiar la contraseña sí exige la actual si la cuenta ya tiene una; quien entró solo con Google puede crear la primera sin ella.)
 
 ## Cómo repetir la revisión
 

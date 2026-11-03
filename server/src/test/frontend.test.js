@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { api, bearer, fakeStorage, fieldsOf, tokenFor, useDatabase, User } from '../testing/helpers.js';
+import { api, bearer, fakeStorage, fieldsOf, signToken, tokenFor, useDatabase, User } from '../testing/helpers.js';
 import { Inquiry } from '../models/Inquiry.js';
 import { Project } from '../models/Project.js';
 import { Service } from '../models/Service.js';
@@ -89,7 +89,7 @@ describe('registro y Mi cuenta', () => {
     const { body } = await api().post('/api/auth/register').send({ nombre: 'Ana Gómez', email: 'ana@ejemplo.com', password: GOOD });
     const old = body.data.token;
 
-    const res = await api().patch('/api/auth/me').set(bearer(old)).send({ password: 'ClaveNueva2026' });
+    const res = await api().patch('/api/auth/me').set(bearer(old)).send({ password: 'ClaveNueva2026', currentPassword: GOOD });
     assert.equal(res.status, 200, JSON.stringify(res.body));
     assert.ok(res.body.data.token);
     assert.equal((await api().get('/api/auth/me').set(bearer(old))).status, 401);
@@ -97,11 +97,24 @@ describe('registro y Mi cuenta', () => {
     assert.equal((await api().post('/api/auth/login').send({ email: 'ana@ejemplo.com', password: 'ClaveNueva2026' })).status, 200);
   });
 
-  it('si PATCH /me trae la contraseña actual, tiene que ser correcta', async () => {
+  it('si la cuenta tiene contraseña, PATCH /me exige la actual: sin ella o con otra no cambia nada', async () => {
     const { body } = await api().post('/api/auth/register').send({ nombre: 'Ana Gómez', email: 'ana@ejemplo.com', password: GOOD });
     const res = await api().patch('/api/auth/me').set(bearer(body.data.token)).send({ password: 'ClaveNueva2026', currentPassword: 'Otra12345' });
     assert.equal(res.status, 400);
     assert.equal(fieldsOf(res.body).currentPassword, 'La contraseña actual no es correcta.');
+
+    const sin = await api().patch('/api/auth/me').set(bearer(body.data.token)).send({ password: 'ClaveNueva2026' });
+    assert.equal(sin.status, 400);
+    assert.equal(fieldsOf(sin.body).currentPassword, 'Ingresá tu contraseña actual.');
+    assert.equal((await api().post('/api/auth/login').send({ email: 'ana@ejemplo.com', password: GOOD })).status, 200, 'la contraseña sigue siendo la de antes');
+  });
+
+  it('quien entró solo con Google crea su primera contraseña con PATCH /me, sin la actual', async () => {
+    const user = await User.create({ name: 'Vicky Víctima', email: 'vicky@gmail.com', googleId: 'g-vicky' });
+    const res = await api().patch('/api/auth/me').set(bearer(signToken(user))).send({ password: 'ClaveNueva2026' });
+    assert.equal(res.status, 200, JSON.stringify(res.body));
+    assert.deepEqual(res.body.data.providers, ['google', 'email']);
+    assert.equal((await api().post('/api/auth/login').send({ email: 'vicky@gmail.com', password: 'ClaveNueva2026' })).status, 200);
   });
 
   it('PATCH /me valida la contraseña nueva y el nombre en su campo', async () => {

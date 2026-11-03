@@ -43,7 +43,7 @@ Sin `MAIL_USER` y `MAIL_PASS`, los emails no se envían: en desarrollo se imprim
 | `/api/profile`, `/api/projects`, `/api/services` (lecturas públicas y CRUD de admin) y `/api/admin/...` | |
 | `npm run seed`: 40 usuarios, 6 proyectos, 4 servicios, 30 consultas, visitas y accesos de 30 días | |
 | Revisión de seguridad hecha: 16 hallazgos corregidos y 7 riesgos documentados ([SECURITY.md](SECURITY.md)) | |
-| 270 tests (auth, contenido, seed, consultas, subidas, usuarios, visitas, estadísticas, deploy y ataques de seguridad) | |
+| 271 tests (auth, contenido, seed, consultas, subidas, usuarios, visitas, estadísticas, deploy y ataques de seguridad) | |
 
 ## Estructura (todo vive dentro de `src/`)
 

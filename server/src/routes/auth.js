@@ -208,8 +208,8 @@ router.post('/google', googleLimit, async (req, res) => {
 router.get('/me', authenticate, (req, res) => ok(res, publicUser(req.user)));
 
 // PATCH /api/auth/me
-// Acepta { name }, { newsletter } o { password }. El formulario de Mi cuenta manda solo la contraseña nueva, sin la
-// actual: si viene `currentPassword` se comprueba, y si no, se acepta (riesgo anotado en SECURITY.md).
+// Acepta { name }, { newsletter } o { password, currentPassword }. Si la cuenta ya tiene contraseña, para cambiarla hay
+// que mandar la actual; quien entró solo con Google puede crear la primera sin ella.
 // Al cambiar la contraseña se cierran las demás sesiones: la respuesta trae un `token` nuevo para esta.
 router.patch('/me', authenticate, async (req, res) => {
   const { name, newsletter, password, passwordConfirm, currentPassword } = req.body ?? {};
@@ -223,8 +223,9 @@ router.patch('/me', authenticate, async (req, res) => {
     password: password === undefined ? '' : validatePassword(password),
     passwordConfirm: password === undefined ? '' : confirmIfSent(password, passwordConfirm),
   });
-  if (password !== undefined && currentPassword !== undefined && user.passwordHash && !(await bcrypt.compare(asString(currentPassword), user.passwordHash))) {
-    fields.currentPassword = 'La contraseña actual no es correcta.';
+  if (password !== undefined && user.passwordHash) {
+    if (!asString(currentPassword)) fields.currentPassword = 'Ingresá tu contraseña actual.';
+    else if (!(await bcrypt.compare(asString(currentPassword), user.passwordHash))) fields.currentPassword = 'La contraseña actual no es correcta.';
   }
   assertValid(fields);
 
