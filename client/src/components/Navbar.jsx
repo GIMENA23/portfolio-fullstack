@@ -58,6 +58,11 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink className={navLinkClass} to="/servicios">
+                Servicios
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink className={navLinkClass} to="/contacto">
                 Contacto
               </NavLink>
@@ -95,6 +100,9 @@ export default function Navbar() {
                     </span>
                   )}
                 </span>
+                <NavLink className="btn btn-link btn-sm text-decoration-none" to="/cuenta">
+                  Mi cuenta
+                </NavLink>
                 <button
                   type="button"
                   className="btn btn-outline-secondary btn-sm px-3"

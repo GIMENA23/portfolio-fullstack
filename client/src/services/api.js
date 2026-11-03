@@ -67,6 +67,10 @@ export const authApi = {
   login: (data) => request('/auth/login', { method: 'POST', body: data }),
   google: (credential) => request('/auth/google', { method: 'POST', body: { credential } }),
   me: () => request('/auth/me'),
+  updateMe: (data) => request('/auth/me', { method: 'PATCH', body: data }), // { name } o { password }
+  deleteMe: () => request('/auth/me', { method: 'DELETE' }),
+  forgot: (email) => request('/auth/forgot', { method: 'POST', body: { email } }),
+  reset: (token, password) => request('/auth/reset', { method: 'POST', body: { token, password } }),
 }
 
 // ---------- Proyectos y demos ----------
@@ -91,9 +95,22 @@ export const inquiriesApi = {
   create: (data) => request('/inquiries', { method: 'POST', body: data }),
   list: (query) => request('/inquiries', { query }), // { tipo, estado, desde, hasta, q, page }
   get: (id) => request(`/inquiries/${id}`),
+  mine: () => request('/inquiries/mine'), // consultas de la persona logueada
   reply: (id, text) => request(`/inquiries/${id}/reply`, { method: 'POST', body: { text } }),
   setStatus: (id, status) => request(`/inquiries/${id}`, { method: 'PATCH', body: { status } }),
 }
+
+// ---------- Perfil del portfolio (admin) ----------
+export const profileApi = {
+  get: () => request('/profile'),
+  put: (data) => request('/profile', { method: 'PUT', body: data }), // FormData si hay foto
+}
+
+/**
+ * true si el error significa «el backend todavía no tiene este endpoint» (o no está levantado).
+ * Las pantallas lo usan para caer a sus datos de prueba (mock*.js) sin romper.
+ */
+export const backendPendiente = (err) => [0, 404, 501, 502, 503, 504].includes(err?.status)
 
 // ---------- Usuarios (admin) ----------
 export const usersApi = {

@@ -31,6 +31,9 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (data) => saveSession(await authApi.register(data)), [])
   const loginWithGoogle = useCallback(async (credential) => saveSession(await authApi.google(credential)), [])
 
+  // Actualiza datos de la sesión en memoria (ej.: el nombre después de editarlo en Mi cuenta)
+  const updateUser = useCallback((cambios) => setUser((u) => (u ? { ...u, ...cambios } : u)), [])
+
   const logout = useCallback(() => {
     tokenStorage.clear()
     setUser(null)
@@ -45,6 +48,7 @@ export function AuthProvider({ children }) {
     register,
     loginWithGoogle,
     logout,
+    updateUser,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

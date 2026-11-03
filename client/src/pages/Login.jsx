@@ -200,6 +200,12 @@ export default function Login() {
 
               <hr className="my-4 text-muted" />
 
+              <p className="small text-center mb-2">
+                <Link to="/recuperar" className="fw-medium text-decoration-none">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </p>
+
               <p className="small text-center mb-0">
                 ¿No tenés cuenta?{' '}
                 <Link to="/registro" className="fw-medium text-decoration-none">

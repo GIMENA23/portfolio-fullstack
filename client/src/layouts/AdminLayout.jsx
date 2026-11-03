@@ -6,6 +6,7 @@ const links = [
   { to: '/admin/proyectos', label: 'Proyectos y demos' },
   { to: '/admin/servicios', label: 'Servicios' },
   { to: '/admin/usuarios', label: 'Usuarios' },
+  { to: '/admin/perfil', label: 'Mi perfil' },
   { to: '/operador', label: 'Consultas' },
 ]
 
