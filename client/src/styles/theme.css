@@ -1046,6 +1046,12 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
   .form-select option:disabled { color: var(--pc-texto-suave); }
 }
 
+/* Detalle de proyecto: ficha lateral (Detalle.dc.html) */
+.ficha-proyecto { background: var(--pc-lana-clara); border: var(--pc-borde); border-radius: var(--pc-radio); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.ficha-rotulo { font-family: var(--pc-font-mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--pc-texto-suave); }
+.ficha-valor { margin: 0; font-weight: 600; }
+.chip-tec { font-family: var(--pc-font-mono); font-size: 0.75rem; padding: 4px 8px; background: var(--pc-lana); border: var(--pc-borde); }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }

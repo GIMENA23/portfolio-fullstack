@@ -17,6 +17,8 @@ function Contenido({ project }) {
   const images = Array.isArray(project.images) ? project.images.filter(Boolean) : []
   const tono = TONOS[(project._id?.charCodeAt?.(project._id.length - 1) ?? 0) % TONOS.length]
   const stack = Array.isArray(project.stack) ? project.stack : []
+  const features = Array.isArray(project.features) ? project.features.filter(Boolean) : []
+  const tieneRelato = !!(project.problem || project.solution)
 
   // Web Share API con respaldo al portapapeles
   const handleShare = async () => {
@@ -92,11 +94,35 @@ function Contenido({ project }) {
 
       <div className="sec-inner" style={{ paddingTop: 0, paddingBottom: 0 }}><GuardaTejida fina /></div>
 
-      <section ref={ref} className="sec-inner d-flex flex-wrap gap-5" style={{ paddingTop: '2.5rem' }}>
+      <section ref={ref} className="sec-inner d-flex flex-wrap gap-5" style={{ paddingTop: '2.5rem', paddingBottom: '6rem' }}>
         <div data-reveal className="d-flex flex-column gap-3" style={{ flex: '2 1 460px', minWidth: 0 }}>
-          <h2 className="h3">Sobre el proyecto</h2>
-          {project.summary && <p className="lead mb-0">{project.summary}</p>}
-          {project.description && <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>{project.description}</p>}
+          {tieneRelato ? (
+            <>
+              {project.problem && (
+                <>
+                  <h2 className="sec-titulo-chico">El problema</h2>
+                  <p className="mb-0">{project.problem}</p>
+                </>
+              )}
+              {project.solution && (
+                <>
+                  <h2 className="sec-titulo-chico mt-3">La solución</h2>
+                  <p className="mb-0">{project.solution}</p>
+                </>
+              )}
+              {features.length > 0 && (
+                <ul className="d-flex flex-column gap-2 mb-0 ps-4">
+                  {features.map((f) => <li key={f}>{f}</li>)}
+                </ul>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 className="sec-titulo-chico">Sobre el proyecto</h2>
+              {project.summary && <p className="mb-0">{project.summary}</p>}
+              {project.description && <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>{project.description}</p>}
+            </>
+          )}
 
           {project.demoUrl && showEmbedDemo && (
             <div className="mt-3">
@@ -117,13 +143,21 @@ function Contenido({ project }) {
           )}
         </div>
 
-        <aside data-reveal className="tarjeta-proyecto align-self-start p-4 d-flex flex-column gap-3" style={{ flex: '1 1 280px', minWidth: 0 }}>
+        <aside data-reveal className="ficha-proyecto align-self-start" style={{ flex: '1 1 300px', minWidth: 0 }}>
+          <div>
+            <span className="ficha-rotulo">ROL</span>
+            <p className="ficha-valor">{project.role || 'Diseño, backend y frontend'}</p>
+          </div>
+          <div>
+            <span className="ficha-rotulo">DURACIÓN</span>
+            <p className="ficha-valor">{project.duration || '[SEMANAS]'}</p>
+          </div>
           {stack.length > 0 && (
             <div className="d-flex flex-column gap-2">
-              <span className="rotulo text-secondary">TECNOLOGÍAS</span>
+              <span className="ficha-rotulo">TECNOLOGÍAS</span>
               <ul className="list-unstyled d-flex flex-wrap gap-2 mb-0">
                 {stack.map((t) => (
-                  <li key={t} className="chip-email small py-1 px-2">{t}</li>
+                  <li key={t} className="chip-tec">{t}</li>
                 ))}
               </ul>
             </div>
