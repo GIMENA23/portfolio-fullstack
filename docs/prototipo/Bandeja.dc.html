@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Bandeja de consultas · arce.dev</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#F8F4EE}
+a{color:#160F10}a:hover{color:#9B1B22}
+
+/* Barra lateral fija y adaptable (corrección del profesor) */
+.panel-lateral{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;overscroll-behavior:contain;z-index:40}
+.panel-check{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.panel-toggle{display:none}
+@media (max-width: 900px){
+  .panel-lateral{flex:1 0 100% !important;max-width:none !important;height:auto;max-height:100vh;border-right:0 !important;border-bottom:1px solid #D8CEC2}
+  .panel-lateral > div:first-child{flex-direction:row !important;align-items:center;flex-wrap:wrap;padding:12px 64px 12px 16px !important}
+  .panel-toggle{display:flex;position:absolute;top:10px;right:12px;width:44px;height:44px;align-items:center;justify-content:center;background:#160F10;cursor:pointer}
+  .panel-check:focus-visible + .panel-toggle{outline:3px solid #E3B04B;outline-offset:2px}
+  .panel-toggle .x{display:none}
+  .panel-lateral nav,.panel-lateral .panel-usuario{display:none !important}
+  .panel-check:checked ~ nav,.panel-check:checked ~ .panel-usuario{display:flex !important}
+  .panel-check:checked ~ .panel-toggle .x{display:block}
+  .panel-check:checked ~ .panel-toggle .h{display:none}
+  .panel-lateral nav a{min-height:44px}
+  main{padding:20px 16px !important}
+  h1{font-size:clamp(24px,7vw,30px) !important}
+}
+</style>
+</helmet>
+<div style="min-height: 960px; display: flex; flex-wrap: wrap; background: #F8F4EE; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+  <aside class="panel-lateral" style="flex: 1 1 240px; max-width: 260px; background: #EFE9E1; color: #160F10; border-right: 1px solid #D8CEC2; display: flex; flex-direction: column;">
+    <div style="padding: 20px 20px 14px; display: flex; flex-direction: column; gap: 10px;">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #160F10;">
+        <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 18px;">arce.dev</span>
+      </a>
+      <span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 3px 8px; background: #160F10; color: #E3B04B;">PANEL OPERADOR</span>
+    </div>
+    <input type="checkbox" id="panel-abrir" class="panel-check" aria-label="Abrir o cerrar el menú del panel"><label for="panel-abrir" class="panel-toggle" title="Menú"><svg class="h" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></label>
+    <div aria-hidden="true" style="height: 8px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+    <nav aria-label="Panel" style="padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">ATENCIÓN AL CLIENTE</span>
+      <a href="Bandeja.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #160F10; background: #FFFFFF; box-shadow: inset 3px 0 0 #9B1B22; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B1B22" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"></path></svg><span style="flex-grow: 1;">Consultas</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 1px 7px; border-radius: 999px; background: #9B1B22; color: #FFF4EC;">7</span></a>
+    </nav>
+    <div class="panel-usuario" style="margin-top: auto; margin: auto 12px 14px; background: #FFFFFF; border: 1px solid #D8CEC2; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 10px; align-items: center; min-width: 0;">
+        <span style="width: 40px; height: 40px; flex: none; border-radius: 999px; background: #160F10; color: #E3B04B; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 14px;">OP</span>
+        <div style="display: flex; flex-direction: column; min-width: 0; line-height: 1.3;">
+          <strong style="font-size: 14px;">Operador Portfolio</strong>
+          <span style="font-size: 12px; color: #5E5550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">operador@portfolio.test</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #9B1B22; margin-top: 2px;">OPERADOR</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+        <a href="Main.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1.5px solid #D8CEC2; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#160F10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>Ver sitio</a>
+        <a href="Login.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; background: #160F10; color: #EFE9E1; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"></path></svg>Salir</a>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px;">
+      <div><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #9B1B22;">7 NUEVAS · 30 EN TOTAL</span><h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 30px; text-transform: uppercase;">Consultas</h1></div>
+      <label for="b-q" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;">Buscar
+        <input id="b-q" type="search" placeholder="Nombre, email o asunto" value="{{q}}" onChange="{{onQ}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 15px; padding: 9px 12px; border: 1.5px solid #D8CEC2; border-radius: 4px; background: #FFFFFF; width: 260px;">
+      </label>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+      <span style="font-size: 13px; font-weight: 600; margin-right: 4px;">Tipo</span>
+      <sc-for list="{{typeChips}}" as="c" hint-placeholder-count="4">
+        <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+      </sc-for>
+      <span style="font-size: 13px; color: #5E5550; margin-left: 12px;">Últimos 30 días</span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+      <div style="flex: 3 1 520px; min-width: 0; overflow-x: auto; background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px;">
+        <div style="display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 0.8fr) minmax(0, 1fr); gap: 12px; padding: 10px 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; border-bottom: 2px solid #D8CEC2;">
+          <span>CLIENTE</span><span>TIPO</span><span>ASUNTO</span><span>FECHA</span><span>ESTADO</span>
+        </div>
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+          <button onClick="{{r.pick}}" style="{{r.rowStyle}}">
+            <span style="font-weight: 600;">{{r.name}}</span><span>{{r.type}}</span><span style="color: #5E5550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{r.subject}}</span><span style="font-variant-numeric: tabular-nums; color: #5E5550;">{{r.date}}</span><span style="{{r.pillStyle}}">{{r.status}}</span>
+          </button>
+        </sc-for>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 28px 16px; text-align: center; color: #5E5550; font-size: 15px;">No hay consultas que coincidan con «{{q}}». <button type="button" onClick="{{clearQ}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background: transparent; border: 0; text-decoration: underline; cursor: pointer; color: #160F10;">Limpiar búsqueda</button></div>
+        </sc-if>
+      </div>
+
+      <section aria-label="Detalle de la consulta" style="flex: 2 1 340px; min-width: 0; background: #FFFFFF; border: 1px solid #D8CEC2; border-top: 3px solid #9B1B22; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; justify-content: space-between; gap: 12px; align-items: start;">
+          <div><h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 20px;">{{sel.name}}</h2><span style="font-size: 13px; color: #5E5550;">{{sel.email}} · {{sel.type}}</span></div>
+          <span style="{{sel.pillStyle}}">{{sel.status}}</span>
+        </div>
+        <p style="margin: 0; background: #F8F4EE; padding: 12px 14px; border-radius: 4px;">{{sel.message}}</p>
+        <label for="b-resp" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600;">Responder por email
+          <textarea id="b-resp" rows="4" maxlength="2000" value="{{resp}}" onChange="{{onResp}}" style="{{respStyle}}"></textarea>
+          <span style="display: flex; justify-content: space-between; gap: 8px; font-weight: 400; font-size: 12px;"><sc-if value="{{showRespErr}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{respErr}}</span></sc-if><span style="margin-left: auto; font-family: 'JetBrains Mono', monospace; color: #5E5550;">{{respLen}} / 2000</span></span>
+        </label>
+        <sc-if value="{{sentNow}}" hint-placeholder-val="{{ false }}">
+          <div role="status" style="display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; background: #EEF2EA; border: 1.5px solid #4F6B3E; color: #4F6B3E; padding: 10px 12px; font-size: 14px; font-weight: 600;">✓ Respuesta enviada a {{sel.email}} <a href="EmailRespuesta.dc.html" style="color: #160F10;">Ver el email →</a></div>
+        </sc-if>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+          <button type="button" onClick="{{send}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background: #160F10; color: #EFE9E1; border: 0; padding: 11px 18px; min-height: 44px; cursor: pointer;">{{sendLabel}}</button>
+          <label for="b-estado" style="display: flex; gap: 8px; align-items: center; font-size: 13px;">Estado
+            <select id="b-estado" value="{{selStatus}}" onChange="{{onStatus}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 8px; min-height: 40px; border: 1.5px solid #D8CEC2; background: #FFFFFF;"><option value="nueva">Nueva</option><option value="en proceso">En proceso</option><option value="respondida">Respondida</option><option value="cerrada">Cerrada</option></select>
+          </label>
+        </div>
+      </section>
+    </div>
+    <span style="font-size: 12px; color: #5E5550;">Datos de ejemplo.</span>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tipo: 'Todas', sel: 0, q: '', st: {}, resp: {}, tried: false, sending: false, sent: {} }; }
+  renderVals() {
+    const pill = {
+      'nueva': 'background: #9B1B22; color: #FFF4EC;',
+      'en proceso': 'background: #160F10; color: #E3B04B;',
+      'respondida': 'background: #4F6B3E; color: #F8F4EE;',
+      'cerrada': 'border: 1px solid #D8CEC2; color: #5E5550;',
+    };
+    const icon = { 'nueva': '● ', 'en proceso': '◐ ', 'respondida': '✓ ', 'cerrada': '– ' };
+    const pillBase = 'justify-self: start; align-self: center; font-family: JetBrains Mono, monospace; font-size: 11px; letter-spacing: 0.04em; padding: 3px 9px; border-radius: 999px; white-space: nowrap; text-transform: uppercase; ';
+    const data = [
+      { name: 'Lucía Gómez', email: 'lucia@ejemplo.com', type: 'Cotización', subject: 'Tienda online para mi emprendimiento', date: '15/10', status: 'nueva', message: 'Vendo cerámica artesanal y quiero una tienda con carrito y pagos. ¿Cuánto costaría y en cuánto tiempo?' },
+      { name: 'Martín Díaz', email: 'martin@correo.com', type: 'Cotización', subject: 'Sistema de turnos para consultorio', date: '15/10', status: 'nueva', message: 'Necesito que mis pacientes saquen turno online y reciban un recordatorio por email.' },
+      { name: 'Sofía López', email: 'sofia@estudio.com', type: 'Asesoría', subject: 'Revisión de arquitectura de API', date: '14/10', status: 'en proceso', message: 'Tenemos una API en Express que se volvió lenta. ¿Podrías revisar cómo está armada?' },
+      { name: 'Juan Pérez', email: 'juan@ejemplo.com', type: 'General', subject: 'Consulta sobre mantenimiento', date: '12/10', status: 'respondida', message: '¿Ofrecés mantenimiento mensual para sitios ya publicados?' },
+      { name: 'Camila Romero', email: 'camila@ejemplo.com', type: 'Asesoría', subject: 'Migrar de SQL a MongoDB', date: '10/10', status: 'respondida', message: 'Queremos evaluar si conviene pasar nuestra base a MongoDB.' },
+      { name: 'Tomás Sosa', email: 'tomas@ejemplo.com', type: 'General', subject: 'Disponibilidad para noviembre', date: '08/10', status: 'cerrada', message: '¿Tenés disponibilidad para empezar un proyecto en noviembre?' },
+    ];
+    const tipos = ['Todas', 'General', 'Cotización', 'Asesoría'];
+    const on = 'font-family: Instrument Sans, sans-serif; font-weight: 600; font-size: 13px; padding: 6px 14px; cursor: pointer; background: #FFFFFF; color: #160F10; border: 1.5px solid #9B1B22; min-height: 36px;';
+    const off = 'font-family: Instrument Sans, sans-serif; font-weight: 600; font-size: 13px; padding: 6px 14px; cursor: pointer; background: transparent; color: #160F10; border: 1.5px solid #D8CEC2; min-height: 36px;';
+    const typeChips = tipos.map((t) => ({ label: t, style: this.state.tipo === t ? on : off, pick: () => this.setState({ tipo: t }) }));
+    data.forEach((d, i) => { if (this.state.st[i]) d.status = this.state.st[i]; });
+    const q = this.state.q.trim().toLowerCase();
+    const visible = data.map((d, i) => ({ ...d, i })).filter((d) => (this.state.tipo === 'Todas' || d.type === this.state.tipo) && (!q || (d.name + ' ' + d.email + ' ' + d.subject).toLowerCase().indexOf(q) >= 0));
+    const rowBase = 'all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 0.8fr) minmax(0, 1fr); gap: 12px; padding: 12px 16px; border-bottom: 1px solid #EEE7DE; font-family: Instrument Sans, sans-serif; font-size: 14px; color: #160F10;';
+    const rows = visible.map((d) => ({
+      ...d,
+      status: icon[d.status] + d.status,
+      pillStyle: pillBase + pill[d.status],
+      rowStyle: rowBase + (this.state.sel === d.i ? ' background: #EFE9E1; box-shadow: inset 3px 0 0 #9B1B22;' : ''),
+      pick: () => this.setState({ sel: d.i, tried: false }),
+    }));
+    const s = data[this.state.sel];
+    const sel = { ...s, status: icon[s.status] + s.status, pillStyle: pillBase + pill[s.status] };
+    const i = this.state.sel;
+    const resp = this.state.resp[i] !== undefined ? this.state.resp[i] : (i === 0 ? 'Hola Lucía, gracias por escribir. Te paso una propuesta con tiempos y costos estimados.' : '');
+    const rt = resp.trim();
+    let respErr = '';
+    if (!rt) respErr = 'Escribí la respuesta antes de enviar.';
+    else if (rt.length < 20) respErr = 'La respuesta es muy corta (mínimo 20 caracteres).';
+    const showRespErr = !!respErr && this.state.tried;
+    return {
+      typeChips, rows, sel, q: this.state.q,
+      empty: rows.length === 0,
+      onQ: (e) => this.setState({ q: e.target.value }),
+      clearQ: () => this.setState({ q: '' }),
+      resp, respLen: resp.length, respErr, showRespErr,
+      respStyle: "font-family: 'Instrument Sans', sans-serif; font-size: 15px; padding: 10px 12px; border: 1.5px solid " + (showRespErr ? '#B93A0C' : '#D8CEC2') + "; border-radius: 4px; resize: vertical;",
+      onResp: (e) => this.setState({ resp: Object.assign({}, this.state.resp, { [i]: e.target.value }) }),
+      selStatus: s.status,
+      onStatus: (e) => this.setState({ st: Object.assign({}, this.state.st, { [i]: e.target.value }) }),
+      sentNow: !!this.state.sent[i],
+      sendLabel: this.state.sending ? 'Enviando…' : 'Enviar respuesta',
+      send: () => {
+        if (respErr) { this.setState({ tried: true }); return; }
+        this.setState({ sending: true, tried: false });
+        setTimeout(() => this.setState({ sending: false, sent: Object.assign({}, this.state.sent, { [i]: true }), st: Object.assign({}, this.state.st, { [i]: 'respondida' }) }), 800);
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

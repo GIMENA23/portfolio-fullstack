@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Contacto · arce.dev</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#EFE9E1}
+a{color:#160F10}a:hover{color:#9B1B22}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes weave{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.w{display:inline-block;animation:up .7s cubic-bezier(.2,.7,.2,1) both}
+.in{animation:up .8s cubic-bezier(.2,.7,.2,1) both}
+.weave{animation:weave 1.2s cubic-bezier(.6,0,.2,1) both}
+.pop{animation:pop .5s cubic-bezier(.2,.7,.2,1) both}
+.field{transition:border-color .2s,box-shadow .2s}
+.field:focus{outline:none;border-color:#160F10;box-shadow:0 0 0 3px #E3B04B}
+.btn{transition:background-color .2s,transform .15s}
+.btn:hover{background-color:#9B1B22}
+.btn:active{transform:translateY(1px)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* Navbar fija y menú adaptable (corrección del profesor) */
+.site-header{position:sticky;top:0;z-index:50}
+.nav-check{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.nav-toggle{display:none;margin-left:auto;width:44px;height:44px;align-items:center;justify-content:center;background:#160F10;cursor:pointer}
+.nav-check:focus-visible + .nav-toggle{outline:3px solid #E3B04B;outline-offset:2px}
+.nav-toggle .x{display:none}
+@media (max-width: 900px){
+  .site-nav{padding:12px 16px !important;gap:12px !important}
+  .nav-toggle{display:flex}
+  .site-nav > :not(.nav-logo):not(.nav-toggle):not(.nav-check){display:none !important}
+  .nav-check:checked ~ :not(.nav-toggle){display:flex !important;flex:1 0 100%;flex-direction:column;align-items:stretch !important;gap:4px !important}
+  .nav-check:checked ~ .nav-links a{padding:12px 0;border-bottom:1px solid currentColor;border-bottom-color:rgba(127,127,127,.25) !important;min-height:44px}
+  .nav-check:checked ~ .nav-toggle{display:flex}
+  .nav-check:checked ~ .nav-toggle .x{display:block}
+  .nav-check:checked ~ .nav-toggle .h{display:none}
+  h1{font-size:clamp(34px,10vw,48px) !important;line-height:1 !important}
+  h2{font-size:clamp(26px,7.5vw,34px) !important}
+  .contacto-grid{grid-template-columns:1fr !important;padding:24px 16px 64px !important}
+}
+</style>
+</helmet>
+<div style="background: #EFE9E1; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.6;">
+
+  <header class="site-header" style="background: #EFE9E1; border-bottom: 1px solid #D8CEC2;">
+    <nav class="site-nav" style="max-width: 1280px; margin: 0 auto; padding: 18px 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px;">
+      <a class="nav-logo" href="{{nav.home}}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #160F10;">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 20px;">arce.dev</span>
+      </a>
+      <input type="checkbox" id="nav-abrir" class="nav-check" aria-label="Abrir o cerrar el menú"><label for="nav-abrir" class="nav-toggle" title="Menú"><svg class="h" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></label>
+      <div class="nav-links" style="display: flex; flex-wrap: wrap; gap: 8px 28px; flex-grow: 1; justify-content: center; font-weight: 500;">
+        <a href="{{nav.home}}" style="text-decoration: none;">Inicio</a>
+        <a href="{{nav.proyectos}}" style="text-decoration: none;">Proyectos</a>
+        <a href="{{nav.servicios}}" style="text-decoration: none;">Servicios</a>
+        <a href="{{nav.contacto}}" style="text-decoration: none; border-bottom: 2px solid #9B1B22;">Contacto</a>
+      </div>
+      <sc-if value="{{nav.logged}}" hint-placeholder-val="{{false}}">
+        <a href="Cuenta.dc.html" style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 1.5px solid #D8CEC2; padding: 5px 12px 5px 5px; text-decoration: none; font-size: 15px; font-weight: 600;">
+          <span style="width: 32px; height: 32px; border-radius: 999px; background: #160F10; color: #E3B04B; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 13px;">VR</span>
+          Valentina ▾
+        </a>
+      </sc-if>
+      <sc-if value="{{nav.guest}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <a href="Login.dc.html" style="text-decoration: none; font-weight: 600;">Ingresar</a>
+        <a href="Registro.dc.html" style="background: #160F10; color: #EFE9E1; padding: 10px 18px; font-weight: 600; font-size: 15px; text-decoration: none;">Registrarme</a>
+      </div>
+      </sc-if>
+    </nav>
+  </header>
+
+  <section style="max-width: 1280px; margin: 0 auto; padding: 64px 32px 0; display: flex; flex-direction: column; gap: 16px;">
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #9B1B22;">CONTACTO</span>
+    <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 64px; line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase; overflow-wrap: anywhere;">
+      <span class="w" style="animation-delay: 0ms;">Contame</span> <span class="w" style="animation-delay: 90ms;">tu</span> <span class="w" style="animation-delay: 180ms;">proyecto.</span>
+    </h1>
+    <div aria-hidden="true" class="weave" style="animation-delay: 300ms; height: 8px; max-width: 360px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+  </section>
+
+  <section class="contacto-grid" style="max-width: 1280px; margin: 0 auto; padding: 40px 32px 96px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 48px; align-items: start;">
+    <div class="in" style="animation-delay: 250ms; display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+      <p style="margin: 0; color: #5E5550;">Contame qué necesitás y te respondo por email en menos de 48 horas hábiles.</p>
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 15px; border-top: 2px solid #160F10; padding-top: 16px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 4px 12px;"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550; width: 90px;">EMAIL</span><span>hola@arce.dev</span></div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px 12px;"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550; width: 90px;">BASE</span><span>Salta, Argentina · remoto</span></div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px 12px;"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550; width: 90px;">RESPUESTA</span><span>Menos de 48 h hábiles</span></div>
+      </div>
+    </div>
+
+    <sc-if value="{{sent}}" hint-placeholder-val="{{false}}">
+      <div role="status" class="in" style="min-width: 0; background: #160F10; color: #EFE9E1; padding: 40px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start;">
+        <span class="pop" style="width: 56px; height: 56px; border-radius: 999px; background: #4F6B3E; display: flex; align-items: center; justify-content: center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F8F4EE" stroke-width="3" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+        </span>
+        <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 32px; text-transform: uppercase;">¡Consulta enviada!</h2>
+        <p style="margin: 0; color: #B3A79F;">Te llegó una copia a tu email. Martina te responde en menos de 48 horas hábiles.</p>
+        <a href="EmailConfirmacion.dc.html" style="color: #E3B04B; font-weight: 600;">Ver el email de confirmación →</a>
+        <div aria-hidden="true" class="weave" style="animation-delay: 200ms; align-self: stretch; height: 8px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+        <button type="button" onClick="{{reset}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background: transparent; color: #EFE9E1; border: 1.5px solid #EFE9E1; padding: 11px 20px; cursor: pointer;">Enviar otra consulta</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{notSent}}" hint-placeholder-val="{{true}}">
+      <form class="in" style="animation-delay: 350ms; min-width: 0; background: #F8F4EE; border: 1px solid #D8CEC2; border-radius: 4px; padding: 32px; display: flex; flex-direction: column; gap: 20px;">
+        <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+          <legend style="font-weight: 600; font-size: 15px; padding: 0; margin-bottom: 8px;">Tipo de consulta</legend>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1.5px solid #160F10;">
+            <sc-for list="{{types}}" as="t" hint-placeholder-count="3">
+              <button type="button" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+            </sc-for>
+          </div>
+        </fieldset>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <label for="c-nombre" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; min-width: 0;">Nombre y apellido
+            <input id="c-nombre" class="field" autocomplete="name" value="{{f.nombre}}" onChange="{{on.nombre}}" onBlur="{{blur.nombre}}" aria-describedby="c-nombre-err" style="{{st.nombre}}">
+            <sc-if value="{{sh.nombre}}" hint-placeholder-val="{{ false }}"><span id="c-nombre-err" style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{er.nombre}}</span></sc-if>
+          </label>
+          <label for="c-email" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; min-width: 0;">Email
+            <input id="c-email" class="field" type="email" autocomplete="email" value="{{f.email}}" onChange="{{on.email}}" onBlur="{{blur.email}}" aria-describedby="c-email-err" style="{{st.email}}">
+            <sc-if value="{{sh.email}}" hint-placeholder-val="{{ true }}"><span id="c-email-err" style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{er.email}}</span></sc-if>
+          </label>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <label for="c-tel" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; min-width: 0;">Teléfono <span style="font-weight: 400; color: #5E5550; font-size: 13px;">Opcional · 10 dígitos, solo números</span>
+            <input id="c-tel" class="field" inputmode="numeric" placeholder="3874000000" value="{{f.tel}}" onChange="{{on.tel}}" onBlur="{{blur.tel}}" aria-describedby="c-tel-err" style="{{st.tel}}">
+            <sc-if value="{{sh.tel}}" hint-placeholder-val="{{ false }}"><span id="c-tel-err" style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{er.tel}}</span></sc-if>
+          </label>
+          <sc-if value="{{isCotiz}}" hint-placeholder-val="{{ true }}">
+            <label for="c-pres" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; min-width: 0;">Presupuesto estimado <span style="font-weight: 400; color: #5E5550; font-size: 13px;">Obligatorio en cotizaciones</span>
+              <select id="c-pres" class="field" value="{{f.pres}}" onChange="{{on.pres}}" onBlur="{{blur.pres}}" style="{{st.pres}}">
+                <option value="">Elegí un rango</option>
+                <option value="chico">Hasta $500.000</option>
+                <option value="medio">$500.000 a $1.500.000</option>
+                <option value="grande">Más de $1.500.000</option>
+              </select>
+              <sc-if value="{{sh.pres}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{er.pres}}</span></sc-if>
+            </label>
+          </sc-if>
+        </div>
+        <label for="c-asunto" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Asunto
+          <input id="c-asunto" class="field" maxlength="120" value="{{f.asunto}}" onChange="{{on.asunto}}" onBlur="{{blur.asunto}}" aria-describedby="c-asunto-err" style="{{st.asunto}}">
+          <sc-if value="{{sh.asunto}}" hint-placeholder-val="{{ false }}"><span id="c-asunto-err" style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{er.asunto}}</span></sc-if>
+        </label>
+        <label for="c-msg" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Mensaje
+          <textarea id="c-msg" class="field" rows="5" maxlength="1000" value="{{f.msg}}" onChange="{{on.msg}}" onBlur="{{blur.msg}}" aria-describedby="c-msg-err" style="{{st.msg}}"></textarea>
+          <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <sc-if value="{{sh.msg}}" hint-placeholder-val="{{ false }}"><span id="c-msg-err" style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{er.msg}}</span></sc-if>
+            <span style="margin-left: auto; font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 12px; color: {{countColor}};">{{msgCount}} / 1000</span>
+          </div>
+        </label>
+        <label for="c-file" style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px;">Adjunto <span style="font-weight: 400; color: #5E5550; font-size: 13px;">Opcional · PDF, JPG o PNG de hasta 2 MB</span>
+          <input id="c-file" type="file" accept=".pdf,.jpg,.jpeg,.png" onChange="{{on.file}}" style="{{fileStyle}}">
+          <sc-if value="{{sh.file}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 13px; color: #B93A0C;">⚠ {{er.file}}</span></sc-if>
+          <sc-if value="{{fileOk}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; font-size: 13px; color: #4F6B3E;">✓ {{fileName}} listo para enviar</span></sc-if>
+        </label>
+        <sc-if value="{{showSummary}}" hint-placeholder-val="{{ false }}">
+          <div role="alert" style="display: flex; gap: 10px; border: 1.5px solid #B93A0C; background: #FBEDE6; color: #B93A0C; padding: 10px 12px; font-size: 14px; font-weight: 600;"><span aria-hidden="true">⚠</span><span>No se envió: revisá {{errCount}} campo(s) marcados en rojo.</span></div>
+        </sc-if>
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+          <span style="font-size: 13px; color: #5E5550;">Al enviar aceptás que usemos tu email solo para responderte.</span>
+          <button type="button" class="btn" onClick="{{send}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; background-color: #160F10; color: #EFE9E1; border: 0; padding: 14px 28px; min-height: 48px; cursor: pointer;">{{sendLabel}}</button>
+        </div>
+      </form>
+    </sc-if>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"logged":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { type: 'Cotización', sent: false, sending: false, tried: false, t: { email: true }, file: null,
+      f: { nombre: 'Martín Díaz', email: 'martin@correo', tel: '', pres: '', asunto: 'Sistema de turnos para mi consultorio', msg: 'Necesito que mis pacientes saquen turno online y reciban un recordatorio por email.' } };
+  }
+  validate(f, type, file) {
+    const e = {};
+    const n = f.nombre.trim();
+    if (!n) e.nombre = 'Ingresá tu nombre.';
+    else if (n.length < 3) e.nombre = 'Mínimo 3 letras.';
+    else if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' ]+$/.test(n)) e.nombre = 'Usá solo letras y espacios.';
+    const m = f.email.trim();
+    if (!m) e.email = 'Ingresá tu email para poder responderte.';
+    else if (m.indexOf('@') < 0) e.email = 'Falta la @, por ejemplo martin@correo.com';
+    else if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(m)) e.email = 'Falta el dominio, por ejemplo martin@correo.com';
+    if (f.tel && !/^\d{10}$/.test(f.tel)) e.tel = /\D/.test(f.tel) ? 'Solo números, sin espacios ni guiones.' : 'Tienen que ser 10 dígitos (código de área + número).';
+    if (type === 'Cotización' && !f.pres) e.pres = 'Elegí un rango de presupuesto.';
+    const a = f.asunto.trim();
+    if (!a) e.asunto = 'Escribí un asunto.';
+    else if (a.length < 5) e.asunto = 'El asunto es muy corto (mínimo 5 caracteres).';
+    const g = f.msg.trim();
+    if (!g) e.msg = 'Contanos qué necesitás.';
+    else if (g.length < 20) e.msg = 'Mínimo 20 caracteres (llevás ' + g.length + ').';
+    if (file && file.bad) e.file = file.bad;
+    return e;
+  }
+  renderVals() {
+    const s = this.state;
+    const er = this.validate(s.f, s.type, s.file);
+    const sh = {}, st = {}, on = {}, blur = {};
+    const field = (bad) => "font-family: 'Instrument Sans', sans-serif; font-size: 16px; padding: 11px 12px; border: 1.5px solid " + (bad ? '#B93A0C' : '#D8CEC2') + "; border-radius: 4px; background: #FFFFFF; color: #160F10; min-width: 0; min-height: 46px; resize: vertical;";
+    ['nombre', 'email', 'tel', 'pres', 'asunto', 'msg', 'file'].forEach((k) => {
+      sh[k] = !!er[k] && (k === 'file' || !!s.t[k] || s.tried);
+      st[k] = field(sh[k]);
+      on[k] = (e) => this.setState({ f: Object.assign({}, this.state.f, { [k]: e.target.value }) });
+      blur[k] = () => this.setState({ t: Object.assign({}, this.state.t, { [k]: true }) });
+    });
+    on.file = (e) => {
+      const fl = e.target.files && e.target.files[0];
+      if (!fl) { this.setState({ file: null }); return; }
+      const okType = /\.(pdf|jpe?g|png)$/i.test(fl.name) && /^(application\/pdf|image\/(jpeg|png))$/.test(fl.type);
+      let bad = '';
+      if (!okType) bad = 'Formato no permitido: solo PDF, JPG o PNG.';
+      else if (fl.size > 2 * 1024 * 1024) bad = 'El archivo pesa ' + (fl.size / 1048576).toFixed(1) + ' MB. El máximo es 2 MB.';
+      this.setState({ file: { name: fl.name, bad } });
+    };
+    const errCount = Object.keys(er).length;
+    const len = s.f.msg.length;
+    const formVals = {
+      f: s.f, er: Object.assign({ nombre: '', email: '', tel: '', pres: '', asunto: '', msg: '', file: '' }, er), sh, st, on, blur,
+      isCotiz: s.type === 'Cotización',
+      msgCount: len, countColor: len > 950 ? '#B93A0C' : '#5E5550',
+      fileOk: !!(s.file && !s.file.bad), fileName: s.file ? s.file.name : '',
+      fileStyle: "font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 10px; background: #FFFFFF; border: 1.5px dashed " + (s.file && s.file.bad ? '#B93A0C' : '#D8CEC2') + ";",
+      showSummary: s.tried && errCount > 0, errCount,
+      sendLabel: s.sending ? 'Enviando…' : 'Enviar consulta',
+    };
+    const logged = !!this.props.logged;
+    const nav = {
+      logged, guest: !logged,
+      home: logged ? 'MainUsuario.dc.html' : 'Main.dc.html',
+      proyectos: logged ? 'ProyectosUsuario.dc.html' : 'Proyectos.dc.html',
+      servicios: logged ? 'ServiciosUsuario.dc.html' : 'Servicios.dc.html',
+      contacto: logged ? 'ContactoUsuario.dc.html' : 'Contacto.dc.html',
+      detalle: logged ? 'Detalle.dc.html' : 'Registro.dc.html',
+    };
+
+    const base = 'font-family: Instrument Sans, sans-serif; font-weight: 600; font-size: 15px; padding: 12px; border: 0; cursor: pointer; min-height: 44px; transition: background-color .2s, color .2s;';
+    const types = ['General', 'Cotización', 'Asesoría'].map((n) => ({
+      label: n,
+      style: base + (this.state.type === n ? ' background: #160F10; color: #EFE9E1;' : ' background: transparent; color: #160F10;'),
+      pick: () => this.setState({ type: n }),
+    }));
+    return Object.assign(formVals, {
+      nav,
+      types,
+      sent: s.sent,
+      notSent: !s.sent,
+      send: () => {
+        if (errCount > 0) { this.setState({ tried: true }); return; }
+        this.setState({ sending: true });
+        setTimeout(() => this.setState({ sending: false, sent: true }), 900);
+      },
+      reset: () => this.setState({ sent: false, tried: false, t: {}, file: null, f: { nombre: '', email: '', tel: '', pres: '', asunto: '', msg: '' } }),
+    });
+  }
+}
+</script>
+</body>
+</html>

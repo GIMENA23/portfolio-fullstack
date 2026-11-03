@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Dashboard · arce.dev</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#F8F4EE}
+a{color:#160F10}a:hover{color:#9B1B22}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes weave{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes drop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@keyframes blink{50%{opacity:0}}
+.w{display:inline-block;animation:up .7s cubic-bezier(.2,.7,.2,1) both}
+.in{animation:up .8s cubic-bezier(.2,.7,.2,1) both}
+.weave{animation:weave 1.4s cubic-bezier(.6,0,.2,1) both}
+.grow{transform-origin:bottom;animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+.growx{transform-origin:left;animation:growx .9s cubic-bezier(.2,.7,.2,1) both}
+.drop{animation:drop .3s ease-out both}
+.caret{display:inline-block;width:9px;height:1.1em;background:#E3B04B;vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+.card{transition:transform .25s cubic-bezier(.2,.7,.2,1),border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-6px);border-color:#9B1B22;box-shadow:0 10px 0 -4px #160F10}
+.lnk{background-image:linear-gradient(#9B1B22,#9B1B22);background-size:0 2px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .3s}
+.lnk:hover{background-size:100% 2px}
+.btn{transition:background-color .2s,color .2s,transform .15s}
+.btn:hover{background-color:#9B1B22;color:#FFF4EC}
+.reveal{animation:up linear both;animation-timeline:view();animation-range:entry 0% entry 35%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* Barra lateral fija y adaptable (corrección del profesor) */
+.panel-lateral{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;overscroll-behavior:contain;z-index:40}
+.panel-check{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.panel-toggle{display:none}
+@media (max-width: 900px){
+  .panel-lateral{flex:1 0 100% !important;max-width:none !important;height:auto;max-height:100vh;border-right:0 !important;border-bottom:1px solid #D8CEC2}
+  .panel-lateral > div:first-child{flex-direction:row !important;align-items:center;flex-wrap:wrap;padding:12px 64px 12px 16px !important}
+  .panel-toggle{display:flex;position:absolute;top:10px;right:12px;width:44px;height:44px;align-items:center;justify-content:center;background:#160F10;cursor:pointer}
+  .panel-check:focus-visible + .panel-toggle{outline:3px solid #E3B04B;outline-offset:2px}
+  .panel-toggle .x{display:none}
+  .panel-lateral nav,.panel-lateral .panel-usuario{display:none !important}
+  .panel-check:checked ~ nav,.panel-check:checked ~ .panel-usuario{display:flex !important}
+  .panel-check:checked ~ .panel-toggle .x{display:block}
+  .panel-check:checked ~ .panel-toggle .h{display:none}
+  .panel-lateral nav a{min-height:44px}
+  main{padding:20px 16px !important}
+  h1{font-size:clamp(24px,7vw,30px) !important}
+}
+</style>
+</helmet>
+<div style="min-height: 1060px; display: flex; flex-wrap: wrap; background: #F8F4EE; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+  <aside class="panel-lateral" style="flex: 1 1 240px; max-width: 260px; background: #EFE9E1; color: #160F10; border-right: 1px solid #D8CEC2; display: flex; flex-direction: column;">
+    <div style="padding: 20px 20px 14px; display: flex; flex-direction: column; gap: 10px;">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #160F10;">
+        <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 18px;">arce.dev</span>
+      </a>
+      <span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 3px 8px; background: #9B1B22; color: #FFF4EC;">PANEL ADMINISTRADOR</span>
+    </div>
+    <input type="checkbox" id="panel-abrir" class="panel-check" aria-label="Abrir o cerrar el menú del panel"><label for="panel-abrir" class="panel-toggle" title="Menú"><svg class="h" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></label>
+    <div aria-hidden="true" style="height: 8px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+    <nav aria-label="Panel" style="padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CONTENIDO Y MÉTRICAS</span>
+      <a href="Dashboard.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #160F10; background: #FFFFFF; box-shadow: inset 3px 0 0 #9B1B22; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B1B22" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"></path></svg><span style="flex-grow: 1;">Dashboard</span></a>
+      <a href="ProyectosAdmin.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3z"></path></svg><span style="flex-grow: 1;">Proyectos y demos</span></a>
+      <a href="ServiciosAdmin.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path></svg><span style="flex-grow: 1;">Servicios</span></a>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CUENTAS</span>
+      <a href="Usuarios.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8"></path></svg><span style="flex-grow: 1;">Usuarios</span></a>
+      <a href="Perfil.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg><span style="flex-grow: 1;">Mi perfil</span></a>
+    </nav>
+    <div class="panel-usuario" style="margin-top: auto; margin: auto 12px 14px; background: #FFFFFF; border: 1px solid #D8CEC2; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 10px; align-items: center; min-width: 0;">
+        <span style="width: 40px; height: 40px; flex: none; border-radius: 999px; background: #9B1B22; color: #FFF4EC; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 14px;">AP</span>
+        <div style="display: flex; flex-direction: column; min-width: 0; line-height: 1.3;">
+          <strong style="font-size: 14px;">Admin Portfolio</strong>
+          <span style="font-size: 12px; color: #5E5550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">admin@portfolio.test</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #9B1B22; margin-top: 2px;">ADMINISTRADOR</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+        <a href="Main.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1.5px solid #D8CEC2; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#160F10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>Ver sitio</a>
+        <a href="Login.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; background: #160F10; color: #EFE9E1; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"></path></svg>Salir</a>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px; display: flex; flex-direction: column; gap: 22px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px;">
+      <div><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #9B1B22;">MÉTRICAS DEL SITIO</span><h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 30px; text-transform: uppercase;">Dashboard</h1></div>
+    </div>
+
+    <section aria-label="Consulta parametrizada" style="background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
+        <label for="db-desde" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;">Desde
+          <input id="db-desde" type="date" value="{{q.desde}}" min="2026-09-16" max="{{q.hasta}}" onChange="{{q.setDesde}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 8px 10px; border: 1.5px solid #D8CEC2; border-radius: 4px;">
+        </label>
+        <label for="db-hasta" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;">Hasta
+          <input id="db-hasta" type="date" value="{{q.hasta}}" min="{{q.desde}}" max="2026-10-15" onChange="{{q.setHasta}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 8px 10px; border: 1.5px solid #D8CEC2; border-radius: 4px;">
+        </label>
+        <label for="db-tipo" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;">Tipo de consulta
+          <select id="db-tipo" value="{{q.tipo}}" onChange="{{q.setTipo}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 8px 10px; border: 1.5px solid #D8CEC2; border-radius: 4px; background: #FFFFFF; min-width: 160px;"><option value="todas">Todas</option><option value="cotizacion">Cotización</option><option value="general">General</option><option value="asesoria">Asesoría</option></select>
+        </label>
+        <div role="group" aria-label="Agrupar por" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;">Agrupar por
+          <div style="display: flex; border: 1.5px solid #D8CEC2;">
+            <sc-for list="{{q.groups}}" as="g" hint-placeholder-count="2">
+              <button type="button" onClick="{{g.pick}}" style="{{g.style}}">{{g.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+        <button type="button" onClick="{{q.reset}}" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 13px; background: transparent; border: 0; text-decoration: underline; cursor: pointer; padding: 8px 4px; color: #5E5550;">Limpiar filtros</button>
+      </div>
+      <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550; background: #F8F4EE; padding: 8px 10px; overflow-wrap: anywhere;">GET /api/stats/visits?desde={{q.desde}}&amp;hasta={{q.hasta}}&amp;agrupar={{q.agrupar}} · GET /api/stats/inquiries-by-type?desde={{q.desde}}&amp;hasta={{q.hasta}}&amp;tipo={{q.tipo}}</code>
+    </section>
+
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;">
+      <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+        <div class="in" style="{{k.style}}">
+          <span style="font-size: 13px; color: #5E5550;">{{k.label}}</span>
+          <strong style="font-family: Syne, sans-serif; font-weight: 800; font-size: 32px; line-height: 1.1; font-variant-numeric: tabular-nums;">{{k.value}}</strong>
+          <span style="font-size: 12px; color: #5E5550;">{{k.note}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+      <section style="flex: 2 1 520px; min-width: 0; background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; justify-content: space-between; gap: 12px;"><h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 18px;">{{visitsTitle}}</h2><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #5E5550;">máx. {{maxVisits}}</span></div>
+        <div style="height: 200px; display: flex; align-items: flex-end; gap: 4px; border-bottom: 1px solid #5E5550; padding-top: 8px; background: repeating-linear-gradient(to top, transparent 0 49px, #EEE7DE 49px 50px);">
+          <sc-for list="{{visits}}" as="v" hint-placeholder-count="14">
+            <div title="{{v.tip}}" class="grow" style="{{v.style}}"></div>
+          </sc-for>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5E5550;"><span>{{firstDay}}</span><span>{{lastDay}}</span></div>
+      </section>
+
+      <section style="flex: 1 1 300px; min-width: 0; background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 18px;">Consultas por tipo</h2>
+        <sc-for list="{{types}}" as="t" hint-placeholder-count="3">
+          <div style="display: grid; grid-template-columns: 92px minmax(0, 1fr) 32px; gap: 10px; align-items: center; font-size: 14px;">
+            <span>{{t.label}}</span>
+            <div style="height: 14px; background: #EFE9E1;"><div class="growx" style="{{t.style}}"></div></div>
+            <strong style="text-align: right; font-variant-numeric: tabular-nums;">{{t.value}}</strong>
+          </div>
+        </sc-for>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #5E5550; margin-top: auto;">
+          <span><span style="display: inline-block; width: 10px; height: 10px; background: #9B1B22;"></span> Cotización</span>
+          <span><span style="display: inline-block; width: 10px; height: 10px; background: #5E5550;"></span> General</span>
+          <span><span style="display: inline-block; width: 10px; height: 10px; background: #8A5A35;"></span> Asesoría</span>
+        </div>
+      </section>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+      <section style="flex: 1 1 360px; min-width: 0; background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 18px;">Registros por semana</h2>
+        <div style="height: 140px; display: flex; align-items: flex-end; gap: 14px; border-bottom: 1px solid #5E5550;">
+          <sc-for list="{{weeks}}" as="w" hint-placeholder-count="6">
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;"><span style="font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;">{{w.value}}</span><div class="grow" style="{{w.style}}"></div></div>
+          </sc-for>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5E5550;"><span>hace 6 semanas</span><span>esta semana</span></div>
+      </section>
+
+      <section style="flex: 2 1 520px; min-width: 0; background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline;"><h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 18px;">Últimas consultas</h2><span style="font-size: 13px; color: #5E5550;">Las responde el operador</span></div>
+        <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 8px 12px; font-size: 14px; align-items: center;">
+          <span style="font-weight: 600;">Lucía Gómez</span><span style="color: #5E5550;">Cotización</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 999px; background: #9B1B22; color: #FFF4EC;">● NUEVA</span>
+          <span style="font-weight: 600;">Martín Díaz</span><span style="color: #5E5550;">Cotización</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 999px; background: #9B1B22; color: #FFF4EC;">● NUEVA</span>
+          <span style="font-weight: 600;">Sofía López</span><span style="color: #5E5550;">Asesoría</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 999px; background: #160F10; color: #E3B04B;">◐ EN PROCESO</span>
+          <span style="font-weight: 600;">Juan Pérez</span><span style="color: #5E5550;">General</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 999px; background: #4F6B3E; color: #F8F4EE;">✓ RESPONDIDA</span>
+        </div>
+      </section>
+    </div>
+    <span style="font-size: 12px; color: #5E5550;">Datos de ejemplo, como los que carga el script de datos de prueba.</span>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { desde: '2026-10-02', hasta: '2026-10-15', tipo: 'todas', agrupar: 'dia' }; }
+  renderVals() {
+    const st = this.state;
+    const series = [38, 42, 35, 51, 47, 29, 24, 44, 56, 49, 61, 58, 33, 27, 46, 52, 48, 63, 59, 41, 36, 55, 67, 62, 70, 64, 45, 39, 58, 72];
+    const start = new Date('2026-09-16T00:00:00');
+    const idx = (d) => Math.round((new Date(d + 'T00:00:00') - start) / 86400000);
+    let i0 = Math.max(0, Math.min(29, idx(st.desde))), i1 = Math.max(0, Math.min(29, idx(st.hasta)));
+    if (i0 > i1) [i0, i1] = [i1, i0];
+    const days = i1 - i0 + 1;
+    let slice = series.slice(i0, i1 + 1);
+    if (st.agrupar === 'semana') {
+      const out = [];
+      for (let j = slice.length; j > 0; j -= 7) out.unshift(slice.slice(Math.max(0, j - 7), j).reduce((a, b) => a + b, 0));
+      slice = out;
+    }
+    const max = Math.max(...slice, 1);
+    const visits = slice.map((v, i) => ({
+      tip: v + ' visitas',
+      style: 'animation-delay: ' + (i * 40) + 'ms; flex: 1; min-width: 0; height: ' + Math.round((v / max) * 180) + 'px; background: ' + (i === slice.length - 1 ? '#9B1B22' : '#8A5A35') + ';',
+    }));
+    const total = series.slice(i0, i1 + 1).reduce((a, b) => a + b, 0);
+    const fmt = (d) => d.slice(8, 10) + '/' + d.slice(5, 7);
+    const k = 'background: #FFFFFF; border: 1px solid #D8CEC2; border-top: 3px solid #D8CEC2; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px;';
+    const kHot = 'background: #FFFFFF; border: 1px solid #D8CEC2; border-top: 3px solid #9B1B22; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px;';
+    const scale = days / 30;
+    const t = [['cotizacion', 'Cotización', 14, '#9B1B22'], ['general', 'General', 9, '#5E5550'], ['asesoria', 'Asesoría', 7, '#8A5A35']].map(([id, label, v, color]) => [id, label, Math.max(1, Math.round(v * scale * 2)), color]);
+    const tmax = Math.max(...t.map((x) => x[2]));
+    const types = t.map(([id, label, value, color]) => ({ label, value, style: 'height: 100%; width: ' + Math.round((value / tmax) * 100) + '%; background: ' + color + '; opacity: ' + (st.tipo === 'todas' || st.tipo === id ? 1 : 0.2) + ';' }));
+    const consultas = st.tipo === 'todas' ? t.reduce((a, x) => a + x[2], 0) : (t.find((x) => x[0] === st.tipo) || [0, 0, 0])[2];
+    const kpiRaw = [
+      { label: 'Visitas · ' + days + ' días', value: total.toLocaleString('es-AR'), note: 'Contador general del sitio', style: k },
+      { label: 'Usuarios registrados', value: '40', note: '+6 este mes', style: k },
+      { label: 'Accesos autenticados', value: String(Math.round(312 * scale)), note: 'Ingresos con cuenta en el período', style: k },
+      { label: 'Consultas' + (st.tipo === 'todas' ? '' : ' · ' + t.find((x) => x[0] === st.tipo)[1]), value: String(consultas), note: 'En el período elegido', style: kHot },
+    ];
+    const w = [3, 5, 4, 8, 6, 9];
+    const weeks = w.map((v, i) => ({ value: v, style: 'animation-delay: ' + (300 + i * 80) + 'ms; width: 100%; height: ' + Math.round((v / 9) * 100) + 'px; background: ' + (i === w.length - 1 ? '#9B1B22' : '#8A5A35') + ';' }));
+    const gb = 'font-family: Instrument Sans, sans-serif; font-weight: 600; font-size: 13px; padding: 7px 12px; border: 0; cursor: pointer;';
+    const q = {
+      desde: st.desde, hasta: st.hasta, tipo: st.tipo, agrupar: st.agrupar,
+      setDesde: (e) => this.setState({ desde: e.target.value }),
+      setHasta: (e) => this.setState({ hasta: e.target.value }),
+      setTipo: (e) => this.setState({ tipo: e.target.value }),
+      reset: () => this.setState({ desde: '2026-10-02', hasta: '2026-10-15', tipo: 'todas', agrupar: 'dia' }),
+      groups: [['dia', 'Día'], ['semana', 'Semana']].map(([id, label]) => ({ label, style: gb + (st.agrupar === id ? ' background: #EFE9E1; color: #160F10; box-shadow: inset 0 -3px 0 #9B1B22;' : ' background: #FFFFFF; color: #5E5550;'), pick: () => this.setState({ agrupar: id }) })),
+    };
+    const kpis = kpiRaw.map((x, i) => ({ ...x, style: 'animation-delay: ' + (i * 90) + 'ms; ' + x.style }));
+    return { visits, maxVisits: max, kpis, types, weeks, q, visitsTitle: st.agrupar === 'dia' ? 'Visitas por día' : 'Visitas por semana', firstDay: fmt(st.desde), lastDay: fmt(st.hasta) };
+  }
+}
+</script>
+</body>
+</html>

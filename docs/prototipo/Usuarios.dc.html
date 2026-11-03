@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Usuarios · Administrador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#F8F4EE}
+a{color:#160F10}a:hover{color:#9B1B22}
+
+/* Barra lateral fija y adaptable (corrección del profesor) */
+.panel-lateral{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;overscroll-behavior:contain;z-index:40}
+.panel-check{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.panel-toggle{display:none}
+@media (max-width: 900px){
+  .panel-lateral{flex:1 0 100% !important;max-width:none !important;height:auto;max-height:100vh;border-right:0 !important;border-bottom:1px solid #D8CEC2}
+  .panel-lateral > div:first-child{flex-direction:row !important;align-items:center;flex-wrap:wrap;padding:12px 64px 12px 16px !important}
+  .panel-toggle{display:flex;position:absolute;top:10px;right:12px;width:44px;height:44px;align-items:center;justify-content:center;background:#160F10;cursor:pointer}
+  .panel-check:focus-visible + .panel-toggle{outline:3px solid #E3B04B;outline-offset:2px}
+  .panel-toggle .x{display:none}
+  .panel-lateral nav,.panel-lateral .panel-usuario{display:none !important}
+  .panel-check:checked ~ nav,.panel-check:checked ~ .panel-usuario{display:flex !important}
+  .panel-check:checked ~ .panel-toggle .x{display:block}
+  .panel-check:checked ~ .panel-toggle .h{display:none}
+  .panel-lateral nav a{min-height:44px}
+  main{padding:20px 16px !important}
+  h1{font-size:clamp(24px,7vw,30px) !important}
+}
+</style>
+</helmet>
+<div style="min-height: 960px; display: flex; flex-wrap: wrap; background: #F8F4EE; color: #160F10; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5;">
+
+  <aside class="panel-lateral" style="flex: 1 1 240px; max-width: 260px; background: #EFE9E1; color: #160F10; border-right: 1px solid #D8CEC2; display: flex; flex-direction: column;">
+    <div style="padding: 20px 20px 14px; display: flex; flex-direction: column; gap: 10px;">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #160F10;">
+        <svg width="28" height="28" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" transform="rotate(45 17 17)" fill="#9B1B22"></rect><text x="17" y="21" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="11" fill="#FFF4EC">ma</text></svg>
+        <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 18px;">arce.dev</span>
+      </a>
+      <span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 3px 8px; background: #9B1B22; color: #FFF4EC;">PANEL ADMINISTRADOR</span>
+    </div>
+    <input type="checkbox" id="panel-abrir" class="panel-check" aria-label="Abrir o cerrar el menú del panel"><label for="panel-abrir" class="panel-toggle" title="Menú"><svg class="h" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></label>
+    <div aria-hidden="true" style="height: 8px; background: linear-gradient(#160F10 0 3px, transparent 3px 5px, #160F10 5px), #E3B04B;"></div>
+    <nav aria-label="Panel" style="padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CONTENIDO Y MÉTRICAS</span>
+      <a href="Dashboard.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"></path></svg><span style="flex-grow: 1;">Dashboard</span></a>
+      <a href="ProyectosAdmin.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3z"></path></svg><span style="flex-grow: 1;">Proyectos y demos</span></a>
+      <a href="ServiciosAdmin.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path></svg><span style="flex-grow: 1;">Servicios</span></a>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; padding: 12px 12px 6px;">CUENTAS</span>
+      <a href="Usuarios.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #160F10; background: #FFFFFF; box-shadow: inset 3px 0 0 #9B1B22; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B1B22" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM22 19v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8"></path></svg><span style="flex-grow: 1;">Usuarios</span></a>
+      <a href="Perfil.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-decoration: none; color: #5E5550;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5550" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg><span style="flex-grow: 1;">Mi perfil</span></a>
+    </nav>
+    <div class="panel-usuario" style="margin-top: auto; margin: auto 12px 14px; background: #FFFFFF; border: 1px solid #D8CEC2; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 10px; align-items: center; min-width: 0;">
+        <span style="width: 40px; height: 40px; flex: none; border-radius: 999px; background: #9B1B22; color: #FFF4EC; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 14px;">AP</span>
+        <div style="display: flex; flex-direction: column; min-width: 0; line-height: 1.3;">
+          <strong style="font-size: 14px;">Admin Portfolio</strong>
+          <span style="font-size: 12px; color: #5E5550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">admin@portfolio.test</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #9B1B22; margin-top: 2px;">ADMINISTRADOR</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+        <a href="Main.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1.5px solid #D8CEC2; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#160F10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>Ver sitio</a>
+        <a href="Login.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; background: #160F10; color: #EFE9E1; text-decoration: none; font-size: 13px; font-weight: 600;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EFE9E1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"></path></svg>Salir</a>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px;">
+      <div><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #9B1B22;">40 CUENTAS · 312 ACCESOS</span><h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 30px; text-transform: uppercase;">Usuarios</h1></div>
+      <label for="u-q" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600;">Buscar
+        <input id="u-q" type="search" placeholder="Nombre o email" value="{{q}}" onChange="{{onQ}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 15px; padding: 9px 12px; border: 1.5px solid #D8CEC2; border-radius: 4px; background: #FFFFFF; width: 260px;">
+      </label>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+      <span style="font-size: 13px; font-weight: 600; margin-right: 4px;">Rol</span>
+      <sc-for list="{{roleChips}}" as="c" hint-placeholder-count="4">
+        <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #D8CEC2; border-radius: 4px;">
+      <div style="min-width: 900px;">
+        <div style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr) 150px 110px 110px 90px 130px; gap: 12px; padding: 10px 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #5E5550; border-bottom: 2px solid #D8CEC2;">
+          <span>NOMBRE</span><span>EMAIL</span><span>ROL</span><span>ALTA</span><span>ÚLT. ACCESO</span><span>ACCESOS</span><span>ESTADO</span>
+        </div>
+        <sc-for list="{{rows}}" as="u" hint-placeholder-count="7">
+          <div style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr) 150px 110px 110px 90px 130px; gap: 12px; padding: 10px 16px; align-items: center; border-bottom: 1px solid #EEE7DE; font-size: 14px;">
+            <span style="font-weight: 600; display: flex; gap: 6px; align-items: center;">{{u.name}}<span style="{{u.providerStyle}}">{{u.provider}}</span></span>
+            <span style="color: #5E5550; overflow: hidden; text-overflow: ellipsis;">{{u.email}}</span>
+            <label style="display: flex;"><span style="position: absolute; left: -9999px;">Rol de {{u.name}}</span>
+              <select onChange="{{u.setRole}}" value="{{u.role}}" style="font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 6px 8px; border: 1.5px solid #D8CEC2; background: #FFFFFF; width: 100%;"><option value="Usuario">Usuario</option><option value="Operador">Operador</option><option value="Administrador">Administrador</option></select>
+            </label>
+            <span style="font-variant-numeric: tabular-nums; color: #5E5550;">{{u.created}}</span>
+            <span style="font-variant-numeric: tabular-nums; color: #5E5550;">{{u.last}}</span>
+            <span style="font-variant-numeric: tabular-nums; font-weight: 600;">{{u.logins}}</span>
+            <button type="button" onClick="{{u.toggle}}" style="{{u.stateStyle}}">{{u.state}}</button>
+          </div>
+        </sc-for>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 28px 16px; text-align: center; color: #5E5550; font-size: 15px;">Ningún usuario coincide con la búsqueda.</div>
+        </sc-if>
+      </div>
+    </div>
+    <sc-if value="{{showMsg}}" hint-placeholder-val="{{ false }}"><div role="status" style="{{msgStyle}}">{{msg}}</div></sc-if>
+    <span style="font-size: 12px; color: #5E5550;">Datos de ejemplo. Cambiá un rol o tocá el estado para activar o desactivar una cuenta.</span>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filter: 'Todos', q: '', msg: '', msgOk: true,
+      users: [
+        { name: 'Admin Portfolio', email: 'admin@portfolio.test', role: 'Administrador', provider: 'email', created: '01/09/26', last: 'hoy', logins: 58, active: true },
+        { name: 'Operador Portfolio', email: 'operador@portfolio.test', role: 'Operador', provider: 'email', created: '01/09/26', last: 'hoy', logins: 41, active: true },
+        { name: 'Valentina Ríos', email: 'valentina@correo.com', role: 'Usuario', provider: 'Google', created: '14/10/26', last: 'ayer', logins: 6, active: true },
+        { name: 'Lucía Gómez', email: 'lucia@ejemplo.com', role: 'Usuario', provider: 'email', created: '12/10/26', last: '13/10', logins: 3, active: true },
+        { name: 'Mateo Fernández', email: 'mateo@ejemplo.com', role: 'Usuario', provider: 'Google', created: '05/10/26', last: '10/10', logins: 9, active: true },
+        { name: 'Julieta Sosa', email: 'julieta@ejemplo.com', role: 'Usuario', provider: 'email', created: '28/09/26', last: '02/10', logins: 2, active: false },
+        { name: 'Nicolás Pérez', email: 'nicolas@ejemplo.com', role: 'Usuario', provider: 'email', created: '20/09/26', last: '30/09', logins: 5, active: true },
+      ],
+    };
+  }
+  renderVals() {
+    const { users, filter } = this.state;
+    const update = (i, patch, msg) => this.setState({ users: users.map((u, j) => (j === i ? { ...u, ...patch } : u)), msg: msg || '', msgOk: true });
+    const self = 'admin@portfolio.test';
+    const q = this.state.q.trim().toLowerCase();
+    const chipOn = 'font-family: Instrument Sans, sans-serif; font-weight: 600; font-size: 13px; padding: 6px 14px; cursor: pointer; background: #FFFFFF; color: #160F10; border: 1.5px solid #9B1B22; min-height: 36px;';
+    const chipOff = 'font-family: Instrument Sans, sans-serif; font-weight: 600; font-size: 13px; padding: 6px 14px; cursor: pointer; background: transparent; color: #160F10; border: 1.5px solid #D8CEC2; min-height: 36px;';
+    const roleChips = ['Todos', 'Usuario', 'Operador', 'Administrador'].map((r) => ({ label: r, style: filter === r ? chipOn : chipOff, pick: () => this.setState({ filter: r }) }));
+    const pillBase = 'font-family: JetBrains Mono, monospace; font-size: 11px; letter-spacing: 0.04em; padding: 4px 10px; border-radius: 999px; cursor: pointer; justify-self: start; ';
+    const rows = users
+      .map((u, i) => ({ u, i }))
+      .filter(({ u }) => (filter === 'Todos' || u.role === filter) && (!q || (u.name + ' ' + u.email).toLowerCase().indexOf(q) >= 0))
+      .map(({ u, i }) => ({
+        ...u,
+        providerStyle: 'font-family: JetBrains Mono, monospace; font-size: 10px; font-weight: 500; padding: 1px 6px; border: 1px solid #D8CEC2; color: #5E5550;',
+        state: u.active ? '✓ ACTIVA' : '– DESACTIVADA',
+        stateStyle: pillBase + (u.active ? 'background: #4F6B3E; color: #F8F4EE; border: 0;' : 'background: transparent; color: #5E5550; border: 1px solid #D8CEC2;'),
+        toggle: () => {
+          if (u.email === self) { this.setState({ msg: '⚠ No podés desactivar tu propia cuenta de administrador.', msgOk: false }); return; }
+          update(i, { active: !u.active }, '✓ ' + u.name + (u.active ? ': cuenta desactivada. Ya no puede ver las demos.' : ': cuenta activada.'));
+        },
+        setRole: (e) => {
+          if (u.email === self) { this.setState({ msg: '⚠ No podés quitarte el rol de administrador.', msgOk: false }); return; }
+          update(i, { role: e.target.value }, '✓ ' + u.name + ' ahora es ' + e.target.value + '.');
+        },
+      }));
+    return {
+      roleChips, rows, q: this.state.q, empty: rows.length === 0,
+      onQ: (e) => this.setState({ q: e.target.value }),
+      showMsg: !!this.state.msg, msg: this.state.msg,
+      msgStyle: 'font-size: 14px; font-weight: 600; padding: 10px 12px; border: 1.5px solid ' + (this.state.msgOk ? '#4F6B3E; color: #4F6B3E; background: #EEF2EA;' : '#B93A0C; color: #B93A0C; background: #FBEDE6;'),
+    };
+  }
+}
+</script>
+</body>
+</html>
