@@ -60,15 +60,17 @@ export default function App() {
           }
         />
         <Route path="recuperar" element={<Recuperar />} />
-        <Route path="login" element={<Login />} />
-        <Route path="registro" element={<Register />} />
       </Route>
 
-      {/* Panel de operador (operador y admin) */}
+      {/* Acceso: pantalla dividida, sin navbar ni pie (Login.dc.html / Registro.dc.html) */}
+      <Route path="login" element={<Login />} />
+      <Route path="registro" element={<Register />} />
+
+      {/* Panel de operador (solo operadores; el admin tiene su propio panel) */}
       <Route
         path="operador"
         element={
-          <ProtectedRoute roles={['operator', 'admin']}>
+          <ProtectedRoute roles={['operator']}>
             <OperatorLayout />
           </ProtectedRoute>
         }

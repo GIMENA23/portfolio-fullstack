@@ -13,4 +13,9 @@ export const mockPerfil = {
   linkedin: '',
   stack: ['React', 'Node.js', 'Express', 'MongoDB', 'Bootstrap'],
   photo: '',
+  experience: [
+    { period: '[AÑO] — HOY', role: 'Desarrolladora fullstack independiente', detail: 'Sistemas a medida para pymes de Salta y Jujuy.' },
+    { period: '[AÑO] — [AÑO]', role: 'Desarrolladora backend · [EMPRESA]', detail: 'APIs REST y bases de datos para un equipo de producto.' },
+    { period: '[AÑO] — [AÑO]', role: 'Ingeniería en Informática · UCASAL', detail: 'Formación en desarrollo de software y sistemas.' },
+  ],
 }
