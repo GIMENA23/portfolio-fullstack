@@ -131,35 +131,38 @@ export default function UsersAdmin() {
         {usandoMock && <span className="badge text-bg-warning">Datos de prueba</span>}
       </div>
 
-      <div className="row g-2 mb-3">
-        <div className="col-12 col-md-8">
+      <div className="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+        <div className="d-flex flex-wrap align-items-center gap-2" role="group" aria-label="Filtrar por rol">
+          <span className="small fw-semibold me-1">Rol</span>
+          {[['', 'Todos'], ...Object.entries(ROLES)].map(([valor, label]) => (
+            <button
+              key={valor || 'todos'}
+              type="button"
+              aria-pressed={filtros.role === valor}
+              className={`filtro ${filtros.role === valor ? 'on' : ''}`}
+              onClick={() => pedir({ ...filtros, role: valor, page: 1 })}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <label htmlFor="buscar-usuarios" className="small fw-semibold d-flex flex-column gap-1">
+          Buscar
           <input
+            id="buscar-usuarios"
             type="search"
             className="form-control"
-            placeholder="Buscar por nombre o email"
+            placeholder="Nombre o email"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             maxLength={60}
-            aria-label="Buscar usuarios"
+            style={{ width: 'min(100%, 260px)' }}
           />
-        </div>
-        <div className="col-12 col-md-4">
-          <select
-            className="form-select"
-            value={filtros.role}
-            onChange={(e) => pedir({ ...filtros, role: e.target.value, page: 1 })}
-            aria-label="Filtrar por rol"
-          >
-            <option value="">Todos los roles</option>
-            {Object.entries(ROLES).map(([valor, label]) => (
-              <option key={valor} value={valor}>{label}</option>
-            ))}
-          </select>
-        </div>
+        </label>
       </div>
 
-      {aviso && <div className="alert alert-success py-2" role="status">{aviso}</div>}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {aviso && <div className="alert alert-success py-2" role="status">✓ {aviso}</div>}
+      {error && <div className="alert alert-danger py-2" role="alert">⚠ {error}</div>}
 
       {loading && <GuardaLoader texto="Cargando usuarios…" />}
 
@@ -172,12 +175,13 @@ export default function UsersAdmin() {
           <table className="table align-middle">
             <thead>
               <tr>
-                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Email</th>
                 <th>Rol</th>
-                <th>Activo</th>
                 <th className="d-none d-lg-table-cell">Alta</th>
-                <th className="d-none d-md-table-cell">Último acceso</th>
+                <th className="d-none d-md-table-cell">Últ. acceso</th>
                 <th className="d-none d-md-table-cell text-end">Accesos</th>
+                <th>Estado</th>
                 <th className="text-end"><span className="visually-hidden">Acciones</span></th>
               </tr>
             </thead>
@@ -187,13 +191,11 @@ export default function UsersAdmin() {
                 const ocupado = ocupadoId === u._id
                 return (
                   <tr key={u._id} className={u.active ? '' : 'opacity-75'}>
-                    <td style={{ minWidth: '12rem' }}>
-                      <div className="small text-muted text-break">{u.email}</div>
-                      {u.provider === 'google' && <div className="small text-muted">Cuenta de Google</div>}
-                      <div className="small text-muted d-md-none">
-                        {u.loginCount ?? 0} accesos · último: {formatoFecha(u.lastLogin)}
-                      </div>
+                    <td style={{ minWidth: '10rem' }}>
+                      <div className="fw-semibold">{u.name}</div>
+                      <span className="rotulo text-secondary" style={{ fontSize: '0.625rem' }}>{u.provider === 'google' ? 'GOOGLE' : 'EMAIL'}</span>
                     </td>
+                    <td className="small text-break" style={{ minWidth: '11rem' }}>{u.email}</td>
                     <td style={{ minWidth: '9.5rem' }}>
                       <select
                         className="form-select form-select-sm"
@@ -210,31 +212,27 @@ export default function UsersAdmin() {
                         ))}
                       </select>
                     </td>
-                    <td>
-                      <div className="form-check form-switch mb-0">
-                        <input
-                          type="checkbox"
-                          role="switch"
-                          className="form-check-input"
-                          checked={u.active}
-                          disabled={propio || ocupado}
-                          onChange={(e) =>
-                            actualizar(
-                              u,
-                              { active: e.target.checked },
-                              `${u.name} quedó ${e.target.checked ? 'activo' : 'desactivado'}.`,
-                            )
-                          }
-                          aria-label={`${u.name} activo`}
-                        />
-                      </div>
-                    </td>
                     <td className="d-none d-lg-table-cell small text-nowrap">{formatoFecha(u.createdAt)}</td>
                     <td className="d-none d-md-table-cell small text-nowrap">{formatoFecha(u.lastLogin)}</td>
                     <td className="d-none d-md-table-cell text-end">{u.loginCount ?? 0}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className={`estado estado-boton ${u.active ? 'estado-respondida' : 'estado-cerrada'}`}
+                        disabled={propio || ocupado}
+                        title={propio ? 'No podés desactivar tu propia cuenta' : undefined}
+                        aria-label={`${u.name}: ${u.active ? 'activa, tocá para desactivar' : 'desactivada, tocá para activar'}`}
+                        onClick={() =>
+                          actualizar(u, { active: !u.active }, `${u.name} quedó ${u.active ? 'desactivada' : 'activa'}.`)
+                        }
+                      >
+                        <span aria-hidden="true">{u.active ? '✓' : '–'}</span> {u.active ? 'ACTIVA' : 'DESACTIVADA'}
+                      </button>
+                    </td>
                     <td className="text-end text-nowrap">
                       {propio ? null : confirmarId === u._id ? (
-                        <div className="d-flex flex-column flex-sm-row gap-1 justify-content-end">
+                        <div className="d-flex flex-column flex-sm-row gap-1 justify-content-end align-items-center">
+                          <span className="small">¿Eliminar a {u.name}?</span>
                           <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(u)} disabled={ocupado}>
                             Eliminar
                           </button>
@@ -245,7 +243,7 @@ export default function UsersAdmin() {
                       ) : (
                         <button
                           type="button"
-                          className="btn btn-sm btn-outline-danger"
+                          className="btn btn-sm btn-link text-danger px-1"
                           onClick={() => setConfirmarId(u._id)}
                           aria-label={`Eliminar a ${u.name}`}
                         >

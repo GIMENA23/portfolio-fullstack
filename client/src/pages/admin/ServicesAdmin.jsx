@@ -26,7 +26,9 @@ const ICONOS = {
   chat: 'Chat',
 }
 
-const VACIO = { name: '', description: '', icon: '', priceFrom: '', order: '', visible: true }
+const TONOS = [['carmin', 'Carmín'], ['negro', 'Negro'], ['vicuna', 'Vicuña'], ['exito', 'Cardón']]
+
+const VACIO = { name: '', description: '', icon: '', priceFrom: '', order: '', visible: true, color: '' }
 
 const formatoPrecio = (n) =>
   n == null || n === ''
@@ -111,6 +113,7 @@ export default function ServicesAdmin() {
       order: f.order === '' ? 0 : Number(f.order),
     }
     if (f.icon) datos.icon = f.icon
+    if (f.color) datos.color = f.color // TODO (C): guardar el color del ícono en el modelo Service
     if (f.priceFrom !== '') datos.priceFrom = Number(f.priceFrom)
     return datos
   }
@@ -132,6 +135,7 @@ export default function ServicesAdmin() {
       priceFrom: s.priceFrom ?? '',
       order: s.order ?? '',
       visible: s.visible ?? true,
+      color: s.color ?? '',
     })
     setErrores({})
     setConfirmarId(null)
@@ -222,6 +226,36 @@ export default function ServicesAdmin() {
     setEliminando(false)
   }
 
+  // 6. Reordenar: intercambia el campo `order` de dos servicios vecinos y guarda ambos
+  const mover = async (s, dir) => {
+    const i = servicios.findIndex((x) => x._id === s._id)
+    const otro = servicios[i + dir]
+    if (!otro) return
+    const ordenS = i + dir + 1
+    const ordenOtro = i + 1
+    const cuerpo = (x, order) => {
+      const d = { name: x.name, description: x.description, order, visible: x.visible ?? true }
+      if (x.icon) d.icon = x.icon
+      if (x.priceFrom != null && x.priceFrom !== '') d.priceFrom = x.priceFrom
+      return d
+    }
+    const aplicar = () =>
+      setServicios(ordenar(servicios.map((x) => (x._id === s._id ? { ...x, order: ordenS } : x._id === otro._id ? { ...x, order: ordenOtro } : x))))
+    try {
+      await Promise.all([servicesApi.update(s._id, cuerpo(s, ordenS)), servicesApi.update(otro._id, cuerpo(otro, ordenOtro))])
+      aplicar()
+      mostrarAviso('Orden actualizado.')
+    } catch (err) {
+      if (err.status === 501) {
+        setSoloPantalla(true)
+        aplicar()
+        mostrarAviso('Orden cambiado solo en pantalla (la API todavía no guarda).')
+      } else {
+        setError(err.message)
+      }
+    }
+  }
+
   // --- Render ---
   const largoDesc = form.description.trim().length
 
@@ -249,15 +283,87 @@ export default function ServicesAdmin() {
       {aviso && <div className="alert alert-success py-2" role="status">{aviso}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {/* Formulario crear / editar */}
-      {formAbierto && (
-        <form className="card mb-4" onSubmit={guardar} noValidate>
+      <div className="admin-split">
+        <div className="admin-split-main">
+          {loading && <GuardaLoader texto="Cargando servicios…" />}
+
+          {!loading && !error && servicios.length === 0 && (
+            <div className="alert alert-light border">Todavía no hay servicios cargados.</div>
+          )}
+          {!loading && servicios.length > 0 && (
+            <div className="table-responsive">
+              <table className="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th style={{ width: 72 }}>Orden</th>
+                    <th>Servicio</th>
+                    <th className="d-none d-lg-table-cell">Precio desde</th>
+                    <th>Visible</th>
+                    <th className="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {servicios.map((s, idx) => (
+                    <tr key={s._id} className={editandoId === s._id ? 'table-active' : ''}>
+                      <td>
+                        <div className="d-flex gap-1">
+                          <button type="button" className="btn btn-sm btn-outline-secondary px-2" onClick={() => mover(s, -1)} disabled={idx === 0} aria-label={`Subir ${s.name}`}>▲</button>
+                          <button type="button" className="btn btn-sm btn-outline-secondary px-2" onClick={() => mover(s, 1)} disabled={idx === servicios.length - 1} aria-label={`Bajar ${s.name}`}>▼</button>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-start gap-2">
+                          <span className={`servicio-icono tono-${s.color || TONOS[idx % TONOS.length][0]}`} style={{ width: 32, height: 32 }} aria-hidden="true" />
+                          <div>
+                            <div className="fw-semibold">{s.name}</div>
+                            <div className="small text-muted">{s.description}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="d-none d-lg-table-cell text-nowrap">{formatoPrecio(s.priceFrom)}</td>
+                      <td>
+                        <span className={`estado ${s.visible === false ? 'estado-cerrada' : 'estado-respondida'}`}>
+                          <span aria-hidden="true">{s.visible === false ? '–' : '✓'}</span> {s.visible === false ? 'Oculto' : 'Visible'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="d-flex flex-wrap justify-content-end align-items-center gap-1">
+                          {confirmarId === s._id ? (
+                            <>
+                              <span className="small text-nowrap">¿Eliminar «{s.name}»?</span>
+                              <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(s._id)} disabled={eliminando}>Eliminar</button>
+                              <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setConfirmarId(null)} disabled={eliminando}>Cancelar</button>
+                            </>
+                          ) : (
+                            <>
+                              <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => abrirEditar(s)}>Editar</button>
+                              <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => setConfirmarId(s._id)} aria-label={`Eliminar ${s.name}`}>Eliminar</button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        <aside className="admin-split-lateral">
+          {formAbierto ? (
+        <form className={`card admin-form ${editandoId ? 'modo-editando' : 'modo-nuevo'}`} onSubmit={guardar} noValidate aria-label={editandoId ? 'Editar servicio' : 'Nuevo servicio'}>
+          <div className="admin-modo d-flex justify-content-between align-items-start gap-2">
+            <div style={{ minWidth: 0 }}>
+              <span className="admin-modo-badge">{editandoId ? 'EDITANDO' : 'NUEVO'}</span>
+              <h2 className="mb-0 text-truncate">{editandoId ? `Editando: ${form.name || '…'}` : 'Nuevo servicio'}</h2>
+            </div>
+            <button type="button" className="btn-close" onClick={cerrarForm} aria-label="Cerrar formulario" disabled={guardando} />
+          </div>
           <div className="card-body">
-            <h2 className="h5 mb-3">{editandoId ? 'Editar servicio' : 'Nuevo servicio'}</h2>
             {errores.general && <div className="alert alert-danger">{errores.general}</div>}
 
             <div className="row g-3">
-              <div className="col-12 col-md-8">
+              <div className="col-12">
                 <label htmlFor="name" className="form-label">Nombre *</label>
                 <input
                   id="name"
@@ -271,7 +377,7 @@ export default function ServicesAdmin() {
                 {errores.name && <div className="invalid-feedback">{errores.name}</div>}
               </div>
 
-              <div className="col-12 col-md-4">
+              <div className="col-12">
                 <label htmlFor="icon" className="form-label">Ícono</label>
                 <select
                   id="icon"
@@ -340,7 +446,23 @@ export default function ServicesAdmin() {
                 {errores.order && <div className="invalid-feedback">{errores.order}</div>}
               </div>
 
-              <div className="col-12 col-md-4 d-flex align-items-end">
+              <fieldset className="col-12 border-0 p-0 m-0">
+                <legend className="form-label fs-6">Color del ícono</legend>
+                <div className="d-flex gap-2">
+                  {TONOS.map(([id, label]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      className={`muestra-tono tono-${id} ${form.color === id ? 'on' : ''}`}
+                      aria-label={label}
+                      aria-pressed={form.color === id}
+                      onClick={() => setForm({ ...form, color: id })}
+                    />
+                  ))}
+                </div>
+              </fieldset>
+
+              <div className="col-12 d-flex align-items-end">
                 <div className="form-check form-switch mb-2">
                   <input
                     id="visible"
@@ -356,105 +478,25 @@ export default function ServicesAdmin() {
               </div>
             </div>
 
-            <div className="d-flex justify-content-end gap-2 mt-4">
+            <div className="d-flex flex-wrap align-items-center justify-content-end gap-2 mt-4">
+              {Object.keys(errores).some((k) => errores[k]) && <span className="campo-error me-auto">Revisá los campos marcados.</span>}
               <button type="button" className="btn btn-outline-secondary" onClick={cerrarForm} disabled={guardando}>
                 Cancelar
               </button>
               <button type="submit" className="btn btn-primary" disabled={guardando}>
-                {guardando ? 'Guardando…' : editandoId ? 'Guardar cambios' : 'Crear servicio'}
+                {guardando ? 'Guardando…' : editandoId ? 'Guardar cambios' : 'Crear'}
               </button>
             </div>
           </div>
         </form>
-      )}
-
-      {/* Listado */}
-      {loading && <GuardaLoader texto="Cargando servicios…" />}
-
-      {!loading && !error && servicios.length === 0 && (
-        <div className="alert alert-light border">Todavía no hay servicios cargados.</div>
-      )}
-
-      {!loading && servicios.length > 0 && (
-        <div className="table-responsive">
-          <table className="table align-middle">
-            <thead>
-              <tr>
-                <th className="text-center">#</th>
-                <th>Servicio</th>
-                <th className="d-none d-md-table-cell">Precio desde</th>
-                <th className="d-none d-sm-table-cell">Estado</th>
-                <th className="text-end">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {servicios.map((s) => (
-                <tr key={s._id} className={editandoId === s._id ? 'table-active' : ''}>
-                  <td className="text-center text-muted small">{s.order ?? '—'}</td>
-                  <td>
-                    <div className="fw-semibold">{s.name}</div>
-                    <div className="small text-muted">{s.description}</div>
-                    <div className="small d-md-none mt-1">
-                      Desde {formatoPrecio(s.priceFrom)}
-                      {s.visible === false && <span className="badge text-bg-secondary ms-2 d-sm-none">Oculto</span>}
-                    </div>
-                  </td>
-                  <td className="d-none d-md-table-cell text-nowrap">{formatoPrecio(s.priceFrom)}</td>
-                  <td className="d-none d-sm-table-cell">
-                    {s.visible === false ? (
-                      <span className="badge text-bg-secondary">Oculto</span>
-                    ) : (
-                      <span className="badge text-bg-success">Visible</span>
-                    )}
-                  </td>
-                  <td>
-                    <div className="d-flex flex-column flex-sm-row justify-content-end align-items-stretch align-items-sm-center gap-1">
-                    {confirmarId === s._id ? (
-                      <>
-                        <span className="small text-nowrap">¿Eliminar?</span>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger"
-                          onClick={() => eliminar(s._id)}
-                          disabled={eliminando}
-                        >
-                          Sí
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-secondary"
-                          onClick={() => setConfirmarId(null)}
-                          disabled={eliminando}
-                        >
-                          No
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={() => abrirEditar(s)}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => setConfirmarId(s._id)}
-                        >
-                          Eliminar
-                        </button>
-                      </>
-                    )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+          ) : (
+            <div className="admin-vacio">
+              <strong>Ningún servicio seleccionado</strong>
+              <span>Tocá «Editar» en un servicio o creá uno nuevo.</span>
+            </div>
+          )}
+        </aside>
+      </div>
     </div>
   )
 }

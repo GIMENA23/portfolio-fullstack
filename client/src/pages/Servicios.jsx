@@ -66,7 +66,7 @@ function ListaServicios({ servicios }) {
           <div className="col-12 col-lg-6" key={s._id} data-reveal>
             <article className="tarjeta-proyecto h-100 p-4 d-flex flex-column gap-3">
               <div className="d-flex justify-content-between align-items-start gap-3">
-                <span className={`servicio-icono ${TONOS[i % TONOS.length]}`} aria-hidden="true">
+                <span className={`servicio-icono ${s.color ? `tono-${s.color}` : TONOS[i % TONOS.length]}`} aria-hidden="true">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d={trazo} />
                   </svg>

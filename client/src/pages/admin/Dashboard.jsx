@@ -11,7 +11,9 @@
 //   registrations    → [{ semana: 'AAAA-MM-DD', total }]     (?desde&hasta)
 
 import { useEffect, useState } from 'react'
-import { statsApi } from '../../services/api.js'
+import { statsApi, inquiriesApi } from '../../services/api.js'
+import EstadoConsulta from '../../components/EstadoConsulta.jsx'
+import { mockInquiries } from '../operator/mockInquiries.js'
 import { NumeroAnimado, GuardaLoader, opcionesGrafico, estiloDataset, useColoresGrafico } from '../../animations'
 import {
   Chart as ChartJS,
@@ -94,6 +96,16 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [usandoMock, setUsandoMock] = useState(false)
+  const [tipo, setTipo] = useState('') // filtro de consultas (en el navegador)
+  const [ultimas, setUltimas] = useState([])
+
+  // Últimas consultas (las responde el operador)
+  useEffect(() => {
+    inquiriesApi
+      .list({ page: 1 })
+      .then((d) => setUltimas((d.items ?? d).slice(0, 4)))
+      .catch(() => setUltimas(mockInquiries.slice(0, 4))) // datos de prueba si la API todavía no responde
+  }, [])
 
   // Totales (no dependen del rango)
   useEffect(() => {
@@ -154,7 +166,7 @@ export default function Dashboard() {
     etiqueta: rango.agrupar === 'semana' ? `Sem. ${fechaCorta(v.fecha)}` : fechaCorta(v.fecha),
     total: v.total,
   }))
-  const datosTipo = porTipo.map((t) => ({ etiqueta: TIPOS[t.tipo] ?? t.tipo, total: t.total }))
+  const datosTipo = porTipo.filter((t) => !tipo || t.tipo === tipo).map((t) => ({ etiqueta: TIPOS[t.tipo] ?? t.tipo, total: t.total }))
   const datosRegistros = registros.map((r) => ({ etiqueta: `Sem. ${fechaCorta(r.semana)}`, total: r.total }))
 
   return (
@@ -173,9 +185,9 @@ export default function Dashboard() {
       <div className="row g-3 mb-4">
         {KPIS.map((k, i) => (
           <div key={k.clave} className="col-6 col-lg-3">
-            <div className="kpi h-100">
+            <div className={`kpi h-100 ${k.clave === 'inquiries' ? 'kpi-atencion' : ''}`}>
               <div className="kpi-valor">
-                {resumen ? <NumeroAnimado valor={resumen[k.clave] ?? 0} delay={i * 120} /> : '—'}
+                {resumen ? <NumeroAnimado valor={k.clave === 'inquiries' && tipo ? (porTipo.find((t) => t.tipo === tipo)?.total ?? 0) : (resumen[k.clave] ?? 0)} delay={i * 120} /> : '—'}
               </div>
               <div className="kpi-label mt-2">{k.label}</div>
             </div>
@@ -203,12 +215,20 @@ export default function Dashboard() {
               </select>
             </div>
           </div>
+          <div className="d-flex flex-wrap align-items-center gap-2 mt-3" role="group" aria-label="Tipo de consulta">
+            <span className="small fw-semibold me-1">Tipo de consulta</span>
+            {[['', 'Todas'], ...Object.entries(TIPOS)].map(([valor, label]) => (
+              <button key={valor || 'todas'} type="button" aria-pressed={tipo === valor} className={`filtro ${tipo === valor ? 'on' : ''}`} onClick={() => setTipo(valor)}>
+                {label}
+              </button>
+            ))}
+          </div>
           {errorRango && <div className="text-danger small fw-semibold mt-2">⚠ {errorRango}</div>}
           <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
             <code className="small text-secondary" style={{ overflowWrap: 'anywhere' }}>
               GET /api/stats/visits?desde={rango.desde}&amp;hasta={rango.hasta}&amp;agrupar={rango.agrupar} · GET /api/stats/inquiries-by-type?desde={rango.desde}&amp;hasta={rango.hasta}
             </code>
-            <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => setRango({ desde: haceDias(13), hasta: hoy(), agrupar: 'dia' })}>
+            <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => { setTipo(''); setRango({ desde: haceDias(13), hasta: hoy(), agrupar: 'dia' }) }}>
               Limpiar filtros
             </button>
           </div>
@@ -290,6 +310,27 @@ export default function Dashboard() {
                 }}
               />
             </Grafico>
+          </div>
+
+          <div className="col-12 col-md-6 col-lg-12">
+            <div className="card h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-baseline mb-3">
+                  <h2 className="h6 mb-0">Últimas consultas</h2>
+                  <span className="small text-muted">Las responde el operador</span>
+                </div>
+                <ul className="list-unstyled d-flex flex-column gap-2 mb-0">
+                  {ultimas.map((q) => (
+                    <li key={q._id} className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                      <strong>{q.name}</strong>
+                      <span className="text-muted">{TIPOS[q.type] ?? q.type}</span>
+                      <EstadoConsulta status={q.status} />
+                    </li>
+                  ))}
+                  {ultimas.length === 0 && <li className="text-muted">Todavía no hay consultas.</li>}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       )}

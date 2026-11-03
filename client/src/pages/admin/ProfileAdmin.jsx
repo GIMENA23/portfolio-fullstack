@@ -76,6 +76,9 @@ export default function ProfileAdmin() {
   const [cargando, setCargando] = useState(true)
   const [guardando, setGuardando] = useState(false)
   const [aviso, setAviso] = useState('')
+  const [experiencia, setExperiencia] = useState([])
+  const [nuevaExp, setNuevaExp] = useState({ period: '', role: '', detail: '' })
+  const [errExp, setErrExp] = useState('')
   const [soloPantalla, setSoloPantalla] = useState(false)
   const inputFoto = useRef(null)
 
@@ -91,6 +94,7 @@ export default function ProfileAdmin() {
       linkedin: p.linkedin ?? '',
     })
     setStack(p.stack ?? [])
+    setExperiencia(p.experience ?? [])
     setFotoActual(p.photo ?? '')
   }
 
@@ -166,15 +170,29 @@ export default function ProfileAdmin() {
   }
 
   const armarCuerpo = () => {
-    const datos = { ...Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim()])), stack }
+    const datos = { ...Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim()])), stack, experience: experiencia }
     if (!fotoNueva) return datos
     const fd = new FormData()
     Object.entries(datos).forEach(([k, v]) => {
       if (k === 'stack') v.forEach((s) => fd.append('stack', s))
+      else if (k === 'experience') fd.append('experience', JSON.stringify(v))
       else fd.append(k, v)
     })
     fd.append('photo', fotoNueva.file)
     return fd
+  }
+
+  const agregarExperiencia = () => {
+    const e = { period: nuevaExp.period.trim(), role: nuevaExp.role.trim(), detail: nuevaExp.detail.trim() }
+    let problema = ''
+    if (e.period.length < 3 || e.period.length > 30) problema = 'El período debe tener entre 3 y 30 caracteres (ej.: [AÑO] — HOY).'
+    else if (e.role.length < 3 || e.role.length > 80) problema = 'El puesto debe tener entre 3 y 80 caracteres.'
+    else if (e.detail.length > 150) problema = 'El detalle puede tener hasta 150 caracteres.'
+    else if (experiencia.length >= 8) problema = 'Máximo 8 experiencias.'
+    setErrExp(problema)
+    if (problema) return
+    setExperiencia((x) => [...x, e])
+    setNuevaExp({ period: '', role: '', detail: '' })
   }
 
   const guardar = async (e) => {
@@ -233,12 +251,25 @@ export default function ProfileAdmin() {
 
   return (
     <div>
-      <span className="rotulo">LO QUE EDITES ACÁ SE VE EN EL SITIO</span>
-      <h1 className="h2 mb-3">Mi perfil</h1>
+      <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+        <div>
+          <span className="rotulo">LO QUE EDITES ACÁ SE VE EN EL SITIO</span>
+          <h1 className="h2 mb-0">Mi perfil</h1>
+        </div>
+        <div className="d-flex flex-wrap align-items-center gap-3">
+          {aviso && <span role="status" className="campo-ok">✓ Perfil actualizado</span>}
+          {Object.keys(errores).some((k) => errores[k]) && (
+            <span role="alert" className="campo-error">⚠ No se guardó: revisá {Object.keys(errores).filter((k) => errores[k]).length} campo(s)</span>
+          )}
+          <button type="submit" form="form-perfil" className="btn btn-primary" disabled={guardando}>
+            {guardando ? 'Guardando…' : 'Guardar cambios'}
+          </button>
+        </div>
+      </div>
 
       <div className="row g-4">
         <div className="col-12 col-xl-7">
-          <form onSubmit={guardar} noValidate>
+          <form id="form-perfil" onSubmit={guardar} noValidate>
             <ResumenErrores errores={errores} etiquetas={ETIQUETAS} />
             {errores.general && <div className="alert alert-danger" role="alert">⚠ {errores.general}</div>}
             {aviso && (
@@ -328,16 +359,45 @@ export default function ProfileAdmin() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary mt-4" disabled={guardando}>
-              {guardando ? 'Guardando…' : 'Guardar perfil'}
-            </button>
+            <section className="mt-4" aria-labelledby="exp-titulo">
+              <h2 id="exp-titulo" className="mb-3">Experiencia</h2>
+              <ul className="list-unstyled d-flex flex-column gap-2">
+                {experiencia.map((e, i) => (
+                  <li key={`${e.period}-${e.role}-${i}`} className="d-flex flex-wrap justify-content-between align-items-start gap-2 p-2 border">
+                    <div style={{ minWidth: 0 }}>
+                      <span className="linea-fecha">{e.period}</span>
+                      <div className="fw-semibold">{e.role}</div>
+                      {e.detail && <div className="small text-secondary">{e.detail}</div>}
+                    </div>
+                    <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => setExperiencia((x) => x.filter((_, k) => k !== i))} aria-label={`Quitar ${e.role}`}>Quitar</button>
+                  </li>
+                ))}
+                {experiencia.length === 0 && <li className="text-secondary small">Todavía no cargaste experiencia.</li>}
+              </ul>
+              <div className="row g-2">
+                <div className="col-12 col-md-4">
+                  <label htmlFor="exp-periodo" className="form-label">Período</label>
+                  <input id="exp-periodo" className="form-control" value={nuevaExp.period} onChange={(e) => setNuevaExp({ ...nuevaExp, period: e.target.value })} placeholder="[AÑO] — HOY" maxLength={30} />
+                </div>
+                <div className="col-12 col-md-8">
+                  <label htmlFor="exp-puesto" className="form-label">Puesto</label>
+                  <input id="exp-puesto" className="form-control" value={nuevaExp.role} onChange={(e) => setNuevaExp({ ...nuevaExp, role: e.target.value })} maxLength={80} />
+                </div>
+                <div className="col-12">
+                  <label htmlFor="exp-detalle" className="form-label">Detalle <span className="text-secondary">Opcional</span></label>
+                  <input id="exp-detalle" className="form-control" value={nuevaExp.detail} onChange={(e) => setNuevaExp({ ...nuevaExp, detail: e.target.value })} maxLength={150} />
+                </div>
+              </div>
+              {errExp && <div className="campo-error mt-2">⚠ {errExp}</div>}
+              <button type="button" className="btn btn-outline-primary mt-2" onClick={agregarExperiencia}>+ Agregar experiencia</button>
+            </section>
           </form>
         </div>
 
         {/* Vista previa en vivo del hero */}
         <div className="col-12 col-xl-5">
           <div className="position-sticky" style={{ top: '1rem' }}>
-            <p className="rotulo mb-2">Vista previa del inicio</p>
+            <p className="rotulo mb-2">VISTA PREVIA EN EL SITIO</p>
             <div className="card">
               <div className="card-body p-4 text-center text-lg-start">
                 {foto && (
@@ -356,6 +416,7 @@ export default function ProfileAdmin() {
                 </ul>
               </div>
             </div>
+            <a href="/" target="_blank" rel="noreferrer" className="d-inline-block mt-2 fw-semibold">Ver el inicio completo ↗</a>
           </div>
         </div>
       </div>

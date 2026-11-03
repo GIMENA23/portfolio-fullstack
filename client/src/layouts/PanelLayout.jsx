@@ -113,14 +113,14 @@ export default function PanelLayout({ variante = 'admin', grupos, links }) {
               type="button"
               className="btn btn-primary btn-sm"
               onClick={() => {
+                navigate('/', { replace: true }) // primero salimos del panel, así no vuelve a /login
                 logout()
-                navigate('/')
               }}
             >
               <Icono nombre="salir" /> Salir
             </button>
+            <BotonModoNoche />
           </div>
-          <BotonModoNoche className="w-100" />
         </div>
       </aside>
 

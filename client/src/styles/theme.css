@@ -415,7 +415,7 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .kpi {
   background: var(--pc-blanco);
   border: var(--pc-borde);
-  border-top: 6px solid var(--pc-linea);
+  border-top: 3px solid var(--pc-linea);
   padding: var(--pc-esp-3) var(--pc-esp-4);
 }
 .kpi.kpi-atencion { border-top-color: var(--pc-carmin); }
@@ -526,7 +526,7 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 }
 
 /* Responsive: tablas con scroll horizontal y objetivos táctiles cómodos */
-.table-responsive { -webkit-overflow-scrolling: touch; }
+.table-responsive { -webkit-overflow-scrolling: touch; position: relative; }
 @media (max-width: 767.98px) {
   .table-responsive > .table { min-width: 34rem; }
 }
@@ -842,8 +842,9 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .panel-usuario-card { background: var(--pc-blanco); border: var(--pc-borde); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 .panel-avatar-grande { width: 40px; height: 40px; background: var(--pc-carmin); color: var(--pc-sobre-carmin); }
 .panel-operador .panel-avatar-grande { background: var(--pc-negro); color: var(--pc-dorado); }
-.panel-acciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-.panel-acciones .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding-inline: 6px; min-height: 44px; }
+.panel-acciones { display: flex; gap: 6px; }
+.panel-acciones .btn { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; min-height: 40px; font-size: 0.8125rem; }
+.panel-acciones .boton-noche { flex: none; width: 40px; min-width: 40px; min-height: 40px; padding: 0; font-size: 1rem; }
 .panel-usuario-datos .rotulo { margin-top: 2px; }
 
 /* Navbar: «Ingresar» como link, avatar del usuario y links centrados */
@@ -865,6 +866,69 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 
 .numero-404 { font-family: var(--pc-font-titulo); font-weight: 800; font-size: clamp(6rem, 24vw, 13rem); line-height: 0.85; letter-spacing: -0.04em; color: var(--pc-negro); }
 [data-bs-theme='dark'] .numero-404 { color: var(--pc-carmin); }
+
+/* ───── Escala tipográfica de los paneles (más compacta que la del sitio público) ───── */
+.panel-sidebar { font-size: 0.9375rem; }
+.panel-usuario-datos strong { font-size: 0.875rem; }
+.panel-usuario-datos span { font-size: 0.8125rem; }
+.panel-main {
+  --bs-body-font-size: 0.9375rem;
+  font-size: 0.9375rem; line-height: 1.5;
+}
+.panel-main h2, .panel-main .h2 { font-size: 1.25rem; line-height: 1.15; }
+.panel-main h1, .panel-main .h1, .panel-main h1.h2 { font-size: 1.875rem; line-height: 1.05; letter-spacing: 0; }
+.panel-main h3, .panel-main .h3, .panel-main .h4, .panel-main .h5, .panel-main .h6 { font-size: 1rem; }
+.panel-main .table { font-size: 0.875rem; }
+.panel-main .table > thead th { font-size: 0.6875rem; }
+.panel-main .form-label, .panel-main label { font-size: 0.875rem; }
+.panel-main .form-control, .panel-main .form-select { font-size: 0.9375rem; min-height: 40px; }
+.panel-main textarea.form-control { min-height: 0; }
+.panel-main .btn { --bs-btn-font-size: 0.9375rem; font-size: 0.9375rem; min-height: 40px; --bs-btn-padding-y: 0.5rem; }
+.panel-main .btn-sm { --bs-btn-font-size: 0.875rem; font-size: 0.875rem; min-height: 36px; --bs-btn-padding-y: 0.3125rem; }
+.panel-main .kpi-valor { font-size: 2rem; }
+.panel-main .estado { font-size: 0.6875rem; }
+.panel-main .form-text, .panel-main small { font-size: 0.8125rem; }
+@media (max-width: 767.98px) {
+  .panel-main .btn, .panel-main .btn-sm { min-height: 44px; }
+}
+/* ───── Escala del sitio público (según los prototipos) ───── */
+.navbar .nav-link { font-size: 1rem; font-weight: 500; }
+.btn { --bs-btn-font-size: 0.9375rem; }
+.btn-sm { --bs-btn-font-size: 0.875rem; }
+.form-label { font-size: 0.9375rem; font-weight: 600; }
+.form-control, .form-select { font-size: 1rem; }
+
+/* ───── Admin: tabla a la izquierda y formulario lateral (Nuevo / Editando) ───── */
+.admin-split { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.admin-split-main { flex: 3 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.admin-split-lateral { flex: 2 1 340px; min-width: 0; }
+@media (min-width: 1200px) { .admin-split-lateral { position: sticky; top: 16px; } }
+.admin-vacio {
+  border: 1.5px dashed var(--pc-linea); padding: 28px 20px; text-align: center;
+  display: flex; flex-direction: column; gap: 6px; color: var(--pc-texto-suave);
+}
+.admin-form { border-radius: var(--pc-radio); }
+.admin-modo { padding: 14px 16px; border-bottom: var(--pc-borde); }
+.admin-modo h2 { font-size: 1.125rem; margin-top: 4px; }
+.admin-modo-badge {
+  display: inline-block; font-family: var(--pc-font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; padding: 2px 8px;
+}
+.modo-nuevo { border-top: 4px solid var(--pc-exito); }
+.modo-nuevo .admin-modo { background: var(--pc-fondo-exito); }
+.modo-nuevo .admin-modo-badge { background: var(--pc-exito); color: var(--pc-lana-clara); }
+.modo-editando { border-top: 4px solid var(--pc-dorado); }
+.modo-editando .admin-modo { background: var(--pc-negro); color: #efe9e1; }
+.modo-editando .admin-modo-badge { background: var(--pc-dorado); color: var(--pc-negro); }
+.modo-editando .btn-close { filter: invert(1); }
+.foto-mini { width: 64px; height: 48px; padding: 4px 6px; }
+.foto-mini > span { font-size: 1.125rem !important; }
+
+.muestra-tono { width: 36px; height: 36px; border: 2px solid var(--pc-linea); background: var(--tono); padding: 0; }
+.muestra-tono.on { outline: 3px solid var(--pc-dorado); outline-offset: 2px; border-color: var(--pc-texto); }
+
+.estado-boton { border: 0; cursor: pointer; min-height: 32px; }
+.estado-boton.estado-cerrada { border: 1px solid var(--pc-linea); background: transparent; }
+.estado-boton:disabled { cursor: not-allowed; opacity: 0.7; }
 
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */

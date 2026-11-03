@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import AuthLayout from '../components/AuthLayout.jsx'
+import { inicioPorRol, rutaPermitida } from '../services/rutas.js'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i
 
@@ -57,9 +58,9 @@ export default function Login() {
 
     try {
       const user = await login(form.email.trim(), form.password)
-      const destino =
-        location.state?.from ||
-        (user.role === 'admin' ? '/admin' : user.role === 'operator' ? '/operador' : '/proyectos')
+      // Admin y operador van siempre a su panel; el usuario vuelve a donde quería ir solo si puede verlo.
+      const quiso = location.state?.from
+      const destino = user.role === 'user' && rutaPermitida(user.role, quiso) ? quiso : inicioPorRol(user.role)
       navigate(destino, { replace: true })
     } catch (err) {
       if (Array.isArray(err.details) && err.details.length > 0) {

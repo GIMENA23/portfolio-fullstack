@@ -196,7 +196,7 @@ export default function Inbox() {
 
   return (
     <div className="d-flex flex-column gap-3">
-      <div className="d-flex flex-wrap justify-content-between align-items-end gap-3">
+      <div className={`${selId ? 'd-none d-md-flex' : 'd-flex'} flex-wrap justify-content-between align-items-end gap-3`}>
         <div>
           <span className="rotulo">{nuevas} NUEVAS · {consultas.length} EN TOTAL</span>
           <h1 className="h2 mb-0">Consultas</h1>
@@ -215,7 +215,7 @@ export default function Inbox() {
         </label>
       </div>
 
-      <div className="d-flex flex-wrap align-items-center gap-2" role="group" aria-label="Filtrar por tipo">
+      <div className={`${selId ? 'd-none d-md-flex' : 'd-flex'} flex-wrap align-items-center gap-2`} role="group" aria-label="Filtrar por tipo">
         <span className="small fw-semibold me-1">Tipo</span>
         {[['', 'Todas'], ...Object.entries(TIPOS)].map(([valor, label]) => (
           <button
