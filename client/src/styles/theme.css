@@ -383,7 +383,7 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
   position: relative;
   isolation: isolate;
   font-family: var(--pc-font-titulo); font-weight: 800; font-size: 11px;
-  color: var(--pc-sobre-carmin);
+  color: #fff4ec; /* el rombo es carmín fijo en ambos modos */
 }
 .logo-rombo::before {
   content: ''; position: absolute; inset: 5px;

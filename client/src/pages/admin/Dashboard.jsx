@@ -12,7 +12,7 @@
 
 import { useEffect, useState } from 'react'
 import { statsApi } from '../../services/api.js'
-import { NumeroAnimado, GuardaLoader } from '../../animations'
+import { NumeroAnimado, GuardaLoader, opcionesGrafico, estiloDataset, useColoresGrafico } from '../../animations'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -62,25 +62,6 @@ const porSemana = (serie) => {
   return Object.entries(semanas).map(([fecha, total]) => ({ fecha, total }))
 }
 
-// Lee una variable CSS del tema (así los gráficos respetan el modo noche)
-const color = (variable) =>
-  getComputedStyle(document.documentElement).getPropertyValue(variable).trim()
-
-// Opciones comunes a los gráficos de ejes (líneas y barras)
-const opcionesEjes = () => ({
-  responsive: true,
-  maintainAspectRatio: false, // el alto lo da el div contenedor
-  plugins: { legend: { display: false } },
-  scales: {
-    x: { grid: { display: false }, ticks: { color: color('--pc-texto-suave') } },
-    y: {
-      beginAtZero: true,
-      ticks: { precision: 0, color: color('--pc-texto-suave') },
-      grid: { color: color('--pc-linea') },
-    },
-  },
-})
-
 // Contenedor de cada gráfico: título, alto fijo y texto alternativo para lectores de pantalla
 function Grafico({ titulo, extra, alto = 260, descripcion, vacio, children }) {
   return (
@@ -93,7 +74,7 @@ function Grafico({ titulo, extra, alto = 260, descripcion, vacio, children }) {
         {vacio ? (
           <p className="text-muted small mb-0">Sin datos en este período.</p>
         ) : (
-          <div style={{ position: 'relative', height: alto }} role="img" aria-label={descripcion}>
+          <div className="grafico" style={{ height: alto }} role="img" aria-label={descripcion}>
             {children}
           </div>
         )}
@@ -103,6 +84,7 @@ function Grafico({ titulo, extra, alto = 260, descripcion, vacio, children }) {
 }
 
 export default function Dashboard() {
+  const c = useColoresGrafico() // colores de la marca según claro/noche
   const [rango, setRango] = useState({ desde: haceDias(13), hasta: hoy(), agrupar: 'dia' })
   const [errorRango, setErrorRango] = useState('')
   const [resumen, setResumen] = useState(null)
@@ -236,17 +218,14 @@ export default function Dashboard() {
               descripcion={`Visitas: ${datosVisitas.map((d) => `${d.etiqueta} ${d.total}`).join(', ')}`}
             >
               <Line
-                options={opcionesEjes()}
+                options={opcionesGrafico('linea', c)}
                 data={{
                   labels: datosVisitas.map((d) => d.etiqueta),
                   datasets: [
                     {
                       label: 'Visitas',
                       data: datosVisitas.map((d) => d.total),
-                      borderColor: color('--pc-carmin'),
-                      backgroundColor: `${color('--pc-carmin')}22`, // mismo color, transparente
-                      fill: true,
-                      tension: 0.3,
+                      ...estiloDataset('linea', c),
                       pointRadius: 3,
                     },
                   ],
@@ -263,20 +242,13 @@ export default function Dashboard() {
               descripcion={`Consultas: ${datosTipo.map((d) => `${d.etiqueta} ${d.total}`).join(', ')}`}
             >
               <Doughnut
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: { legend: { position: 'bottom', labels: { color: color('--pc-texto') } } },
-                }}
+                options={opcionesGrafico('dona', c)}
                 data={{
                   labels: datosTipo.map((d) => d.etiqueta),
                   datasets: [
                     {
                       data: datosTipo.map((d) => d.total),
-                      // Colores que se leen en modo claro y en modo noche
-                      backgroundColor: [color('--pc-carmin'), color('--pc-vicuna'), color('--pc-dorado')],
-                      borderColor: color('--pc-lana-clara'),
-                      borderWidth: 2,
+                      ...estiloDataset('dona', c),
                     },
                   ],
                 }}
@@ -292,14 +264,14 @@ export default function Dashboard() {
               descripcion={`Registros: ${datosRegistros.map((d) => `${d.etiqueta} ${d.total}`).join(', ')}`}
             >
               <Bar
-                options={opcionesEjes()}
+                options={opcionesGrafico('barras', c)}
                 data={{
                   labels: datosRegistros.map((d) => d.etiqueta),
                   datasets: [
                     {
                       label: 'Registros',
                       data: datosRegistros.map((d) => d.total),
-                      backgroundColor: color('--pc-vicuna'),
+                      ...estiloDataset('barras', c),
                       borderRadius: 4,
                       maxBarThickness: 48,
                     },

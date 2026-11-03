@@ -8,12 +8,10 @@ export default function Hero() {
         
         {/* Columna de texto */}
         <div className="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start">
-          <p className="fs-4 text-muted mb-2">Hola, soy tu nombre</p>
-          <h1 className="display-4 fw-bold mb-3">
-            Desarrollador Fullstack
-          </h1>
-          
-          {/* Animación de Gimena */}
+          <p className="rotulo mb-2">DESARROLLADORA FULLSTACK · SALTA</p>
+          <p className="fs-4 text-muted mb-3">Hola, soy Martina Arce</p>
+
+          {/* Único h1 de la página */}
           <TituloAnimado texto="Productos web" resaltado="de punta a punta." />
           
           <p className="lead mt-4 mb-4 text-secondary">

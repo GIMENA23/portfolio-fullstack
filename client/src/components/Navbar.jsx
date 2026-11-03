@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import { BotonModoNoche } from '../animations'
 
 export default function Navbar() {
   const { user, hasRole, logout } = useAuth()
@@ -26,20 +27,11 @@ export default function Navbar() {
   const displayName = (user?.name || user?.nombre || 'Usuario').split(' ')[0]
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary sticky-top shadow-sm py-2">
+    <nav className="navbar navbar-expand-lg bg-body sticky-top py-2">
       <div className="container">
         <Link className="navbar-brand fw-bold d-flex align-items-center gap-2" to="/">
-          <span
-            className="d-inline-flex align-items-center justify-content-center rounded-2 text-white fw-bold small"
-            style={{
-              width: 30,
-              height: 30,
-              backgroundColor: 'var(--color-primary, #0d6efd)',
-            }}
-          >
-            PF
-          </span>
-          <span>Portfolio</span>
+          <span className="logo-rombo" aria-hidden="true">ma</span>
+          <span>arce.dev</span>
         </Link>
 
         <button
@@ -89,12 +81,16 @@ export default function Navbar() {
 
             <li className="nav-item d-none d-lg-block mx-1 text-muted opacity-50">|</li>
 
+            <li className="nav-item ms-lg-2">
+              <BotonModoNoche />
+            </li>
+
             {user ? (
               <li className="nav-item d-flex align-items-center justify-content-between justify-content-lg-start gap-2 pt-2 pt-lg-0 border-top border-lg-0 mt-2 mt-lg-0">
                 <span className="small text-secondary d-flex align-items-center gap-1">
                   Hola, <strong className="text-body">{displayName}</strong>
                   {user.role && user.role !== 'user' && (
-                    <span className="badge rounded-pill text-bg-light border text-uppercase ms-1">
+                    <span className="badge rounded-pill text-bg-secondary text-uppercase ms-1">
                       {user.role}
                     </span>
                   )}

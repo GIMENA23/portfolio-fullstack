@@ -32,7 +32,7 @@ export default function Home() {
       <section className="container py-5 my-4">
         <div
           className="card border-0 shadow-sm p-4 p-md-5 text-center"
-          style={{ backgroundColor: 'var(--color-surface, #f8f9fa)' }}
+          style={{ backgroundColor: 'var(--pc-lana-clara)' }}
         >
           <div className="card-body">
             <h2 className="fw-bold mb-3">¿Tenés un proyecto en mente?</h2>
