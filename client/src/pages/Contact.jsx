@@ -155,7 +155,7 @@ export default function Contact() {
     <>
       <section className="sec-inner d-flex flex-column gap-3" style={{ paddingBottom: 0 }}>
         <span className="rotulo">CONTACTO</span>
-        <TituloAnimado texto="Contame tu proyecto." className="pagina-titulo" />
+        <TituloAnimado texto="Contame tu proyecto." className="pagina-titulo titulo-contacto" />
         <div style={{ maxWidth: 360 }}><GuardaTejida fina alCargar delay={300} /></div>
       </section>
 

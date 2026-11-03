@@ -934,6 +934,9 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .sec-titulo-chico { font-family: var(--pc-font-titulo); font-weight: 800; font-size: 1.875rem; line-height: 1.05; text-transform: uppercase; margin: 0; }
 @media (max-width: 767.98px) { .sec-titulo-chico { font-size: 1.625rem; } }
 
+/* Contacto: el título corta en dos líneas («Contame tu / proyecto.») */
+.titulo-contacto { font-size: clamp(1.75rem, 8vw, 4rem); max-width: 14em; }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
