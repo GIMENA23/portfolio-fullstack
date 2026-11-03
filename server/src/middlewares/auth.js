@@ -1,42 +1,59 @@
-// ⚙️ BASE DEL PROYECTO — autenticación con JWT y control de roles.
-//   router.get('/x', requireAuth, handler)                    → logueado
-//   router.post('/x', requireAuth, requireRole('admin'), h)   → solo admin
-import jwt from 'jsonwebtoken'
-import { env } from '../config/env.js'
-import User from '../models/User.js'
-import { unauthorized, forbidden } from '../utils/http.js'
+import mongoose from 'mongoose';
+import { User } from '../models/User.js';
+import { AppError } from '../utils/AppError.js';
+import { verifyToken } from '../utils/tokens.js';
 
-export const signToken = (user) =>
-  jwt.sign({ sub: user._id.toString(), role: user.role }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN })
+const bearerToken = (req) => {
+  const [scheme, token] = (req.get('authorization') || '').split(' ');
+  return scheme === 'Bearer' && token ? token : null;
+};
 
-async function loadUser(req) {
-  const header = req.headers.authorization || ''
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null
-  if (!token) return null
+// Devuelve el usuario dueño del token. Revisa `active` en cada pedido, así que
+// desactivar una cuenta corta también las sesiones que ya estaban abiertas.
+async function userFromToken(token) {
+  let payload;
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET)
-    const user = await User.findById(payload.sub)
-    return user && user.active ? user : null
+    payload = verifyToken(token);
   } catch {
-    return null
+    throw new AppError(401, 'no_autenticado', 'Tu sesión venció. Iniciá sesión de nuevo.');
   }
+  // El hash se carga porque `providers` (publicUser) se calcula con él; publicUser nunca lo devuelve.
+  const user = mongoose.isValidObjectId(payload.sub) ? await User.findById(payload.sub).select('+passwordHash') : null;
+  if (!user) throw new AppError(401, 'no_autenticado', 'Tu sesión venció. Iniciá sesión de nuevo.');
+  // Un token emitido antes del último cambio de contraseña ya no vale.
+  if ((payload.tv ?? 0) !== (user.tokenVersion ?? 0)) {
+    throw new AppError(401, 'no_autenticado', 'Tu sesión venció. Iniciá sesión de nuevo.');
+  }
+  if (!user.active) throw new AppError(403, 'cuenta_desactivada', 'Tu cuenta está desactivada. Escribinos para recuperarla.');
+  return user;
 }
 
-/** Exige sesión iniciada. Deja el usuario en req.user. */
-export async function requireAuth(req, res, next) {
-  req.user = await loadUser(req)
-  if (!req.user) return next(unauthorized())
-  next()
+export async function authenticate(req, _res, next) {
+  const token = bearerToken(req);
+  if (!token) throw new AppError(401, 'no_autenticado', 'Iniciá sesión para continuar.');
+  req.user = await userFromToken(token);
+  next();
 }
 
-/** Si hay sesión, deja req.user; si no, sigue igual (para rutas públicas). */
-export async function optionalAuth(req, res, next) {
-  req.user = await loadUser(req)
-  next()
+// Para endpoints públicos que mejoran si hay sesión (por ejemplo enviar una consulta).
+// Un token inválido o vencido no es un error: el pedido sigue como anónimo.
+export async function optionalAuth(req, _res, next) {
+  req.user = null;
+  const token = bearerToken(req);
+  if (token) {
+    try {
+      req.user = await userFromToken(token);
+    } catch {
+      req.user = null;
+    }
+  }
+  next();
 }
 
-/** Exige uno de los roles indicados. Usar DESPUÉS de requireAuth. */
-export const requireRole = (...roles) => (req, res, next) => {
-  if (!req.user || !roles.includes(req.user.role)) return next(forbidden())
-  next()
-}
+// Se usa después de `authenticate`.
+export const requireRole =
+  (...roles) =>
+  (req, _res, next) => {
+    if (!roles.includes(req.user.role)) throw new AppError(403, 'sin_permiso', 'No tenés permiso para hacer esto.');
+    next();
+  };

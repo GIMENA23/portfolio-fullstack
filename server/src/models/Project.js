@@ -1,35 +1,31 @@
-// ⚙️ BASE DEL PROYECTO — colección "projects" (cada proyecto incluye su demo)
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import { jsonOptions } from '../utils/serialize.js';
 
-const urlRegex = /^https?:\/\/.+/
+const imageSchema = new mongoose.Schema({ url: { type: String, required: true }, publicId: { type: String, required: true } }, { _id: false });
+
+const httpsUrl = { validator: (v) => !v || /^https?:\/\/\S+\.\S+/.test(v), message: 'Tiene que empezar con http:// o https://' };
 
 const projectSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: [true, 'El título es obligatorio'],
-      trim: true,
-      minlength: [3, 'El título debe tener al menos 3 caracteres'],
-      maxlength: [80, 'El título no puede superar 80 caracteres'],
-    },
-    summary: {
-      type: String,
-      required: [true, 'El resumen es obligatorio'],
-      trim: true,
-      maxlength: [200, 'El resumen no puede superar 200 caracteres'],
-    },
-    description: { type: String, required: [true, 'La descripción es obligatoria'], trim: true },
+    title: { type: String, required: true, trim: true, minlength: 3, maxlength: 80 },
+    summary: { type: String, required: true, trim: true, maxlength: 200 },
+    description: { type: String, trim: true, maxlength: 3000, default: '' },
+    problem: { type: String, trim: true, maxlength: 1000, default: '' },
+    solution: { type: String, trim: true, maxlength: 1000, default: '' },
+    highlights: { type: [{ type: String, trim: true, maxlength: 160 }], validate: (v) => v.length <= 6 },
+    role: { type: String, trim: true, maxlength: 80, default: '' },
+    duration: { type: String, trim: true, maxlength: 40, default: '' },
     stack: {
-      type: [String],
-      validate: [(v) => v.length > 0, 'Indicá al menos una tecnología'],
+      type: [{ type: String, trim: true, minlength: 1, maxlength: 30 }],
+      validate: [(v) => v.length >= 1 && v.length <= 12, 'Indicá al menos una tecnología.'],
     },
-    images: { type: [String], default: [] },
-    demoUrl: { type: String, trim: true, match: [urlRegex, 'La URL de la demo no es válida'] },
-    repoUrl: { type: String, trim: true, match: [urlRegex, 'La URL del repositorio no es válida'] },
+    images: { type: [imageSchema], validate: (v) => v.length <= 5 },
+    demoUrl: { type: String, default: null, validate: httpsUrl },
+    repoUrl: { type: String, default: null, validate: httpsUrl },
+    visible: { type: Boolean, default: false },
     featured: { type: Boolean, default: false },
-    visible: { type: Boolean, default: true },
   },
-  { timestamps: true },
-)
+  { timestamps: true, toJSON: jsonOptions },
+);
 
-export default mongoose.model('Project', projectSchema)
+export const Project = mongoose.model('Project', projectSchema);

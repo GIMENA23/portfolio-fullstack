@@ -1,36 +1,29 @@
-// ⚙️ BASE DEL PROYECTO — servidor Express.
-// Todas las rutas ya están montadas: cada uno trabaja en su archivo de routes/.
-import express from 'express'
-import cors from 'cors'
-import { env } from './config/env.js'
-import { connectDB } from './config/db.js'
-import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js'
+import mongoose from 'mongoose';
+import { createApp } from './app.js';
+import { env } from './config/env.js';
 
-import authRoutes from './routes/auth.routes.js'
-import projectRoutes from './routes/projects.routes.js'
-import serviceRoutes from './routes/services.routes.js'
-import inquiryRoutes from './routes/inquiries.routes.js'
-import userRoutes from './routes/users.routes.js'
-import { visitsRouter, statsRouter } from './routes/stats.routes.js'
+try {
+  // Si Atlas no deja entrar a esta IP, falla en 10 segundos con un mensaje claro en lugar de colgarse.
+  await mongoose.connect(env.mongoUri, { serverSelectionTimeoutMS: 10_000 });
+} catch (error) {
+  console.error(`No se pudo conectar a MongoDB: ${error.message}`);
+  console.error('Revisá MONGODB_URI (usuario, contraseña y nombre de la base) y que Atlas permita esta IP en Network Access.');
+  process.exit(1);
+}
+console.log('MongoDB conectado');
 
-const app = express()
+const server = createApp().listen(env.port, () => {
+  console.log(`API escuchando en http://localhost:${env.port}/api`);
+});
 
-app.set('trust proxy', 1) // necesario en Render para leer la IP real
-app.use(cors({ origin: env.CLIENT_URL.split(',') }))
-app.use(express.json({ limit: '100kb' }))
-
-app.get('/api/health', (req, res) => res.json({ ok: true, data: { status: 'online' } }))
-
-app.use('/api/auth', authRoutes)
-app.use('/api/projects', projectRoutes)
-app.use('/api/services', serviceRoutes)
-app.use('/api/inquiries', inquiryRoutes)
-app.use('/api/users', userRoutes)
-app.use('/api/visits', visitsRouter)
-app.use('/api/stats', statsRouter)
-
-app.use('/api', notFoundHandler)
-app.use(errorHandler)
-
-await connectDB()
-app.listen(env.PORT, () => console.log(`🚀 API escuchando en http://localhost:${env.PORT}`))
+// Render manda SIGTERM al reiniciar o redeployar: se termina lo que está en curso y se cierra la conexión.
+function shutdown(signal) {
+  console.log(`${signal} recibido: cerrando…`);
+  setTimeout(() => process.exit(1), 10_000).unref(); // si algo cuelga, no se queda trabado el deploy
+  server.close(async () => {
+    await mongoose.disconnect();
+    process.exit(0);
+  });
+}
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
