@@ -1,285 +1,144 @@
-// 🎨 DUEÑO: Integrante B
+// 🎨 DUEÑO: Integrante B — 05 Experiencia (Main.dc.html): línea de tiempo con rombos
+// + actividad real del repositorio desde la API pública de GitHub.
 import { useEffect, useState } from 'react'
-import { useReveal } from '../../animations'
+import { useReveal, GuardaLoader, GuardaTejida } from '../../animations'
+import EncabezadoSeccion from '../EncabezadoSeccion.jsx'
 
-// Cambiá este usuario por tu usuario real de GitHub o el del equipo
-const DEFAULT_GITHUB_USER = 'octocat'
+const REPO = 'GIMENA23/portfolio-fullstack'
+const REPO_URL = `https://github.com/${REPO}`
 
+// Años y empresas: placeholders hasta tener los datos reales.
 const TIMELINE = [
   {
-    id: 1,
-    period: '[AÑO] — Presente',
-    role: 'Desarrolladora Fullstack Freelance',
-    place: '[EMPRESA]',
-    type: 'Trabajo',
-    description:
-      'Diseño y desarrollo de aplicaciones web completas utilizando el stack MERN (MongoDB, Express, React y Node.js), autenticación JWT y despliegue en la nube.',
-    tags: ['React', 'Node.js', 'MongoDB', 'Bootstrap 5'],
+    periodo: '[AÑO] — HOY',
+    rol: 'Desarrolladora fullstack independiente',
+    texto: 'Sistemas a medida para pymes de Salta y Jujuy.',
   },
   {
-    id: 2,
-    period: '[AÑO] — [AÑO]',
-    role: 'Desarrolladora Frontend',
-    place: '[EMPRESA]',
-    type: 'Trabajo',
-    description:
-      'Construcción de interfaces responsivas, consumo de APIs REST, validación de formularios y optimización de experiencia de usuario.',
-    tags: ['JavaScript', 'React Router', 'CSS3', 'Git'],
+    periodo: '[AÑO] — [AÑO]',
+    rol: 'Desarrolladora backend · [EMPRESA]',
+    texto: 'APIs REST y bases de datos para un equipo de producto.',
   },
   {
-    id: 3,
-    period: 'En curso',
-    role: 'Formación Universitaria en Informática / Sistemas',
-    place: 'Universidad Católica de Salta (UCASAL)',
-    type: 'Estudio',
-    description:
-      'Especialización en ingeniería de software, arquitectura cliente-servidor, bases de datos y programación web avanzada (Lenguajes IV).',
-    tags: ['Arquitectura Web', 'Bases de Datos', 'Ingeniería de Software'],
+    periodo: '[AÑO] — [AÑO]',
+    rol: 'Ingeniería en Informática · UCASAL',
+    texto: 'Formación en desarrollo de software y sistemas.',
   },
 ]
 
-const FALLBACK_REPOS = [
-  {
-    id: 'fallback-1',
-    name: 'portfolio-fullstack-mern',
-    description:
-      'Aplicación web fullstack con React, Express y MongoDB, panel administrativo y autenticación por roles.',
-    html_url: 'https://github.com',
-    language: 'JavaScript',
-    stargazers_count: 12,
-    forks_count: 3,
-  },
-  {
-    id: 'fallback-2',
-    name: 'rest-api-nodejs-jwt',
-    description:
-      'Servidor backend con Express, validación estricta de datos, seguridad con JWT y arquitectura modular.',
-    html_url: 'https://github.com',
-    language: 'JavaScript',
-    stargazers_count: 8,
-    forks_count: 2,
-  },
-  {
-    id: 'fallback-3',
-    name: 'ui-components-react',
-    description:
-      'Colección de componentes reutilizables en React con soporte responsive en Bootstrap 5 y animaciones.',
-    html_url: 'https://github.com',
-    language: 'JSX',
-    stargazers_count: 6,
-    forks_count: 1,
-  },
-]
+const fechaCorta = (iso) => new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
-export default function Experience() {
-  const revealRef = useReveal()
-
-  const [username, setUsername] = useState(DEFAULT_GITHUB_USER)
-  const [inputUser, setInputUser] = useState(DEFAULT_GITHUB_USER)
-  const [repos, setRepos] = useState([])
-  const [loadingRepos, setLoadingRepos] = useState(true)
-  const [usingFallback, setUsingFallback] = useState(false)
+function useRepoGithub() {
+  const [estado, setEstado] = useState({ cargando: true, error: '', repo: null, lenguajes: [], commits: [] })
 
   useEffect(() => {
-    let isMounted = true
-    setLoadingRepos(true)
-    setUsingFallback(false)
-
-    fetch(
-      `https://api.github.com/users/${encodeURIComponent(
-        username
-      )}/repos?sort=updated&per_page=4`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error('No se pudo obtener el perfil de GitHub')
+    let activo = true
+    const pedir = (ruta) =>
+      fetch(`https://api.github.com/repos/${REPO}${ruta}`).then((res) => {
+        if (!res.ok) throw new Error(res.status === 403 ? 'GitHub limitó las consultas por un rato' : `GitHub respondió ${res.status}`)
         return res.json()
       })
-      .then((data) => {
-        if (!isMounted) return
-        if (Array.isArray(data) && data.length > 0) {
-          setRepos(data.slice(0, 4))
-        } else {
-          setRepos(FALLBACK_REPOS)
-          setUsingFallback(true)
-        }
-      })
-      .catch(() => {
-        if (!isMounted) return
-        setRepos(FALLBACK_REPOS)
-        setUsingFallback(true)
-      })
-      .finally(() => {
-        if (isMounted) setLoadingRepos(false)
-      })
 
+    Promise.all([pedir(''), pedir('/languages'), pedir('/commits?per_page=5')])
+      .then(([repo, langs, commits]) => {
+        if (!activo) return
+        const total = Object.values(langs).reduce((a, b) => a + b, 0) || 1
+        const lenguajes = Object.entries(langs).map(([nombre, bytes]) => ({ nombre, pct: Math.round((bytes / total) * 100) }))
+        setEstado({ cargando: false, error: '', repo, lenguajes, commits })
+      })
+      .catch((err) => {
+        if (activo) setEstado({ cargando: false, error: err.message || 'No se pudo conectar con GitHub', repo: null, lenguajes: [], commits: [] })
+      })
     return () => {
-      isMounted = false
+      activo = false
     }
-  }, [username])
+  }, [])
 
-  const handleUserSearch = (e) => {
-    e.preventDefault()
-    const clean = inputUser.trim()
-    if (clean) setUsername(clean)
+  return estado
+}
+
+function ActividadGithub() {
+  const { cargando, error, repo, lenguajes, commits } = useRepoGithub()
+
+  if (cargando) return <GuardaLoader texto="Consultando GitHub…" />
+
+  if (error) {
+    return (
+      <div className="alert alert-light mb-0" role="alert">
+        ⚠ No pudimos cargar la actividad de GitHub ({error}).{' '}
+        <a href={REPO_URL} target="_blank" rel="noreferrer" className="alert-link">Ver el repositorio en GitHub ↗</a>
+      </div>
+    )
   }
 
   return (
-    <section id="experience" ref={revealRef} className="container py-5">
-      {/* Encabezado de la sección */}
-      <div className="text-center mb-5">
-        <span className="badge rounded-pill text-bg-light border px-3 py-2 mb-2 text-secondary">
-          Trayectoria & Código
-        </span>
-        <h2 className="fw-bold mb-2">Experiencia y Formación</h2>
-        <p className="text-secondary mb-0 mx-auto" style={{ maxWidth: '640px' }}>
-          Recorrido académico y profesional junto con actividad reciente obtenida directamente desde la API pública de GitHub.
-        </p>
-      </div>
+    <div className="card">
+      <div className="card-body p-4 d-flex flex-column gap-3">
+        <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div>
+            <a href={repo.html_url} target="_blank" rel="noreferrer" className="fw-bold">{repo.full_name} ↗</a>
+            {repo.description && <p className="small text-secondary mb-0">{repo.description}</p>}
+          </div>
+          <span className="rotulo">★ {repo.stargazers_count} · ⑂ {repo.forks_count}</span>
+        </div>
 
-      <div className="row gy-5 gx-lg-5">
-        {/* Columna izquierda: Línea de tiempo */}
-        <div className="col-lg-7">
-          <h3 className="h5 fw-bold mb-4 d-flex align-items-center gap-2">
-            <span>📌</span> Línea de tiempo
-          </h3>
-
-          <div className="position-relative ps-4 border-start border-2 border-primary-subtle">
-            {TIMELINE.map((item, idx) => (
-              <div
-                key={item.id}
-                className={`position-relative ${
-                  idx !== TIMELINE.length - 1 ? 'mb-4' : ''
-                }`}
-              >
-                {/* Punto indicador en la línea */}
-                <span
-                  className="position-absolute top-0 start-0 translate-middle rounded-circle border border-2 border-white shadow-sm"
-                  style={{
-                    width: '14px',
-                    height: '14px',
-                    marginLeft: '-1.5rem',
-                    marginTop: '1.25rem',
-                    backgroundColor: 'var(--pc-carmin)',
-                  }}
-                />
-
-                <div className="card border-0 shadow-sm">
-                  <div className="card-body p-4">
-                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
-                      <span className="badge rounded-pill text-bg-light border text-secondary">
-                        {item.period}
-                      </span>
-                      <span
-                        className={`badge rounded-pill ${
-                          item.type === 'Trabajo'
-                            ? 'text-bg-primary'
-                            : 'text-bg-secondary'
-                        }`}
-                      >
-                        {item.type}
-                      </span>
-                    </div>
-
-                    <h4 className="h5 fw-bold mb-1">{item.role}</h4>
-                    <p className="text-primary small fw-medium mb-2">
-                      {item.place}
-                    </p>
-                    <p className="text-secondary small mb-3">
-                      {item.description}
-                    </p>
-
-                    <div className="d-flex flex-wrap gap-1">
-                      {item.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="badge text-bg-light border fw-normal text-secondary"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {lenguajes.length > 0 && (
+          <ul className="list-unstyled d-flex flex-wrap gap-2 mb-0" aria-label="Lenguajes del repositorio">
+            {lenguajes.map((l) => (
+              <li key={l.nombre} className="chip-email small">{l.nombre} · {l.pct}%</li>
             ))}
-          </div>
-        </div>
+          </ul>
+        )}
 
-        {/* Columna derecha: Repositorios reales desde GitHub API */}
-        <div className="col-lg-5">
-          <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-            <h3 className="h5 fw-bold mb-0 d-flex align-items-center gap-2">
-              <span>💻</span> Repositorios en GitHub
-            </h3>
-            <span className="badge text-bg-light border text-muted">
-              GitHub REST API
-            </span>
-          </div>
-
-          {/* Buscador de usuario de GitHub en vivo */}
-          <form onSubmit={handleUserSearch} className="mb-3">
-            <div className="input-group input-group-sm shadow-sm">
-              <span className="input-group-text bg-white text-muted">@</span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Usuario de GitHub..."
-                value={inputUser}
-                onChange={(e) => setInputUser(e.target.value)}
-                aria-label="Usuario de GitHub"
-              />
-              <button type="submit" className="btn btn-outline-primary">
-                Cargar
-              </button>
-            </div>
-          </form>
-
-          {usingFallback && (
-            <div className="alert alert-light border small py-2 mb-3 text-secondary">
-              Mostrando repositorios destacados del equipo. Podés ingresar cualquier usuario válido de GitHub arriba.
-            </div>
-          )}
-
-          {loadingRepos ? (
-            <div className="card border-0 shadow-sm p-4 text-center text-muted">
-              <div className="spinner-border spinner-border-sm text-primary mx-auto mb-2" role="status" />
-              <small>Consultando API de GitHub…</small>
-            </div>
-          ) : (
-            <div className="d-flex flex-column gap-3">
-              {repos.map((repo) => (
-                <a
-                  key={repo.id}
-                  href={repo.html_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="card border-0 shadow-sm text-decoration-none text-reset"
-                >
-                  <div className="card-body p-3">
-                    <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
-                      <h4 className="h6 fw-bold text-primary mb-0 text-break">
-                        {repo.name}
-                      </h4>
-                      <span className="badge rounded-pill text-bg-light border small">
-                        ★ {repo.stargazers_count ?? 0}
-                      </span>
-                    </div>
-
-                    <p className="text-secondary small mb-2">
-                      {repo.description || 'Repositorio de código público en GitHub.'}
-                    </p>
-
-                    <div className="d-flex align-items-center justify-content-between small text-muted">
-                      <span>{repo.language || 'Código'}</span>
-                      <span>Ver en GitHub →</span>
-                    </div>
-                  </div>
+        <div>
+          <p className="rotulo mb-2">Últimos commits</p>
+          <ul className="list-unstyled d-flex flex-column gap-2 mb-0">
+            {commits.map((c) => (
+              <li key={c.sha} className="small d-flex flex-wrap justify-content-between gap-2">
+                <a href={c.html_url} target="_blank" rel="noreferrer" className="text-decoration-none">
+                  {c.commit.message.split('\n')[0]}
                 </a>
-              ))}
-            </div>
-          )}
+                <span className="text-secondary">{fechaCorta(c.commit.author.date)}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-    </section>
+    </div>
+  )
+}
+
+export default function Experience() {
+  const ref = useReveal()
+
+  return (
+    <>
+      <GuardaTejida fina />
+      <section id="experiencia" ref={ref} className="sec-clara">
+        <div className="sec-inner d-flex flex-column gap-5">
+          <div className="d-flex flex-wrap gap-5">
+            <div data-reveal className="d-flex flex-column gap-3" style={{ flex: '1 1 280px', minWidth: 0 }}>
+              <EncabezadoSeccion num="05" rotulo="EXPERIENCIA · RECORRIDO" titulo="Experiencia" />
+              <p className="mb-0 text-secondary small">Trabajo independiente, equipos de producto y formación en la UCASAL.</p>
+            </div>
+            <ol data-reveal className="linea-tiempo" style={{ flex: '2 1 480px', minWidth: 0 }}>
+              {TIMELINE.map((t) => (
+                <li key={t.rol}>
+                  <span className="hito" aria-hidden="true" />
+                  <span className="linea-fecha">{t.periodo}</span>
+                  <strong className="linea-rol">{t.rol}</strong>
+                  <p className="mb-0 small text-secondary">{t.texto}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div data-reveal>
+            <p className="rotulo mb-3">ACTIVIDAD EN GITHUB</p>
+            <ActividadGithub />
+          </div>
+        </div>
+      </section>
+    </>
   )
 }

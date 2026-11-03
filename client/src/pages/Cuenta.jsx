@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { authApi, inquiriesApi, backendPendiente } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { GuardaLoader } from '../animations'
+import HeroPagina from '../components/HeroPagina.jsx'
 import PasswordReglas from '../components/PasswordReglas.jsx'
 import ResumenErrores from '../components/ResumenErrores.jsx'
 import { validarNuevaPassword } from '../components/passwordReglas.js'
@@ -340,11 +341,11 @@ export default function Cuenta() {
   const Panel = PANELES[tab]
 
   return (
+    <>
+    <HeroPagina rotulo="USUARIO REGISTRADO" titulo="Mi cuenta" />
     <div className="container py-5">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <p className="rotulo mb-2">Mi cuenta</p>
-          <h1 className="h2 mb-4">Tu cuenta</h1>
 
           <ul className="nav nav-tabs flex-nowrap overflow-auto mb-4" role="tablist">
             {TABS.map((t) => (
@@ -370,5 +371,6 @@ export default function Cuenta() {
         </div>
       </div>
     </div>
+    </>
   )
 }

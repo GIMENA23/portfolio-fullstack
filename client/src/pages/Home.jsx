@@ -1,11 +1,12 @@
-// 🎨 DUEÑO: Integrante B — arma la página de inicio con las secciones.
-// Cada sección está en su propio archivo (components/home/) para no pisarse.
+// 🎨 DUEÑO: Integrante B — arma la página de inicio con las secciones del prototipo (Main.dc.html).
+// Orden: hero · 01 Perfil · 02 Stack · 03 Servicios · 04 Proyectos · 05 Experiencia · cierre.
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Hero from '../components/home/Hero.jsx'
 import About from '../components/home/About.jsx'
 import Stack from '../components/home/Stack.jsx'
 import Services from '../components/home/Services.jsx'
+import Featured from '../components/home/Featured.jsx'
 import Experience from '../components/home/Experience.jsx'
 import * as apiModule from '../services/api.js'
 
@@ -26,28 +27,14 @@ export default function Home() {
       <About />
       <Stack />
       <Services />
+      <Featured />
       <Experience />
 
-      {/* Banner final de llamada a la acción (CTA) */}
-      <section className="container py-5 my-4">
-        <div
-          className="card border-0 shadow-sm p-4 p-md-5 text-center"
-          style={{ backgroundColor: 'var(--pc-lana-clara)' }}
-        >
-          <div className="card-body">
-            <h2 className="fw-bold mb-3">¿Tenés un proyecto en mente?</h2>
-            <p className="text-secondary mb-4 mx-auto" style={{ maxWidth: '600px' }}>
-              Contame tu idea para armar una propuesta a medida o revisá en detalle los sistemas que ya están en producción.
-            </p>
-            <div className="d-flex flex-wrap gap-3 justify-content-center">
-              <Link to="/contacto" className="btn btn-primary btn-lg px-4">
-                Solicitar cotización
-              </Link>
-              <Link to="/proyectos" className="btn btn-outline-secondary btn-lg px-4">
-                Explorar portfolio
-              </Link>
-            </div>
-          </div>
+      {/* Cierre */}
+      <section className="sec-negra">
+        <div className="cierre-inner">
+          <h2 className="sec-titulo mb-0">¿Tenés un proyecto?</h2>
+          <Link to="/contacto" className="btn btn-cierre px-4">Contame →</Link>
         </div>
       </section>
     </>

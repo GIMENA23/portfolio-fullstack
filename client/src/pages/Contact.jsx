@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { inquiriesApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { EnviadoLottie } from '../animations'
+import HeroPagina from '../components/HeroPagina.jsx'
 
 const INITIAL_FORM = {
   nombre: '',
@@ -185,15 +186,14 @@ export default function Contact() {
   }
 
   return (
+    <>
+    <HeroPagina rotulo="CONTACTO" titulo="Contame tu proyecto." />
     <div className="container py-5">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <div className="mb-4 text-center text-lg-start">
-            <h1 className="fw-bold mb-2">Contacto</h1>
-            <p className="text-secondary mb-0">
-              Completá el formulario para consultas generales, solicitar una cotización o pedir asesoría técnica.
-            </p>
-          </div>
+          <p className="text-secondary mb-4">
+            Completá el formulario para consultas generales, solicitar una cotización o pedir asesoría técnica.
+          </p>
 
           <div className="card border-0 shadow-sm">
             <div className="card-body p-4 p-md-5">
@@ -369,5 +369,6 @@ export default function Contact() {
         </div>
       </div>
     </div>
+    </>
   )
 }

@@ -13,6 +13,7 @@
 //   <NumeroAnimado valor={779} />              → KPIs del dashboard que cuentan (anime.js)
 //   <BotonModoNoche />                         → botón ☀/☾ (data-bs-theme en <html> + localStorage)
 //   aplicarModoGuardado(), useModoNoche()      → arrancar con el modo recordado / leerlo en un componente
+//   <GuardaTejida />                           → guarda separadora que se teje (fina, alCargar)
 //   <RutaAnimada />                            → reemplaza al <Outlet /> de un layout: anima el cambio de página
 //   opcionesGrafico(), estiloDataset(), useColoresGrafico() → opciones de Chart.js con la marca (no importa chart.js)
 //   reduceMovimiento()                       → true si el sistema pide menos movimiento
@@ -33,6 +34,7 @@ export { default as EnviadoLottie } from './componentes/EnviadoLottie.jsx'
 export { default as NumeroAnimado } from './componentes/NumeroAnimado.jsx'
 export { default as BotonModoNoche } from './componentes/BotonModoNoche.jsx'
 export { default as RutaAnimada } from './componentes/RutaAnimada.jsx'
+export { default as GuardaTejida } from './componentes/GuardaTejida.jsx'
 export { aplicarModoGuardado, aplicarTema, alternarTema, useModoNoche } from './modoNoche.js'
 export { opcionesGrafico, estiloDataset, useColoresGrafico } from './graficos.js'
 
