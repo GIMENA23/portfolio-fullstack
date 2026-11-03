@@ -5,13 +5,15 @@ import { Inquiry } from '../models/Inquiry.js';
 import { authenticate, optionalAuth, requireRole } from '../middlewares/auth.js';
 import { limit } from '../middlewares/rateLimit.js';
 import { AppError, validationError } from '../utils/AppError.js';
+import { withAliases } from '../utils/aliases.js';
 import { INQUIRY_STATUSES, INQUIRY_TYPES, inquiryHandlers, replyHandlers, run } from '../utils/contentValidators.js';
 import { DAY_MS, parseDay } from '../utils/dates.js';
 import { inquiryConfirmationEmail, inquiryReplyEmail } from '../utils/emailTemplates.js';
 import { sendMail } from '../utils/mailer.js';
-import { escapeRegex, pageMeta, pageParams } from '../utils/pagination.js';
+import { escapeRegex, pageParams, pageResult } from '../utils/pagination.js';
 import { currentProfile } from '../utils/profile.js';
 import { created, ok } from '../utils/respond.js';
+import { checkAndStoreAll, receiveFiles } from '../utils/uploadFile.js';
 import { inquiryDetail, inquiryMine, inquiryReplies, inquiryRow } from '../utils/serialize.js';
 import { asString, assertValid, cleanText, normalizeEmail } from '../utils/validators.js';
 
@@ -21,11 +23,18 @@ const staff = [authenticate, requireRole('operator', 'admin')];
 const inquiryNotFound = () => new AppError(404, 'no_encontrado', 'No encontramos esa consulta.');
 const clientUrl = env.clientUrls[0];
 
+// El formulario del sitio manda los campos en español (nombre, telefono, tipo, presupuesto, asunto, mensaje) y el
+// adjunto como archivo en `adjunto` (multipart); los errores vuelven con esos mismos nombres. También se acepta
+// JSON con los nombres de la API y un `attachment` ya subido a /api/uploads.
+const FORM_FIELDS = { nombre: 'name', telefono: 'phone', tipo: 'type', presupuesto: 'budget', asunto: 'subject', mensaje: 'message', adjunto: 'attachment' };
+
 // POST /api/inquiries — público (si trae sesión, la consulta queda en "Mis consultas")
 router.post(
   '/',
   optionalAuth,
   limit({ windowMs: 60 * 60 * 1000, max: 5, message: 'Enviaste varias consultas seguidas. Probá de nuevo en una hora.' }),
+  // Va antes del tope por email: en multipart el email recién se conoce después de leer el formulario.
+  receiveFiles({ single: 'adjunto' }),
   // Cada consulta le manda un email de confirmación al email que ella misma trae. Sin este tope, el formulario
   // sirve para mandarle mensajes (con texto a elección) a un tercero desde cualquier IP.
   limit({
@@ -35,7 +44,7 @@ router.post(
     skip: (req) => !normalizeEmail(req.body?.email),
     message: 'Ese email ya recibió varias confirmaciones. Probá de nuevo en una hora.',
   }),
-  async (req, res) => {
+  withAliases(FORM_FIELDS, async (req, res) => {
     const body = req.body ?? {};
 
     // Campo oculto anti-spam: una persona no lo ve ni lo completa. Si trae texto, se responde como si todo hubiera salido bien.
@@ -47,6 +56,10 @@ router.post(
     if (data.type === 'cotizacion' && !data.budget) errors.budget = 'Elegí un rango de presupuesto.';
     assertValid(errors);
     if (data.type !== 'cotizacion') data.budget = null;
+    if (req.file) {
+      const [{ url, name, size, mime }] = await checkAndStoreAll([req.file], 'attachment', 'attachment');
+      data.attachment = { url, name, size, mime };
+    }
 
     const inquiry = await Inquiry.create({ ...data, userId: req.user?._id ?? null });
 
@@ -61,7 +74,7 @@ router.post(
     }
 
     created(res, { id: String(inquiry._id), number: inquiry.number, status: inquiry.status, createdAt: inquiry.createdAt, emailSent });
-  },
+  }),
 );
 
 // GET /api/inquiries — bandeja del operador: ?tipo=&estado=&desde=&hasta=&q=&page=&limit=
@@ -97,7 +110,7 @@ router.get('/', ...staff, async (req, res) => {
     Inquiry.find(filter).sort({ createdAt: -1, _id: -1 }).skip(paging.skip).limit(paging.limit),
     Inquiry.countDocuments(filter),
   ]);
-  ok(res, inquiries.map(inquiryRow), pageMeta(paging, total));
+  ok(res, pageResult(inquiries.map(inquiryRow), paging, total));
 });
 
 // GET /api/inquiries/mine — registrado: solo las consultas enviadas con su sesión

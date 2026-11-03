@@ -187,6 +187,8 @@ export async function runSeed({ password, now = new Date() }) {
   // --- Contenido público
   const projectDocs = projects.map(({ daysAgo, ...project }) => ({
     ...project,
+    // El panel pide una descripción de al menos 20 caracteres: sin esto, editar un proyecto del seed obligaría a escribirla.
+    description: [project.problem, project.solution].filter(Boolean).join(' ').slice(0, 3000) || project.summary,
     createdAt: at(startOfDay(now, daysAgo) + 12 * HOUR),
     updatedAt: at(startOfDay(now, Math.max(0, daysAgo - int(1, 20)) ) + 12 * HOUR),
   }));

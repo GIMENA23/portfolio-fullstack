@@ -171,15 +171,16 @@ describe('bandeja del operador', () => {
     assert.equal((await api().get('/api/inquiries').set(bearer(await tokenFor('admin')))).status, 200);
   });
 
-  it('lista las más nuevas primero, con los datos de la fila y sin el mensaje', async () => {
+  it('lista las más nuevas primero, con los datos de la fila, el mensaje y las respuestas', async () => {
     await saved({ name: 'Antigua Ana', createdAt: new Date('2026-10-01') });
     await saved({ name: 'Reciente Rosa', createdAt: new Date('2026-10-20'), replies: [{ text: 'x'.repeat(25), operatorId: (await User.create({ name: 'Operador Uno', email: 'op@x.test', role: 'operator' }))._id, operatorName: 'Operador Uno' }] });
 
     const res = await api().get('/api/inquiries').set(bearer(await tokenFor('operator')));
-    assert.deepEqual(res.body.data.map((row) => row.name), ['Reciente Rosa', 'Antigua Ana']);
-    assert.deepEqual(Object.keys(res.body.data[0]).sort(), ['anonymized', 'createdAt', 'email', 'id', 'name', 'number', 'repliesCount', 'status', 'subject', 'type']);
-    assert.equal(res.body.data[0].repliesCount, 1);
-    assert.deepEqual(res.body.meta, { page: 1, limit: 20, total: 2, totalPages: 1 });
+    assert.deepEqual(res.body.data.items.map((row) => row.name), ['Reciente Rosa', 'Antigua Ana']);
+    assert.deepEqual(Object.keys(res.body.data.items[0]).sort(), ['_id', 'anonymized', 'attachment', 'budget', 'createdAt', 'email', 'id', 'message', 'name', 'number', 'phone', 'replies', 'repliesCount', 'status', 'subject', 'type']);
+    assert.equal(res.body.data.items[0].repliesCount, 1);
+    assert.equal(res.body.data.items[0].replies[0].operator.name, 'Operador Uno');
+    assert.deepEqual([res.body.data.page, res.body.data.pages, res.body.data.total], [1, 1, 2]);
   });
 
   it('filtra por tipo, estado y texto, y los filtros se combinan', async () => {
@@ -187,7 +188,7 @@ describe('bandeja del operador', () => {
     await saved({ name: 'Sofía López', type: 'asesoria', status: 'en_proceso', subject: 'Revisión de arquitectura de API' });
     await saved({ name: 'Juan Pérez', type: 'general', status: 'respondida', email: 'juan@ejemplo.com' });
     const operator = bearer(await tokenFor('operator'));
-    const names = async (query) => (await api().get(`/api/inquiries?${query}`).set(operator)).body.data.map((row) => row.name).sort();
+    const names = async (query) => (await api().get(`/api/inquiries?${query}`).set(operator)).body.data.items.map((row) => row.name).sort();
 
     assert.deepEqual(await names('tipo=cotizacion'), ['Lucía Gómez']);
     assert.deepEqual(await names('estado=respondida'), ['Juan Pérez']);
@@ -203,7 +204,7 @@ describe('bandeja del operador', () => {
     await saved({ name: 'Noche', createdAt: new Date('2026-10-16T02:59:00Z') }); // 15/10 23:59
     await saved({ name: 'Después', createdAt: new Date('2026-10-16T03:00:00Z') }); // 16/10 00:00
     const operator = bearer(await tokenFor('operator'));
-    const names = async (query) => (await api().get(`/api/inquiries?${query}`).set(operator)).body.data.map((row) => row.name).sort();
+    const names = async (query) => (await api().get(`/api/inquiries?${query}`).set(operator)).body.data.items.map((row) => row.name).sort();
 
     assert.deepEqual(await names('desde=2026-10-15&hasta=2026-10-15'), ['Madrugada', 'Noche']);
     assert.deepEqual(await names('desde=2026-10-16'), ['Después']);
@@ -227,8 +228,8 @@ describe('bandeja del operador', () => {
   it('pagina', async () => {
     for (let i = 0; i < 5; i++) await saved({ createdAt: new Date(2026, 9, 1 + i) });
     const res = await api().get('/api/inquiries?limit=2&page=3').set(bearer(await tokenFor('operator')));
-    assert.equal(res.body.data.length, 1);
-    assert.deepEqual(res.body.meta, { page: 3, limit: 2, total: 5, totalPages: 3 });
+    assert.equal(res.body.data.items.length, 1);
+    assert.deepEqual([res.body.data.page, res.body.data.pages, res.body.data.total], [3, 3, 5]);
   });
 });
 
@@ -382,8 +383,8 @@ describe('mis consultas', () => {
     assert.deepEqual(res.body.data.map((c) => c.subject), ['Migrar mi base a MongoDB', 'Tienda online para mi emprendimiento']);
     assert.equal(res.body.data[0].lastReply, null);
     assert.deepEqual(res.body.data[1].lastReply, { text: 'Segunda respuesta con el presupuesto detallado final.', sentAt: '2026-10-14T00:00:00.000Z' });
-    assert.deepEqual(Object.keys(res.body.data[1]).sort(), ['createdAt', 'id', 'lastReply', 'number', 'status', 'subject', 'type']);
-    assert.doesNotMatch(JSON.stringify(res.body), /correo\.com|message|replies/);
+    assert.deepEqual(Object.keys(res.body.data[1]).sort(), ['_id', 'createdAt', 'id', 'lastReply', 'message', 'number', 'replies', 'status', 'subject', 'type']);
+    assert.doesNotMatch(JSON.stringify(res.body), /correo\.com|operatorName|operatorId|Operador Uno|De otra persona/);
   });
 
   it('una consulta enviada sin sesión no aparece, aunque el email coincida', async () => {

@@ -32,37 +32,39 @@ describe('usuarios de admin: lectura', () => {
     await make('Valentina Ríos', 'valentina@correo.com', { googleId: 'g-1', createdAt: new Date('2026-10-14') });
     await make('Mateo Fernández', 'mateo@ejemplo.com', { googleId: 'g-2', passwordHash: 'otro-hash', createdAt: new Date('2026-10-05') });
 
-    const res = await api().get('/api/users?rol=user').set(admin);
+    const res = await api().get('/api/users?role=user').set(admin);
     assert.equal(res.status, 200);
-    assert.deepEqual(res.body.data.map((u) => u.name), ['Valentina Ríos', 'Mateo Fernández', 'Antigua Ana']);
-    assert.deepEqual(res.body.data.map((u) => u.providers), [['google'], ['google', 'email'], ['email']]);
-    assert.deepEqual(Object.keys(res.body.data[0]).sort(), ['active', 'createdAt', 'email', 'id', 'lastLogin', 'loginCount', 'name', 'newsletter', 'providers', 'role']);
+    assert.deepEqual(res.body.data.items.map((u) => u.name), ['Valentina Ríos', 'Mateo Fernández', 'Antigua Ana']);
+    assert.deepEqual(res.body.data.items.map((u) => u.provider), ['google', 'google', 'local']);
+    assert.deepEqual(res.body.data.items.map((u) => u.providers), [['google'], ['google', 'email'], ['email']]);
+    assert.deepEqual(Object.keys(res.body.data.items[0]).sort(), ['_id', 'active', 'createdAt', 'email', 'id', 'lastLogin', 'loginCount', 'name', 'newsletter', 'provider', 'providers', 'role']);
     assert.doesNotMatch(JSON.stringify(res.body), /hash|passwordReset/);
-    assert.deepEqual(res.body.meta, { page: 1, limit: 20, total: 3, totalPages: 1 });
+    assert.deepEqual([res.body.data.page, res.body.data.pages, res.body.data.total], [1, 1, 3]);
   });
 
   it('filtra por rol y por texto, y pagina', async () => {
     await make('Operador Uno', 'operador@portfolio.test', { role: 'operator' });
     await make('Lucía Gómez', 'lucia@ejemplo.com');
     await make('Julieta Sosa', 'julieta@ejemplo.com');
-    const names = async (query) => (await api().get(`/api/users?${query}`).set(admin)).body.data.map((u) => u.name).sort();
+    const names = async (query) => (await api().get(`/api/users?${query}`).set(admin)).body.data.items.map((u) => u.name).sort();
 
-    assert.deepEqual(await names('rol=operator'), ['Operador Uno']);
-    assert.deepEqual(await names('rol=admin'), ['Cuenta admin']);
+    assert.deepEqual(await names('role=operator'), ['Operador Uno']);
+    assert.deepEqual(await names('role=admin'), ['Cuenta admin']);
     assert.deepEqual(await names('q=GÓMEZ'), ['Lucía Gómez']);
     assert.deepEqual(await names('q=julieta@'), ['Julieta Sosa']);
     assert.deepEqual(await names('q=.*'), []);
-    assert.deepEqual(await names('rol=user&q=sosa'), ['Julieta Sosa']);
+    assert.deepEqual(await names('role=user&q=sosa'), ['Julieta Sosa']);
 
     const page = await api().get('/api/users?limit=2&page=2').set(admin);
-    assert.equal(page.body.data.length, 2);
-    assert.deepEqual(page.body.meta, { page: 2, limit: 2, total: 4, totalPages: 2 });
+    assert.equal(page.body.data.items.length, 2);
+    assert.deepEqual([page.body.data.page, page.body.data.pages, page.body.data.total], [2, 2, 4]);
+    assert.deepEqual(await names('rol=operator'), ['Operador Uno'], 'también acepta `rol`');
   });
 
   it('rechaza un rol inválido', async () => {
-    const res = await api().get('/api/users?rol=dios').set(admin);
+    const res = await api().get('/api/users?role=dios').set(admin);
     assert.equal(res.status, 400);
-    assert.equal(fieldsOf(res.body).rol, 'Rol no válido.');
+    assert.equal(fieldsOf(res.body).role, 'Rol no válido.');
   });
 
   it('GET /:id devuelve un usuario; 404 si no existe', async () => {

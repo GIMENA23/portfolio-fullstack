@@ -3,7 +3,7 @@ import { User } from '../models/User.js';
 import { authenticate, requireRole } from '../middlewares/auth.js';
 import { AppError, validationError } from '../utils/AppError.js';
 import { deleteAccount } from '../utils/accounts.js';
-import { escapeRegex, pageMeta, pageParams } from '../utils/pagination.js';
+import { escapeRegex, pageParams, pageResult } from '../utils/pagination.js';
 import { ok } from '../utils/respond.js';
 import { publicUser } from '../utils/serialize.js';
 import { asString, assertValid, cleanText, collect } from '../utils/validators.js';
@@ -19,14 +19,14 @@ const forbidden = (message) => new AppError(403, 'sin_permiso', message);
 // `providers` se calcula con el hash de la contraseña, así que hay que traerlo (publicUser nunca lo devuelve).
 const withProviders = (query) => query.select('+passwordHash');
 
-// GET /api/users?rol=&q=&page=&limit=
+// GET /api/users?role=&q=&page=&limit= (también acepta `rol`)
 router.get('/', async (req, res) => {
   const paging = pageParams(req.query);
   const filter = {};
 
-  const rol = asString(req.query.rol);
+  const rol = asString(req.query.role ?? req.query.rol);
   if (rol) {
-    if (!ROLES.includes(rol)) throw validationError({ rol: 'Rol no válido.' });
+    if (!ROLES.includes(rol)) throw validationError({ role: 'Rol no válido.' });
     filter.role = rol;
   }
   const q = cleanText(req.query.q);
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
     withProviders(User.find(filter).sort({ createdAt: -1, _id: -1 }).skip(paging.skip).limit(paging.limit)),
     User.countDocuments(filter),
   ]);
-  ok(res, users.map(publicUser), pageMeta(paging, total));
+  ok(res, pageResult(users.map(publicUser), paging, total));
 });
 
 // GET /api/users/:id

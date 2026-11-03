@@ -30,7 +30,7 @@ router.get('/summary', async (req, res) => {
     User.countDocuments(),
     User.countDocuments({ createdAt: { $gte: monthStart } }),
   ]);
-  ok(res, { visits, users: { total, newThisMonth }, logins, inquiries });
+  ok(res, { visits, users: total, newUsersThisMonth: newThisMonth, logins, inquiries });
 });
 
 // GET /api/stats/visits?agrupar=dia|semana
@@ -38,7 +38,7 @@ router.get('/visits', async (req, res) => {
   const errors = {};
   const grouping = resolveGrouping(req.query, 'dia', errors);
   const range = resolveRange(req.query, { errors });
-  ok(res, await series(Visit, 'createdAt', range, grouping));
+  ok(res, (await series(Visit, 'createdAt', range, grouping)).map(({ date, count }) => ({ fecha: date, total: count })));
 });
 
 // GET /api/stats/inquiries-by-type — siempre los tres tipos, aunque alguno tenga 0
@@ -46,7 +46,7 @@ router.get('/inquiries-by-type', async (req, res) => {
   const range = resolveRange(req.query);
   const rows = await Inquiry.aggregate([{ $match: inRange('createdAt', range) }, { $group: { _id: '$type', count: { $sum: 1 } } }]);
   const counts = new Map(rows.map((row) => [row._id, row.count]));
-  ok(res, ['cotizacion', 'general', 'asesoria'].map((type) => ({ type, count: counts.get(type) ?? 0 })));
+  ok(res, ['cotizacion', 'general', 'asesoria'].map((tipo) => ({ tipo, total: counts.get(tipo) ?? 0 })));
 });
 
 // GET /api/stats/registrations?agrupar=semana — cuentas creadas. Sin rango: las últimas 6 semanas.
@@ -54,7 +54,8 @@ router.get('/registrations', async (req, res) => {
   const errors = {};
   const grouping = resolveGrouping(req.query, 'semana', errors);
   const range = resolveRange(req.query, { errors, defaultFrom: (to) => addDays(mondayOf(to), -35) });
-  ok(res, await series(User, 'createdAt', range, grouping));
+  // `semana` es el lunes de cada semana (o el día, con agrupar=dia); `fecha` repite lo mismo.
+  ok(res, (await series(User, 'createdAt', range, grouping)).map(({ date, count }) => ({ semana: date, fecha: date, total: count })));
 });
 
 export default router;

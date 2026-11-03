@@ -188,7 +188,7 @@ describe('borrado de archivos que ya no se usan', () => {
   it('al cambiar la foto del perfil se borra la anterior', async () => {
     const admin = bearer(await tokenFor('admin'));
     const profile = (photo) => ({
-      name: 'Martina Arce', title: 'Desarrolladora Fullstack', phrase: 'Productos web de punta a punta.',
+      name: 'Martina Arce', title: 'Desarrolladora Fullstack', tagline: 'Productos web de punta a punta.',
       bio: 'Trabajo con pymes, startups y estudios que necesitan un sistema web completo.',
       email: 'hola@arce.dev', location: 'Salta, Argentina', photo,
     });

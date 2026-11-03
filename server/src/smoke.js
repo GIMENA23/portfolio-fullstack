@@ -114,12 +114,12 @@ if (adminPassword) {
     await check('El dashboard devuelve números', async () => {
       const { response, json } = await request('/stats/summary', { headers: auth });
       expect(response.status === 200, `respondió ${response.status}`);
-      return `visitas ${json.data.visits} · accesos ${json.data.logins} · usuarios ${json.data.users.total} · consultas ${json.data.inquiries}`;
+      return `visitas ${json.data.visits} · accesos ${json.data.logins} · usuarios ${json.data.users} · consultas ${json.data.inquiries}`;
     });
     await check('La bandeja de consultas responde', async () => {
       const { response, json } = await request('/inquiries', { headers: auth });
       expect(response.status === 200, `respondió ${response.status}`);
-      return `${json.meta.total} consultas`;
+      return `${json.data.total} consultas`;
     });
   }
 } else {

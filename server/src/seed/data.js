@@ -10,7 +10,7 @@ const placeholder = (hex, label) => ({
 export const defaultProfile = {
   name: 'Martina Arce',
   title: 'Desarrolladora Fullstack',
-  phrase: 'Productos web de punta a punta.',
+  tagline: 'Productos web de punta a punta.',
   bio: 'Trabajo con pymes, startups y estudios que necesitan un sistema web completo: el backend que guarda y protege los datos, la API que los ordena y la interfaz que la gente usa todos los días.',
   email: 'hola@arce.dev',
   location: 'Salta, Argentina · remoto',
@@ -26,10 +26,10 @@ export const defaultProfile = {
 };
 
 export const services = [
-  { name: 'Desarrollo web a medida', description: 'Sitios y aplicaciones completas, del diseño al despliegue.', color: '#9B1B22', priceFrom: 300000 },
-  { name: 'APIs REST', description: 'Diseño e implementación de APIs seguras y documentadas.', color: '#160F10', priceFrom: 200000 },
-  { name: 'Bases de datos', description: 'Modelado y optimización de bases SQL y MongoDB.', color: '#8A5A35', priceFrom: 150000 },
-  { name: 'Asesoría técnica', description: 'Revisión de código, arquitectura y buenas prácticas.', color: '#4F6B3E', priceFrom: 50000 },
+  { name: 'Desarrollo web a medida', description: 'Sitios y aplicaciones completas, del diseño al despliegue.', icon: 'code', color: 'carmin', priceFrom: 300000 },
+  { name: 'APIs REST', description: 'Diseño e implementación de APIs seguras y documentadas.', icon: 'server', color: 'negro', priceFrom: 200000 },
+  { name: 'Bases de datos', description: 'Modelado y optimización de bases SQL y MongoDB.', icon: 'database', color: 'vicuna', priceFrom: 150000 },
+  { name: 'Asesoría técnica', description: 'Revisión de código, arquitectura y buenas prácticas.', icon: 'chat', color: 'exito', priceFrom: 50000 },
 ];
 
 // daysAgo: antigüedad del proyecto. El último es el borrador.

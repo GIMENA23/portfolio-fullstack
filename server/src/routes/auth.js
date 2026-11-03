@@ -7,6 +7,7 @@ import { LoginAttempt } from '../models/LoginAttempt.js';
 import { authenticate } from '../middlewares/auth.js';
 import { limit } from '../middlewares/rateLimit.js';
 import { AppError, validationError } from '../utils/AppError.js';
+import { withAliases } from '../utils/aliases.js';
 import { created, ok } from '../utils/respond.js';
 import { deleteAccount } from '../utils/accounts.js';
 import { google } from '../utils/google.js';
@@ -83,15 +84,19 @@ function googleName(name, email) {
 }
 
 // POST /api/auth/register
-router.post('/register', registerLimit, async (req, res) => {
+// El formulario del sitio manda `nombre` y no pide repetir la contraseña ni aceptar términos: son opcionales,
+// pero si vienen se validan.
+const confirmIfSent = (password, confirm) => (confirm === undefined ? '' : validatePasswordConfirm(password, confirm));
+
+router.post('/register', registerLimit, withAliases({ nombre: 'name' }, async (req, res) => {
   const { name, email, password, passwordConfirm, acceptTerms, newsletter } = req.body ?? {};
   assertValid(
     collect({
       name: validateName(name, { surname: true }),
       email: validateEmail(email),
       password: validatePassword(password),
-      passwordConfirm: validatePasswordConfirm(password, passwordConfirm),
-      acceptTerms: acceptTerms === true ? '' : 'Tenés que aceptar para crear la cuenta.',
+      passwordConfirm: confirmIfSent(password, passwordConfirm),
+      acceptTerms: acceptTerms === false ? 'Tenés que aceptar para crear la cuenta.' : '',
       newsletter: newsletter === undefined || typeof newsletter === 'boolean' ? '' : 'Valor no válido.',
     }),
   );
@@ -114,7 +119,7 @@ router.post('/register', registerLimit, async (req, res) => {
   }
   await recordLogin(user, 'password');
   created(res, session(user));
-});
+}));
 
 // POST /api/auth/login
 router.post('/login', loginLimit, async (req, res) => {
@@ -203,22 +208,35 @@ router.post('/google', googleLimit, async (req, res) => {
 router.get('/me', authenticate, (req, res) => ok(res, publicUser(req.user)));
 
 // PATCH /api/auth/me
+// Acepta { name }, { newsletter } o { password }. El formulario de Mi cuenta manda solo la contraseña nueva, sin la
+// actual: si viene `currentPassword` se comprueba, y si no, se acepta (riesgo anotado en SECURITY.md).
+// Al cambiar la contraseña se cierran las demás sesiones: la respuesta trae un `token` nuevo para esta.
 router.patch('/me', authenticate, async (req, res) => {
-  const { name, newsletter } = req.body ?? {};
-  if (name === undefined && newsletter === undefined) {
+  const { name, newsletter, password, passwordConfirm, currentPassword } = req.body ?? {};
+  if (name === undefined && newsletter === undefined && password === undefined) {
     throw validationError({}, 'No hay nada para guardar.');
   }
-  assertValid(
-    collect({
-      name: name === undefined ? '' : validateName(name),
-      newsletter: newsletter === undefined || typeof newsletter === 'boolean' ? '' : 'Valor no válido.',
-    }),
-  );
+  const user = await User.findById(req.user._id).select('+passwordHash +passwordReset');
+  const fields = collect({
+    name: name === undefined ? '' : validateName(name),
+    newsletter: newsletter === undefined || typeof newsletter === 'boolean' ? '' : 'Valor no válido.',
+    password: password === undefined ? '' : validatePassword(password),
+    passwordConfirm: password === undefined ? '' : confirmIfSent(password, passwordConfirm),
+  });
+  if (password !== undefined && currentPassword !== undefined && user.passwordHash && !(await bcrypt.compare(asString(currentPassword), user.passwordHash))) {
+    fields.currentPassword = 'La contraseña actual no es correcta.';
+  }
+  assertValid(fields);
 
-  if (name !== undefined) req.user.name = cleanText(name);
-  if (newsletter !== undefined) req.user.newsletter = newsletter;
-  await req.user.save();
-  ok(res, publicUser(req.user));
+  if (name !== undefined) user.name = cleanText(name);
+  if (newsletter !== undefined) user.newsletter = newsletter;
+  if (password !== undefined) {
+    user.passwordHash = await bcrypt.hash(password, BCRYPT_COST);
+    user.passwordReset = undefined;
+    user.tokenVersion = (user.tokenVersion ?? 0) + 1;
+  }
+  await user.save();
+  ok(res, { ...publicUser(user), ...(password !== undefined && { token: signToken(user) }) });
 });
 
 // POST /api/auth/password — crea la contraseña (cuenta de Google) o la cambia
@@ -248,7 +266,8 @@ router.delete('/me', authenticate, async (req, res) => {
   if (req.user.role !== 'user') {
     throw new AppError(403, 'sin_permiso', 'Las cuentas de operador y administrador las elimina un administrador desde Usuarios.');
   }
-  if (req.body?.confirm !== 'ELIMINAR') {
+  // El sitio pide escribir ELIMINAR en la pantalla y no lo manda: si viene, tiene que ser correcto.
+  if (req.body?.confirm !== undefined && req.body.confirm !== 'ELIMINAR') {
     throw validationError({ confirm: 'Escribí ELIMINAR para confirmar.' });
   }
 
@@ -279,7 +298,7 @@ router.post('/reset', resetLimit, async (req, res) => {
   assertValid(
     collect({
       password: validatePassword(password),
-      passwordConfirm: validatePasswordConfirm(password, passwordConfirm),
+      passwordConfirm: confirmIfSent(password, passwordConfirm),
     }),
   );
 

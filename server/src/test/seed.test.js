@@ -161,20 +161,20 @@ describe('seed', () => {
     const summary = await get(`summary?${period}`);
     assert.ok(summary.visits >= 13 * 24 && summary.visits <= 14 * 72, `visitas: ${summary.visits}`);
     assert.ok(summary.logins >= 13 * 14 && summary.logins <= 14 * 30, `accesos: ${summary.logins}`);
-    assert.equal(summary.users.total, 40);
+    assert.equal(summary.users, 40);
 
     const visits = await get(`visits?${period}`);
     assert.equal(visits.length, 14);
-    assert.ok(visits.slice(0, 13).every((day) => day.count >= 24 && day.count <= 72), 'cada día completo tiene entre 24 y 72 visitas');
-    assert.equal(visits.reduce((sum, day) => sum + day.count, 0), summary.visits, 'la serie suma lo mismo que la tarjeta');
+    assert.ok(visits.slice(0, 13).every((day) => day.total >= 24 && day.total <= 72), 'cada día completo tiene entre 24 y 72 visitas');
+    assert.equal(visits.reduce((sum, day) => sum + day.total, 0), summary.visits, 'la serie suma lo mismo que la tarjeta');
 
     const byType = await get(`inquiries-by-type?desde=2026-09-27&hasta=2026-10-26`);
-    assert.deepEqual(byType, [{ type: 'cotizacion', count: 14 }, { type: 'general', count: 9 }, { type: 'asesoria', count: 7 }]);
+    assert.deepEqual(byType, [{ tipo: 'cotizacion', total: 14 }, { tipo: 'general', total: 9 }, { tipo: 'asesoria', total: 7 }]);
     assert.equal((await get('summary?desde=2026-09-27&hasta=2026-10-26&tipo=cotizacion')).inquiries, 14);
 
     const registrations = await get('registrations?desde=2026-06-01&hasta=2026-10-26&agrupar=semana');
-    assert.equal(registrations.reduce((sum, week) => sum + week.count, 0), 40, 'las 40 cuentas, repartidas en semanas');
-    assert.ok(registrations.filter((week) => week.count > 0).length >= 5, 'el gráfico de registros no es una sola barra');
+    assert.equal(registrations.reduce((sum, week) => sum + week.total, 0), 40, 'las 40 cuentas, repartidas en semanas');
+    assert.ok(registrations.filter((week) => week.total > 0).length >= 5, 'el gráfico de registros no es una sola barra');
   });
 
   it('los proyectos del seed se pueden editar sin que la API los rechace', async () => {
@@ -183,7 +183,8 @@ describe('seed', () => {
     const token = bearer(admin.body.data.token);
     const { body } = await api().get('/api/admin/projects').set(token);
     for (const project of body.data) {
-      const res = await api().put(`/api/projects/${project.id}`).set(token).send(project);
+      const { images } = await Project.findById(project.id);
+      const res = await api().put(`/api/projects/${project.id}`).set(token).send({ ...project, images: images.map(({ url, publicId }) => ({ url, publicId })) });
       assert.equal(res.status, 200, `${project.title}: ${JSON.stringify(res.body.error)}`);
     }
   });

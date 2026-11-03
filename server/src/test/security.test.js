@@ -357,11 +357,11 @@ describe('inyección de operadores de Mongo', () => {
     const get = (path) => call('get', path, admin);
 
     // Express 5 no arma objetos con claves como "rol[$ne]": la clave se ignora (no filtra ni rompe) y eso es lo seguro.
-    assert.equal((await get('/api/users?rol[$ne]=user')).body.meta.total, 4, 'se ignora: devuelve a todos, no "todos menos user"');
+    assert.equal((await get('/api/users?role[$ne]=user')).body.data.total, 4, 'se ignora: devuelve a todos, no "todos menos user"');
     assert.equal((await get('/api/users?q[$regex]=.*')).status, 200);
-    assert.equal((await get('/api/users?q[$regex]=.*')).body.meta.total, 4, 'la clave literal "q[$regex]" se ignora: no filtra');
-    assert.equal((await get('/api/inquiries?tipo[$ne]=general')).body.meta.total, 1, 'se ignora: devuelve todo, no "todo menos general"');
-    assert.equal((await get('/api/inquiries?estado[$in][]=nueva')).body.meta.total, 1);
+    assert.equal((await get('/api/users?q[$regex]=.*')).body.data.total, 4, 'la clave literal "q[$regex]" se ignora: no filtra');
+    assert.equal((await get('/api/inquiries?tipo[$ne]=general')).body.data.total, 1, 'se ignora: devuelve todo, no "todo menos general"');
+    assert.equal((await get('/api/inquiries?estado[$in][]=nueva')).body.data.total, 1);
     assert.equal((await get('/api/inquiries?desde[$gt]=2020-01-01')).status, 200);
     assert.equal((await get('/api/admin/projects?visible[$ne]=true')).body.meta.total, 1, 'se ignora: no filtra');
     assert.equal((await api().get('/api/projects?stack[$ne]=zzz')).body.meta.total, 1);
@@ -414,12 +414,12 @@ describe('asignación masiva: el cliente no decide campos que no le tocan', () =
     assert.ok(stored.createdAt.getFullYear() >= 2026);
   });
 
-  it('el admin tampoco puede fijar ids, fechas ni el orden de un servicio a la fuerza', async () => {
+  it('el admin tampoco puede fijar ids ni fechas a la fuerza', async () => {
     const w = await world();
     const project = await call('post', '/api/projects', w.tokens.admin, { title: 'Nuevo proyecto', summary: 'Resumen', stack: ['x'], _id: '6710f0c2a1b2c3d4e5f60718', createdAt: '2000-01-01', __v: 99 });
     assert.notEqual(project.body.data.id, '6710f0c2a1b2c3d4e5f60718');
-    const service = await call('post', '/api/services', w.tokens.admin, { name: 'Otro servicio', description: 'x', order: 1 });
-    assert.equal(service.body.data.order, 2, 'el orden lo decide el servidor');
+    const service = await call('post', '/api/services', w.tokens.admin, { name: 'Otro servicio', description: 'x', _id: '6710f0c2a1b2c3d4e5f60718' });
+    assert.notEqual(service.body.data.id, '6710f0c2a1b2c3d4e5f60718');
   });
 
   it('un __proto__ en el cuerpo no contamina los objetos del servidor', async () => {
@@ -521,7 +521,7 @@ describe('respuestas del servidor', () => {
     const user = await login('usuario@portfolio.test');
     await api().post('/api/auth/forgot').send({ email: 'usuario@portfolio.test' });
 
-    const someUser = (await call('get', '/api/users?limit=1', admin)).body.data[0].id;
+    const someUser = (await call('get', '/api/users?limit=1', admin)).body.data.items[0].id;
     const answered = await Inquiry.findOne({ 'replies.0': { $exists: true } });
     const project = await Project.findOne();
     const paths = [

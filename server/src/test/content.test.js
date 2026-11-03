@@ -41,8 +41,9 @@ describe('proyectos: lectura', () => {
     assert.equal(res.status, 200);
     assert.deepEqual(res.body.data.map((p) => p.title), ['Destacado', 'Reciente', 'Primero']);
     assert.deepEqual(res.body.meta, { page: 1, limit: 20, total: 3, totalPages: 1 });
-    assert.deepEqual(Object.keys(res.body.data[0]).sort(), ['cover', 'featured', 'id', 'stack', 'summary', 'title']);
+    assert.deepEqual(Object.keys(res.body.data[0]).sort(), ['_id', 'cover', 'featured', 'id', 'images', 'stack', 'summary', 'title']);
     assert.equal(res.body.data[0].cover, 'https://res.cloudinary.com/arce/turnos-1.jpg');
+    assert.deepEqual(res.body.data[0].images, ['https://res.cloudinary.com/arce/turnos-1.jpg']);
     assert.doesNotMatch(JSON.stringify(res.body), /demoUrl|repoUrl|problem|solution|highlights/);
   });
 
@@ -65,7 +66,7 @@ describe('proyectos: lectura', () => {
     assert.equal(res.status, 200);
     assert.equal(res.body.data.demoUrl, 'https://turnos.arce.dev');
     assert.equal(res.body.data.problem, 'Un consultorio tomaba los turnos por teléfono.');
-    assert.deepEqual(res.body.data.images, [image('turnos-1')]);
+    assert.deepEqual(res.body.data.images, [image('turnos-1').url]);
   });
 
   it('un borrador es 404 para un usuario y visible para el admin; un id inválido es 404', async () => {
@@ -117,11 +118,11 @@ describe('proyectos: CRUD de admin', () => {
     const mal = await api()
       .post('/api/projects')
       .set(admin)
-      .send(projectBody({ summary: 'x'.repeat(201), demoUrl: 'http://turnos.arce.dev', repoUrl: 'github.com/yo/turnos', images: Array(6).fill(image('a')) }));
+      .send(projectBody({ summary: 'x'.repeat(201), demoUrl: 'ftp://turnos.arce.dev', repoUrl: 'github.com/yo/turnos', images: Array(6).fill(image('a')) }));
     assert.deepEqual(fieldsOf(mal.body), {
       summary: 'Máximo 200 caracteres.',
-      demoUrl: 'Tiene que empezar con https://',
-      repoUrl: 'Tiene que empezar con https://',
+      demoUrl: 'Tiene que empezar con http:// o https://',
+      repoUrl: 'Tiene que empezar con http:// o https://',
       images: 'Máximo 5 imágenes.',
     });
   });
@@ -189,7 +190,8 @@ describe('servicios', () => {
     assert.equal(a.status, 201);
     assert.equal(a.body.data.order, 1);
     assert.equal(b.body.data.order, 2);
-    assert.equal(b.body.data.color, '#9B1B22');
+    assert.equal(b.body.data.color, 'carmin');
+    assert.equal(b.body.data.icon, 'code');
   });
 
   it('no permite dos servicios con el mismo nombre, aunque cambien las mayúsculas', async () => {
@@ -225,9 +227,11 @@ describe('servicios', () => {
 
   it('PUT cambia solo lo que se envía', async () => {
     const { body } = await create();
-    const res = await api().put(`/api/services/${body.data.id}`).set(admin).send({ visible: false, color: '#4f6b3e' });
+    const res = await api().put(`/api/services/${body.data.id}`).set(admin).send({ visible: false, color: 'exito', icon: 'chat', order: 7 });
     assert.equal(res.body.data.visible, false);
-    assert.equal(res.body.data.color, '#4F6B3E');
+    assert.equal(res.body.data.color, 'exito');
+    assert.equal(res.body.data.icon, 'chat');
+    assert.equal(res.body.data.order, 7);
     assert.equal(res.body.data.name, 'Desarrollo web a medida');
   });
 
@@ -267,7 +271,7 @@ describe('perfil', () => {
   const profileBody = (overrides = {}) => ({
     name: 'Martina Arce',
     title: 'Desarrolladora Fullstack',
-    phrase: 'Productos web de punta a punta.',
+    tagline: 'Productos web de punta a punta.',
     bio: 'Trabajo con pymes, startups y estudios que necesitan un sistema web completo.',
     email: 'Hola@Arce.dev',
     location: 'Salta, Argentina · remoto',
@@ -288,39 +292,42 @@ describe('perfil', () => {
 
   it('el admin guarda el perfil y GET lo devuelve', async () => {
     const admin = bearer(await tokenFor('admin'));
-    const res = await api().put('/api/profile').set(admin).send(profileBody({ phrase: 'Otra frase.' }));
+    const res = await api().put('/api/profile').set(admin).send(profileBody({ tagline: 'Otra frase.' }));
     assert.equal(res.status, 200);
     assert.equal(res.body.data.email, 'hola@arce.dev');
-    assert.equal(res.body.data.phrase, 'Otra frase.');
+    assert.equal(res.body.data.tagline, 'Otra frase.');
 
     const leido = await api().get('/api/profile');
     assert.deepEqual(leido.body.data, res.body.data);
-    assert.deepEqual(leido.body.data.photo, image('martina'));
+    assert.equal(leido.body.data.photo, image('martina').url);
   });
 
-  it('PUT reemplaza el perfil entero: lo opcional que no se manda se vacía', async () => {
+  it('PUT reemplaza el perfil entero: lo opcional que no se manda se vacía, menos la foto', async () => {
     const admin = bearer(await tokenFor('admin'));
     await api().put('/api/profile').set(admin).send(profileBody());
     const res = await api().put('/api/profile').set(admin).send(profileBody({ github: undefined, photo: undefined, stack: undefined }));
-    assert.equal(res.body.data.github, null);
-    assert.equal(res.body.data.photo, null);
+    assert.equal(res.body.data.github, '');
     assert.deepEqual(res.body.data.stack, []);
+    assert.equal(res.body.data.photo, image('martina').url, 'guardar sin foto no borra la que había');
+
+    const sinFoto = await api().put('/api/profile').set(admin).send(profileBody({ photo: null }));
+    assert.equal(sinFoto.body.data.photo, '', 'photo: null la quita');
   });
 
   it('valida con los mensajes del contrato', async () => {
     const admin = bearer(await tokenFor('admin'));
     const vacio = await api().put('/api/profile').set(admin).send({});
     assert.equal(vacio.status, 400);
-    assert.deepEqual(Object.keys(fieldsOf(vacio.body)).sort(), ['bio', 'email', 'location', 'name', 'phrase', 'title']);
+    assert.deepEqual(Object.keys(fieldsOf(vacio.body)).sort(), ['bio', 'email', 'location', 'name', 'tagline', 'title']);
 
     const mal = await api()
       .put('/api/profile')
       .set(admin)
-      .send(profileBody({ name: 'Martina 3', title: 'Dev', phrase: 'x'.repeat(61), bio: 'Muy corta', github: 'https://github.com/a/b', linkedin: 'http://linkedin.com/in/yo', stack: ['React', 'react'], email: 'hola@arce' }));
+      .send(profileBody({ name: 'Martina 3', title: 'De', tagline: 'x'.repeat(61), bio: 'Muy corta', github: 'https://github.com/a/b', linkedin: 'http://linkedin.com/in/yo', stack: ['React', 'react'], email: 'hola@arce' }));
     assert.deepEqual(fieldsOf(mal.body), {
       name: 'Usá solo letras y espacios.',
-      title: 'Mínimo 5 caracteres.',
-      phrase: 'La frase tiene que tener entre 1 y 60 caracteres.',
+      title: 'Mínimo 3 caracteres.',
+      tagline: 'La frase tiene que tener entre 1 y 60 caracteres.',
       bio: 'Mínimo 40 caracteres.',
       email: 'El email no es válido. Ejemplo: nombre@correo.com',
       github: 'Tiene que ser https://github.com/tu-usuario',

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import { Service } from '../models/Service.js';
-import { authenticate, requireRole } from '../middlewares/auth.js';
+import { authenticate, optionalAuth, requireRole } from '../middlewares/auth.js';
 import { AppError, validationError } from '../utils/AppError.js';
 import { run, serviceHandlers } from '../utils/contentValidators.js';
 import { created, ok } from '../utils/respond.js';
@@ -21,18 +21,22 @@ async function renumber() {
   await Service.bulkWrite(services.map((service, index) => ({ updateOne: { filter: { _id: service._id }, update: { order: index + 1 } } })));
 }
 
-// GET /api/services — público: solo los visibles, en orden
-router.get('/', async (_req, res) => {
-  const services = await Service.find({ visible: true }).sort({ order: 1 });
-  ok(res, services.map((service) => serviceOut(service)));
+// GET /api/services — público: solo los visibles, en orden. El admin los ve todos, con `visible` (el panel usa esta ruta).
+router.get('/', optionalAuth, async (req, res) => {
+  const isAdmin = req.user?.role === 'admin';
+  const services = await Service.find(isAdmin ? {} : { visible: true }).sort({ order: 1, name: 1 });
+  ok(res, services.map((service) => serviceOut(service, { admin: isAdmin })));
 });
+
+// Los campos que no vinieron (o vinieron vacíos) no se tocan.
+const defined = (data) => Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined));
 
 // POST /api/services — admin; queda al final de la lista
 router.post('/', ...admin, async (req, res) => {
   const { data, errors } = run(req.body, serviceHandlers, { partial: false });
   assertValid(errors);
   const last = await Service.findOne().sort({ order: -1 }).select('order');
-  const service = await Service.create({ ...data, order: (last?.order ?? 0) + 1 });
+  const service = await Service.create({ ...defined(data), order: data.order ?? (last?.order ?? 0) + 1 });
   created(res, serviceOut(service, { admin: true }));
 });
 
@@ -58,7 +62,7 @@ router.put('/:id', ...admin, async (req, res) => {
 
   const { data, errors } = run(req.body, serviceHandlers, { partial: true });
   assertValid(errors);
-  service.set(data);
+  service.set(defined(data));
   await service.save();
   ok(res, serviceOut(service, { admin: true }));
 });

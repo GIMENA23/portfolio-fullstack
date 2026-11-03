@@ -62,7 +62,8 @@ describe('estadísticas', () => {
       await User.create({ name: 'Vieja Ana', email: 'vieja@ejemplo.com', createdAt: new Date(Date.now() - 60 * DAY) });
 
       const { users } = (await get('summary')).body.data;
-      assert.deepEqual(users, { total: 4, newThisMonth: 3 }); // el admin del test más las dos nuevas
+      assert.equal(users, 4); // el admin del test más las dos nuevas
+      assert.equal((await get('summary')).body.data.newUsersThisMonth, 3);
     });
 
     it('sin rango toma los últimos 14 días, contando hoy', async () => {
@@ -74,8 +75,8 @@ describe('estadísticas', () => {
 
     it('devuelve números simples, sin textos', async () => {
       const { data } = (await get('summary')).body;
-      assert.deepEqual(Object.keys(data).sort(), ['inquiries', 'logins', 'users', 'visits']);
-      assert.ok([data.visits, data.logins, data.inquiries, data.users.total, data.users.newThisMonth].every(Number.isInteger));
+      assert.deepEqual(Object.keys(data).sort(), ['inquiries', 'logins', 'newUsersThisMonth', 'users', 'visits']);
+      assert.ok([data.visits, data.logins, data.inquiries, data.users, data.newUsersThisMonth].every(Number.isInteger));
     });
   });
 
@@ -86,15 +87,15 @@ describe('estadísticas', () => {
       // (en UTC ya sería el 3). 03/10 03:00Z es el 3/10 a las 00:00.
       const res = await get('visits?desde=2026-10-02&hasta=2026-10-04&agrupar=dia');
       assert.deepEqual(res.body.data, [
-        { date: '2026-10-02', count: 2 },
-        { date: '2026-10-03', count: 1 },
-        { date: '2026-10-04', count: 0 },
+        { fecha: '2026-10-02', total: 2 },
+        { fecha: '2026-10-03', total: 1 },
+        { fecha: '2026-10-04', total: 0 },
       ]);
     });
 
     it('por defecto agrupa por día', async () => {
       const res = await get('visits?desde=2026-10-02&hasta=2026-10-03');
-      assert.deepEqual(res.body.data.map((d) => d.date), ['2026-10-02', '2026-10-03']);
+      assert.deepEqual(res.body.data.map((d) => d.fecha), ['2026-10-02', '2026-10-03']);
     });
 
     it('agrupado por semana: la fecha es el lunes, y una semana cortada suma solo los días incluidos', async () => {
@@ -104,20 +105,20 @@ describe('estadísticas', () => {
       }
       const res = await get('visits?desde=2026-10-02&hasta=2026-10-14&agrupar=semana');
       assert.deepEqual(res.body.data, [
-        { date: '2026-09-28', count: 2 }, // viernes y domingo; el jueves 1/10 queda afuera del rango
-        { date: '2026-10-05', count: 2 },
-        { date: '2026-10-12', count: 2 }, // lunes y miércoles; el jueves 15/10 queda afuera
+        { fecha: '2026-09-28', total: 2 }, // viernes y domingo; el jueves 1/10 queda afuera del rango
+        { fecha: '2026-10-05', total: 2 },
+        { fecha: '2026-10-12', total: 2 }, // lunes y miércoles; el jueves 15/10 queda afuera
       ]);
     });
 
     it('una semana sin visitas aparece con 0', async () => {
       await visitAt('2026-10-02T15:00:00Z');
       const res = await get('visits?desde=2026-10-02&hasta=2026-10-20&agrupar=semana');
-      assert.deepEqual(res.body.data.map((w) => [w.date, w.count]), [['2026-09-28', 1], ['2026-10-05', 0], ['2026-10-12', 0], ['2026-10-19', 0]]);
+      assert.deepEqual(res.body.data.map((w) => [w.fecha, w.total]), [['2026-09-28', 1], ['2026-10-05', 0], ['2026-10-12', 0], ['2026-10-19', 0]]);
     });
 
     it('un solo día y el máximo de 366 días', async () => {
-      assert.deepEqual((await get('visits?desde=2026-10-02&hasta=2026-10-02')).body.data, [{ date: '2026-10-02', count: 0 }]);
+      assert.deepEqual((await get('visits?desde=2026-10-02&hasta=2026-10-02')).body.data, [{ fecha: '2026-10-02', total: 0 }]);
       assert.equal((await get('visits?desde=2025-10-26&hasta=2026-10-26')).body.data.length, 366);
     });
   });
@@ -131,9 +132,9 @@ describe('estadísticas', () => {
 
       const res = await get('inquiries-by-type?desde=2026-10-02&hasta=2026-10-15');
       assert.deepEqual(res.body.data, [
-        { type: 'cotizacion', count: 2 },
-        { type: 'general', count: 0 },
-        { type: 'asesoria', count: 1 },
+        { tipo: 'cotizacion', total: 2 },
+        { tipo: 'general', total: 0 },
+        { tipo: 'asesoria', total: 1 },
       ]);
     });
   });
@@ -145,16 +146,16 @@ describe('estadísticas', () => {
 
       const { data } = (await get('registrations')).body;
       assert.equal(data.length, 6);
-      assert.ok(data.every(({ date }) => new Date(`${date}T00:00:00Z`).getUTCDay() === 1), 'todas las fechas son lunes');
-      assert.equal(data.reduce((sum, week) => sum + week.count, 0), 2, 'el admin del test y el de hace 8 días; el de hace 60 queda afuera');
-      assert.equal(data.at(-1).count >= 1, true, 'la semana en curso incluye al admin recién creado');
+      assert.ok(data.every(({ semana }) => new Date(`${semana}T00:00:00Z`).getUTCDay() === 1), 'todas las fechas son lunes');
+      assert.equal(data.reduce((sum, week) => sum + week.total, 0), 2, 'el admin del test y el de hace 8 días; el de hace 60 queda afuera');
+      assert.equal(data.at(-1).total >= 1, true, 'la semana en curso incluye al admin recién creado');
     });
 
     it('con rango y por día', async () => {
       await User.create({ name: 'Uno Dos', email: 'a@ejemplo.com', createdAt: new Date('2026-10-02T15:00:00Z') });
       await User.create({ name: 'Tres Cuatro', email: 'b@ejemplo.com', createdAt: new Date('2026-10-02T18:00:00Z') });
       const res = await get('registrations?desde=2026-10-01&hasta=2026-10-03&agrupar=dia');
-      assert.deepEqual(res.body.data, [{ date: '2026-10-01', count: 0 }, { date: '2026-10-02', count: 2 }, { date: '2026-10-03', count: 0 }]);
+      assert.deepEqual(res.body.data, [{ semana: '2026-10-01', fecha: '2026-10-01', total: 0 }, { semana: '2026-10-02', fecha: '2026-10-02', total: 2 }, { semana: '2026-10-03', fecha: '2026-10-03', total: 0 }]);
     });
   });
 

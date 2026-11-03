@@ -1,4 +1,4 @@
-import { SERVICE_COLORS } from '../models/Service.js';
+import { SERVICE_COLORS, SERVICE_ICONS } from '../models/Service.js';
 import { storage } from './storage.js';
 import { NAME_CHARS, asString, cleanText, normalizeEmail, validateEmail } from './validators.js';
 
@@ -10,6 +10,7 @@ const ok = (value) => ({ value });
 const bad = (error) => ({ error });
 
 const HTTPS_URL = /^https:\/\/\S+\.\S+$/;
+const HTTP_URL = /^https?:\/\/\S+\.\S+$/;
 const GITHUB_URL = /^https:\/\/(www\.)?github\.com\/[A-Za-z0-9-]+\/?$/;
 const LINKEDIN_URL = /^https:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9-]+\/?$/;
 
@@ -100,6 +101,7 @@ const photo = (raw) => {
 
 export const projectHandlers = {
   title: text({ min: 3, max: 80, empty: 'Escribí un título de al menos 3 caracteres.', long: 'Máximo 80 caracteres.' }),
+  description: text({ min: 20, max: 3000, short: 'Mínimo 20 caracteres.', long: 'Máximo 3000 caracteres.' }),
   summary: text({ max: 200, empty: 'El resumen es obligatorio.', long: 'Máximo 200 caracteres.' }),
   problem: text({ max: 1000, long: 'Máximo 1000 caracteres.' }),
   solution: text({ max: 1000, long: 'Máximo 1000 caracteres.' }),
@@ -109,14 +111,14 @@ export const projectHandlers = {
   stack: stringList({
     min: 1,
     max: 12,
-    itemMax: 24,
+    itemMax: 30,
     empty: 'Indicá al menos una tecnología.',
     tooMany: 'Máximo 12 tecnologías.',
-    tooLong: 'Cada tecnología puede tener hasta 24 caracteres.',
+    tooLong: 'Cada tecnología puede tener hasta 30 caracteres.',
   }),
   images,
-  demoUrl: optionalUrl(HTTPS_URL, 'Tiene que empezar con https://'),
-  repoUrl: optionalUrl(HTTPS_URL, 'Tiene que empezar con https://'),
+  demoUrl: optionalUrl(HTTP_URL, 'Tiene que empezar con http:// o https://'),
+  repoUrl: optionalUrl(HTTP_URL, 'Tiene que empezar con http:// o https://'),
   visible: bool(false),
   featured: bool(false),
 };
@@ -132,10 +134,18 @@ const price = (raw) => {
 export const serviceHandlers = {
   name: text({ min: 3, max: 60, empty: 'Escribí un nombre de al menos 3 caracteres.', long: 'Máximo 60 caracteres.' }),
   description: text({ max: 300, empty: 'La descripción es obligatoria.', long: 'Máximo 300 caracteres.' }),
+  icon: (raw) => {
+    if (raw === undefined || raw === null || raw === '') return ok(SERVICE_ICONS[0]);
+    return SERVICE_ICONS.includes(raw) ? ok(raw) : bad('Ícono no válido.');
+  },
   color: (raw) => {
-    if (raw === undefined) return ok(SERVICE_COLORS[0]);
-    const color = asString(raw).toUpperCase();
-    return SERVICE_COLORS.includes(color) ? ok(color) : bad('Elegí uno de los colores de la paleta.');
+    if (raw === undefined || raw === null || raw === '') return ok(SERVICE_COLORS[0]);
+    return SERVICE_COLORS.includes(raw) ? ok(raw) : bad('Elegí uno de los colores de la paleta.');
+  },
+  order: (raw) => {
+    if (raw === undefined || raw === null || raw === '') return ok(undefined);
+    const value = typeof raw === 'string' && /^d+$/.test(raw) ? Number(raw) : raw;
+    return Number.isInteger(value) && value >= 0 && value <= 999 ? ok(value) : bad('Debe ser un número entero entre 0 y 999.');
   },
   priceFrom: price,
   visible: bool(false),
@@ -209,8 +219,8 @@ export const profileHandlers = {
     charset: NAME_CHARS,
     charsetError: 'Usá solo letras y espacios.',
   }),
-  title: text({ min: 5, max: 60, empty: 'El título es obligatorio.', short: 'Mínimo 5 caracteres.', long: 'Máximo 60 caracteres.' }),
-  phrase: text({ max: 60, empty: 'La frase tiene que tener entre 1 y 60 caracteres.', long: 'La frase tiene que tener entre 1 y 60 caracteres.' }),
+  title: text({ min: 3, max: 60, empty: 'El título es obligatorio.', short: 'Mínimo 3 caracteres.', long: 'Máximo 60 caracteres.' }),
+  tagline: text({ max: 60, empty: 'La frase tiene que tener entre 1 y 60 caracteres.', long: 'La frase tiene que tener entre 1 y 60 caracteres.' }),
   bio: text({ min: 40, max: 400, empty: 'La presentación es obligatoria.', short: 'Mínimo 40 caracteres.', long: 'Máximo 400 caracteres.' }),
   email: (raw) => {
     const message = validateEmail(raw);
@@ -222,9 +232,9 @@ export const profileHandlers = {
   photo,
   stack: stringList({
     max: 16,
-    itemMax: 24,
+    itemMax: 30,
     tooMany: 'Máximo 16 tecnologías.',
-    tooLong: 'Cada tecnología puede tener hasta 24 caracteres.',
+    tooLong: 'Cada tecnología puede tener hasta 30 caracteres.',
     duplicates: 'Ya está en el stack.',
   }),
   experience,
