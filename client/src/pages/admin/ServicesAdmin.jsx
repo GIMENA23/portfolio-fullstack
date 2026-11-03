@@ -26,7 +26,7 @@ const ICONOS = {
   chat: 'Chat',
 }
 
-const TONOS = [['carmin', 'Carmín'], ['negro', 'Negro'], ['vicuna', 'Vicuña'], ['exito', 'Cardón']]
+const TONOS = [['carmin', 'Carmín'], ['negro', 'Negro'], ['vicuna', 'Vicuña'], ['exito', 'Cardón'], ['oro', 'Oro viejo']]
 
 const VACIO = { name: '', description: '', icon: '', priceFrom: '', order: '', visible: true, color: '' }
 
@@ -306,7 +306,7 @@ export default function ServicesAdmin() {
                   <span className="servicio-precio">
                     {s.priceFrom ? `desde ${formatoPrecio(s.priceFrom)}` : 'a consultar'}
                   </span>
-                  <span className={`estado ${s.visible === false ? 'estado-cerrada' : 'estado-respondida'}`}>
+                  <span className="visible-texto">
                     <span aria-hidden="true">{s.visible === false ? '–' : '✓'}</span> {s.visible === false ? 'oculto' : 'visible'}
                   </span>
                   <div className="d-flex flex-wrap align-items-center gap-1">
@@ -337,7 +337,7 @@ export default function ServicesAdmin() {
               <h2 className="mb-0">{editandoId ? `Editando · ${form.name || '…'}` : 'Nuevo servicio'}</h2>
               <span className="admin-modo-sub">{editandoId ? 'Los cambios se ven en el sitio al guardar.' : 'Completá los campos con * para poder crearlo.'}</span>
             </div>
-            <button type="button" className="btn-close" onClick={cerrarForm} aria-label="Cerrar formulario" disabled={guardando} />
+            <button type="button" className="cerrar-form" onClick={cerrarForm} aria-label="Cerrar formulario" disabled={guardando}>✕</button>
           </div>
           <div className="card-body">
             {errores.general && <div className="alert alert-danger">{errores.general}</div>}
@@ -358,24 +358,7 @@ export default function ServicesAdmin() {
               </div>
 
               <div className="col-12">
-                <label htmlFor="icon" className="form-label">Ícono</label>
-                <select
-                  id="icon"
-                  name="icon"
-                  className={`form-select ${errores.icon ? 'is-invalid' : ''}`}
-                  value={form.icon}
-                  onChange={cambiar}
-                >
-                  <option value="">Sin ícono</option>
-                  {Object.entries(ICONOS).map(([valor, label]) => (
-                    <option key={valor} value={valor}>{label}</option>
-                  ))}
-                </select>
-                {errores.icon && <div className="invalid-feedback">{errores.icon}</div>}
-              </div>
-
-              <div className="col-12">
-                <label htmlFor="description" className="form-label">Descripción *</label>
+                <label htmlFor="description" className="form-label">Descripción * <span className="form-hint">{largoDesc} / {LIMITES.descMax}</span></label>
                 <textarea
                   id="description"
                   name="description"
@@ -387,13 +370,10 @@ export default function ServicesAdmin() {
                   aria-describedby="desc-ayuda"
                 />
                 {errores.description && <div className="invalid-feedback">{errores.description}</div>}
-                <div id="desc-ayuda" className="form-text">
-                  {largoDesc}/{LIMITES.descMax} · mínimo {LIMITES.descMin}
-                </div>
               </div>
 
-              <div className="col-6 col-md-4">
-                <label htmlFor="priceFrom" className="form-label">Precio desde (ARS)</label>
+              <div className="col-12">
+                <label htmlFor="priceFrom" className="form-label">Precio desde (ARS) <span className="form-hint">Opcional · solo números</span></label>
                 <input
                   id="priceFrom"
                   name="priceFrom"
@@ -404,26 +384,8 @@ export default function ServicesAdmin() {
                   className={`form-control ${errores.priceFrom ? 'is-invalid' : ''}`}
                   value={form.priceFrom}
                   onChange={cambiar}
-                  placeholder="Opcional"
                 />
                 {errores.priceFrom && <div className="invalid-feedback">{errores.priceFrom}</div>}
-              </div>
-
-              <div className="col-6 col-md-4">
-                <label htmlFor="order" className="form-label">Orden</label>
-                <input
-                  id="order"
-                  name="order"
-                  type="number"
-                  inputMode="numeric"
-                  min="0"
-                  max={LIMITES.ordenMax}
-                  step="1"
-                  className={`form-control ${errores.order ? 'is-invalid' : ''}`}
-                  value={form.order}
-                  onChange={cambiar}
-                />
-                {errores.order && <div className="invalid-feedback">{errores.order}</div>}
               </div>
 
               <fieldset className="col-12 border-0 p-0 m-0">

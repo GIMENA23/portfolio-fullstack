@@ -16,6 +16,13 @@ const LIMITES = {
 const TIPOS_IMAGEN = ['image/jpeg', 'image/png', 'image/webp']
 const URL_VALIDA = /^https?:\/\/[^\s.]+\.[^\s]{2,}$/
 
+const ultimaModificacion = (p) => {
+  const f = p?.updatedAt ? new Date(p.updatedAt) : null
+  if (!f || Number.isNaN(f.getTime())) return 'Los cambios se ven en el sitio al guardar.'
+  const dias = Math.floor((Date.now() - f.getTime()) / 86400000)
+  return `Última modificación: ${dias <= 0 ? 'hoy' : dias === 1 ? 'hace 1 día' : `hace ${dias} días`}`
+}
+
 const TONOS = ['tono-carmin', 'tono-negro', 'tono-vicuna', 'tono-exito', 'tono-oro', 'tono-suave']
 
 const VACIO = {
@@ -329,26 +336,22 @@ export default function ProjectsAdmin() {
                 </thead>
                 <tbody>
                   {proyectos.map((p, idx) => (
-                    <tr key={p._id} className={editandoId === p._id ? 'table-active' : ''}>
+                    <tr key={p._id} className={editandoId === p._id ? 'fila-activa' : ''}>
                       <td>
                         {p.images?.[0] ? (
                           <img src={p.images[0]} alt="" className="border" style={{ width: 64, height: 48, objectFit: 'cover' }} />
                         ) : (
-                          <span className={`foto-proyecto foto-mini ${TONOS[idx % TONOS.length]}`} aria-hidden="true">
-                            <span>{String(idx + 1).padStart(2, '0')}</span>
-                          </span>
+                          <span className={`cuadro-proyecto ${TONOS[idx % TONOS.length]}`} aria-hidden="true" />
                         )}
                       </td>
                       <td>
                         <div className="fw-semibold">{p.title}</div>
-                        <div className="small text-muted">{p.summary}</div>
                       </td>
-                      <td className="d-none d-lg-table-cell small">{(p.stack ?? []).join(' · ')}</td>
+                      <td className="d-none d-lg-table-cell stack-mono">{(p.stack ?? []).join(', ')}</td>
                       <td>
-                        <span className={`estado ${p.visible === false ? 'estado-cerrada' : 'estado-respondida'}`}>
-                          <span aria-hidden="true">{p.visible === false ? '–' : '✓'}</span> {p.visible === false ? 'Oculto' : 'Visible'}
+                        <span className="visible-texto">
+                          <span aria-hidden="true">{p.visible === false ? '–' : '✓'}</span> {p.visible === false ? 'borrador' : 'sí'}
                         </span>
-                        {p.featured && <span className="estado estado-en-proceso ms-1"><span aria-hidden="true">★</span> Destacado</span>}
                       </td>
                       <td>
                         <div className="d-flex flex-wrap justify-content-end align-items-center gap-1">
@@ -380,9 +383,9 @@ export default function ProjectsAdmin() {
             <div style={{ minWidth: 0 }}>
               <span className="admin-modo-badge">{editandoId ? 'EDITANDO' : 'NUEVO'}</span>
               <h2 className="mb-0">{editandoId ? `Editando · ${form.title || '…'}` : 'Nuevo proyecto'}</h2>
-              <span className="admin-modo-sub">{editandoId ? 'Los cambios se ven en el sitio al guardar.' : 'Completá los campos con * para poder crearlo.'}</span>
+              <span className="admin-modo-sub">{editandoId ? ultimaModificacion(proyectos.find((x) => x._id === editandoId)) : 'Completá los campos con * para poder crearlo.'}</span>
             </div>
-            <button type="button" className="btn-close" onClick={cerrarForm} aria-label="Cerrar formulario" disabled={guardando} />
+            <button type="button" className="cerrar-form" onClick={cerrarForm} aria-label="Cerrar formulario" disabled={guardando}>✕</button>
           </div>
           <div className="card-body">
             {errores.general && <div className="alert alert-danger">{errores.general}</div>}
@@ -395,31 +398,21 @@ export default function ProjectsAdmin() {
               </div>
 
               <div className="col-12">
-                <label htmlFor="stack" className="form-label">Tecnologías *</label>
-                <input id="stack" name="stack" className={campo('stack')} value={form.stack} onChange={cambiar} placeholder="React, Express, MongoDB" aria-describedby="stack-ayuda" />
-                {errores.stack ? (
-                  <div className="invalid-feedback">{errores.stack}</div>
-                ) : (
-                  <div id="stack-ayuda" className="form-text">Separadas por coma.</div>
-                )}
+                <label htmlFor="stack" className="form-label">Tecnologías * <span className="form-hint">Separadas por coma</span></label>
+                <input id="stack" name="stack" className={campo('stack')} value={form.stack} onChange={cambiar} placeholder="React, Express, MongoDB"  />
+                {errores.stack && <div className="invalid-feedback">{errores.stack}</div>}
               </div>
 
               <div className="col-12">
-                <label htmlFor="summary" className="form-label">Resumen *</label>
-                <input id="summary" name="summary" className={campo('summary')} value={form.summary} onChange={cambiar} maxLength={LIMITES.resumenMax} aria-describedby="summary-ayuda" />
+                <label htmlFor="summary" className="form-label">Resumen * <span className="form-hint">Se ve en la tarjeta · {form.summary.trim().length} / {LIMITES.resumenMax}</span></label>
+                <input id="summary" name="summary" className={campo('summary')} value={form.summary} onChange={cambiar} maxLength={LIMITES.resumenMax}  />
                 {errores.summary && <div className="invalid-feedback">{errores.summary}</div>}
-                <div id="summary-ayuda" className="form-text">
-                  Se ve en la tarjeta del proyecto · {form.summary.trim().length}/{LIMITES.resumenMax}
-                </div>
               </div>
 
               <div className="col-12">
-                <label htmlFor="description" className="form-label">Descripción *</label>
-                <textarea id="description" name="description" rows={4} className={campo('description')} value={form.description} onChange={cambiar} maxLength={LIMITES.descMax} aria-describedby="desc-ayuda" />
+                <label htmlFor="description" className="form-label">Descripción * <span className="form-hint">{form.description.trim().length} / {LIMITES.descMax} · mínimo {LIMITES.descMin}</span></label>
+                <textarea id="description" name="description" rows={4} className={campo('description')} value={form.description} onChange={cambiar} maxLength={LIMITES.descMax}  />
                 {errores.description && <div className="invalid-feedback">{errores.description}</div>}
-                <div id="desc-ayuda" className="form-text">
-                  {form.description.trim().length}/{LIMITES.descMax} · mínimo {LIMITES.descMin}
-                </div>
               </div>
 
               <div className="col-12">
@@ -435,7 +428,7 @@ export default function ProjectsAdmin() {
               </div>
 
               <div className="col-12">
-                <span className="form-label d-block">Imágenes ({totalImagenes}/{LIMITES.imagenesMax})</span>
+                <span className="form-label d-block">Imágenes <span className="form-hint">JPG, PNG o WebP · máx. 2 MB cada una · hasta {LIMITES.imagenesMax} ({totalImagenes}/{LIMITES.imagenesMax})</span></span>
                 <div className="d-flex flex-wrap gap-2 mb-2">
                   {existentes.map((url) => (
                     <figure key={url} className="position-relative mb-0">
@@ -462,10 +455,9 @@ export default function ProjectsAdmin() {
                   className={`form-control ${errores.images ? 'is-invalid' : ''}`}
                   onChange={elegirImagenes}
                   disabled={totalImagenes >= LIMITES.imagenesMax}
-                  aria-describedby="images-ayuda"
+                  
                 />
                 {errores.images && <div className="invalid-feedback">{errores.images}</div>}
-                <div id="images-ayuda" className="form-text">JPG, PNG o WebP · máximo 2 MB cada una.</div>
               </div>
 
               <div className="col-12 d-flex flex-wrap gap-4">

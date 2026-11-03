@@ -991,6 +991,18 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .btn-eliminar { background: transparent; color: var(--pc-error); border: 1.5px solid var(--pc-linea); font-weight: 600; }
 .btn-eliminar:hover { border-color: var(--pc-error); color: var(--pc-error); background: transparent; }
 
+/* Admin: pistas bajo la etiqueta, cierre, miniaturas y texto «visible» como en el prototipo */
+.form-hint { display: block; font-weight: 400; font-size: 0.8125rem; color: var(--pc-texto-suave); margin-top: 2px; }
+.cerrar-form { flex: none; width: 46px; height: 46px; border: 1.5px solid var(--pc-linea); background: transparent; color: var(--pc-texto); font-size: 1.125rem; cursor: pointer; }
+.cerrar-form:hover { border-color: var(--pc-texto); }
+.cuadro-proyecto { display: block; width: 70px; height: 50px; background: var(--tono, var(--pc-carmin)); }
+.stack-mono { font-family: var(--pc-font-mono); font-size: 0.8125rem; color: var(--pc-texto-suave); }
+.visible-texto { font-family: var(--pc-font-mono); font-size: 0.8125rem; color: var(--pc-texto-suave); white-space: nowrap; }
+.fila-activa > td { background: var(--pc-lana) !important; }
+.fila-activa > td:first-child { box-shadow: inset 3px 0 0 var(--pc-carmin); }
+.servicio-fila.activa { border-color: var(--pc-linea); box-shadow: inset 4px 0 0 var(--pc-carmin); }
+.servicio-info strong { font-size: 1.25rem; font-weight: 700; }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
