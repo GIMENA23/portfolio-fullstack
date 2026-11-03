@@ -1,10 +1,11 @@
 // 🎨 DUEÑO: Integrante B
-import { useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { projectsApi } from '../services/api.js'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { GuardaLoader, useReveal } from '../animations'
 import HeroPagina from '../components/HeroPagina.jsx'
+import ErrorAmable from '../components/ErrorAmable.jsx'
 
 const TONOS = ['tono-carmin', 'tono-negro', 'tono-vicuna', 'tono-exito', 'tono-oro', 'tono-suave']
 
@@ -63,13 +64,25 @@ export default function Projects() {
   const [selectedTech, setSelectedTech] = useState('Todos')
   const [search, setSearch] = useState('')
 
+  const cargar = useCallback(
+    () =>
+      projectsApi
+        .list()
+        .then((data) => setProjects(Array.isArray(data) ? data : (data?.items ?? [])))
+        .catch((err) => setError(err.message || 'No pudimos cargar los proyectos.'))
+        .finally(() => setLoading(false)),
+    [],
+  )
+
   useEffect(() => {
-    projectsApi
-      .list()
-      .then((data) => setProjects(Array.isArray(data) ? data : []))
-      .catch((err) => setError(err.message || 'Error al cargar los proyectos.'))
-      .finally(() => setLoading(false))
-  }, [])
+    cargar()
+  }, [cargar])
+
+  const reintentar = () => {
+    setLoading(true)
+    setError('')
+    cargar()
+  }
 
   // Extraemos la lista única de tecnologías (stack) de todos los proyectos
   const allTechs = useMemo(() => {
@@ -165,11 +178,7 @@ export default function Projects() {
 
         {loading && <Esqueletos />}
 
-        {error && (
-          <div className="alert alert-danger" role="alert">
-            ⚠ {error}
-          </div>
-        )}
+        {error && <ErrorAmable mensaje={error} onReintentar={reintentar} />}
 
         {!loading && !error && filteredProjects.length === 0 && (
           <div className="alert alert-light mb-0" role="status">

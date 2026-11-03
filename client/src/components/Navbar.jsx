@@ -46,7 +46,7 @@ export default function Navbar() {
         </button>
 
         <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="mainNav">
-          <ul className="navbar-nav ms-auto align-items-lg-center gap-lg-2 pt-2 pt-lg-0">
+          <ul className="navbar-nav mx-lg-auto align-items-lg-center gap-lg-2 pt-2 pt-lg-0">
             <li className="nav-item">
               <NavLink className={navLinkClass} to="/" end>
                 Inicio
@@ -67,15 +67,13 @@ export default function Navbar() {
                 Contacto
               </NavLink>
             </li>
-
-            {hasRole('operator', 'admin') && (
+            {hasRole('operator') && (
               <li className="nav-item">
                 <NavLink className={navLinkClass} to="/operador">
                   Consultas
                 </NavLink>
               </li>
             )}
-
             {hasRole('admin') && (
               <li className="nav-item">
                 <NavLink className={navLinkClass} to="/admin">
@@ -83,43 +81,40 @@ export default function Navbar() {
                 </NavLink>
               </li>
             )}
+          </ul>
 
-            <li className="nav-item d-none d-lg-block mx-1 text-muted opacity-50">|</li>
-
-            <li className="nav-item ms-lg-2">
+          <ul className="navbar-nav align-items-lg-center gap-2 gap-lg-3 pt-2 pt-lg-0">
+            <li className="nav-item">
               <BotonModoNoche />
             </li>
 
             {user ? (
-              <li className="nav-item d-flex align-items-center justify-content-between justify-content-lg-start gap-2 pt-2 pt-lg-0 border-top border-lg-0 mt-2 mt-lg-0">
-                <span className="small text-secondary d-flex align-items-center gap-1">
-                  Hola, <strong className="text-body">{displayName}</strong>
-                  {user.role && user.role !== 'user' && (
-                    <span className="badge rounded-pill text-bg-secondary text-uppercase ms-1">
-                      {user.role}
-                    </span>
-                  )}
-                </span>
-                <NavLink className="btn btn-link btn-sm text-decoration-none" to="/cuenta">
-                  Mi cuenta
-                </NavLink>
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary btn-sm px-3"
-                  onClick={handleLogout}
-                >
-                  Salir
-                </button>
-              </li>
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-pill-usuario" to="/cuenta">
+                    <span className="nav-avatar" aria-hidden="true">{displayName.slice(0, 2).toUpperCase()}</span>
+                    {displayName}
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <button type="button" className="btn btn-outline-primary btn-sm px-3" onClick={handleLogout}>
+                    Salir
+                  </button>
+                </li>
+              </>
             ) : (
-              <li className="nav-item d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pt-2 pt-lg-0 border-top border-lg-0 mt-2 mt-lg-0">
-                <NavLink className="btn btn-link btn-sm text-decoration-none text-secondary" to="/login">
-                  Ingresar
-                </NavLink>
-                <Link className="btn btn-primary btn-sm px-3" to="/registro">
-                  Registrarme
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link nav-ingresar" to="/login">
+                    Ingresar
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <Link className="btn btn-primary" to="/registro">
+                    Registrarme
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </div>

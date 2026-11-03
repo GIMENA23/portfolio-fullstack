@@ -15,6 +15,7 @@ import { inquiriesApi } from '../../services/api.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { mockInquiries, actualizarMock } from './mockInquiries.js'
 import { TIPOS, ESTADOS, formatoFecha } from './inquiryLabels.js'
+import EstadoConsulta from '../../components/EstadoConsulta.jsx'
 
 // Mismo mínimo que replySchema en el modelo; el máximo es para no mandar textos gigantes.
 const MIN_RESPUESTA = 10
@@ -144,7 +145,6 @@ export default function InquiryDetail() {
     )
   }
 
-  const estado = ESTADOS[consulta.status]
   const cerrada = consulta.status === 'cerrada'
   const largo = texto.trim().length
 
@@ -154,7 +154,7 @@ export default function InquiryDetail() {
 
       <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
         <h1 className="h3 mb-0">{consulta.subject}</h1>
-        <span className={`badge text-bg-${estado.color}`}>{estado.label}</span>
+        <EstadoConsulta status={consulta.status} />
         {usandoMock && <span className="badge text-bg-warning">Datos de prueba</span>}
       </div>
 

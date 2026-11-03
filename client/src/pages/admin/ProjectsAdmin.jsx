@@ -283,9 +283,12 @@ export default function ProjectsAdmin() {
   const campo = (name) => `form-control ${errores[name] ? 'is-invalid' : ''}`
 
   return (
-    <div className="container py-4">
-      <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 className="h3 mb-0 me-auto">Proyectos y demos</h1>
+    <div className="py-2">
+      <div className="d-flex flex-wrap align-items-end gap-2 mb-3">
+        <div className="me-auto">
+          <span className="rotulo">{proyectos.length} PROYECTOS · {proyectos.filter((p) => p.visible !== false).length} VISIBLES</span>
+          <h1 className="h2 mb-0">Proyectos y demos</h1>
+        </div>
         {!formAbierto && (
           <button type="button" className="btn btn-primary" onClick={abrirNuevo} disabled={loading}>
             + Nuevo proyecto

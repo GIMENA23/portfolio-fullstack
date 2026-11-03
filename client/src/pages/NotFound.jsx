@@ -1,52 +1,27 @@
-// 🎨 DUEÑO: Integrante B — página 404 (clase 7).
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+// 🎨 DUEÑO: Integrante B — página 404 (NoEncontrada.dc.html).
+import { Link } from 'react-router-dom'
+import { TituloAnimado, GuardaTejida } from '../animations'
 
 export default function NotFound() {
-  const location = useLocation()
-  const navigate = useNavigate()
-
   return (
-    <div className="container py-5 my-4">
-      <div className="row justify-content-center">
-        <div className="col-md-8 col-lg-6 text-center">
-          <div className="card border-0 shadow-sm p-4 p-md-5">
-            <div className="card-body">
-              <span className="badge rounded-pill text-bg-light border px-3 py-2 mb-3 text-secondary">
-                Error HTTP 404
-              </span>
-
-              <p
-                className="display-1 fw-bold mb-2"
-                style={{ color: 'var(--pc-carmin)', lineHeight: 1 }}
-              >
-                404
-              </p>
-
-              <h1 className="h3 fw-bold mb-3">Página no encontrada</h1>
-
-              <p className="text-secondary mb-4">
-                La ruta <code className="px-2 py-1 rounded bg-light">{location.pathname}</code> no existe o fue movida a otra dirección.
-              </p>
-
-              <div className="d-flex flex-wrap gap-2 justify-content-center">
-                <button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  className="btn btn-outline-secondary px-4"
-                >
-                  ← Volver atrás
-                </button>
-                <Link to="/" className="btn btn-primary px-4">
-                  Ir al inicio
-                </Link>
-                <Link to="/proyectos" className="btn btn-outline-primary px-4">
-                  Ver proyectos
-                </Link>
-              </div>
+    <>
+      <section className="banda">
+        <div className="sec-inner d-flex flex-wrap align-items-center gap-5" style={{ paddingTop: '2.5rem', paddingBottom: '4.5rem' }}>
+          <span aria-hidden="true" className="numero-404" style={{ flex: '1 1 300px' }}>404</span>
+          <div className="d-flex flex-column gap-3" style={{ flex: '1 1 440px', minWidth: 0 }}>
+            <span className="rotulo">ERROR 404</span>
+            <TituloAnimado texto="Esta página se destejió." className="pagina-titulo" />
+            <p className="mb-0" style={{ opacity: 0.94 }}>
+              La dirección que buscás no existe o cambió de lugar. Volvé al inicio o mirá los proyectos.
+            </p>
+            <div className="d-flex flex-wrap gap-3">
+              <Link to="/" className="btn btn-primary">Volver al inicio</Link>
+              <Link to="/proyectos" className="btn btn-outline-light">Ver proyectos</Link>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+      <div style={{ maxWidth: '62%' }}><GuardaTejida alCargar /></div>
+    </>
   )
 }

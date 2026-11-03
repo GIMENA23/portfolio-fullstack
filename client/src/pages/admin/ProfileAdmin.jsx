@@ -226,15 +226,15 @@ export default function ProfileAdmin() {
         disabled={guardando}
         {...props.input}
       />
-      {errores[name] && <div className="invalid-feedback">⚠ {errores[name]}</div>}
+      {errores[name] && <div className="invalid-feedback">{errores[name]}</div>}
       {props.ayuda && <div className="form-text">{props.ayuda}</div>}
     </div>
   )
 
   return (
     <div>
-      <h1 className="h3 mb-1">Mi perfil</h1>
-      <p className="text-muted">Lo que se muestra en el inicio del portfolio.</p>
+      <span className="rotulo">LO QUE EDITES ACÁ SE VE EN EL SITIO</span>
+      <h1 className="h2 mb-3">Mi perfil</h1>
 
       <div className="row g-4">
         <div className="col-12 col-xl-7">
@@ -268,7 +268,7 @@ export default function ProfileAdmin() {
                   onChange={cambiar}
                   disabled={guardando}
                 />
-                {errores.bio && <div className="invalid-feedback">⚠ {errores.bio}</div>}
+                {errores.bio && <div className="invalid-feedback">{errores.bio}</div>}
                 <div className="form-text">Entre 40 y 400 caracteres.</div>
               </div>
 
@@ -296,7 +296,7 @@ export default function ProfileAdmin() {
                     disabled={guardando}
                   />
                   <button type="button" className="btn btn-outline-primary" onClick={agregarChip} disabled={guardando}>Agregar</button>
-                  {errores.stack && <div className="invalid-feedback">⚠ {errores.stack}</div>}
+                  {errores.stack && <div className="invalid-feedback">{errores.stack}</div>}
                 </div>
                 <ul className="list-unstyled d-flex flex-wrap gap-2 mt-2 mb-0">
                   {stack.map((s) => (
@@ -320,7 +320,7 @@ export default function ProfileAdmin() {
                   disabled={guardando}
                   aria-describedby="photo-ayuda"
                 />
-                {errores.photo && <div className="invalid-feedback">⚠ {errores.photo}</div>}
+                {errores.photo && <div className="invalid-feedback">{errores.photo}</div>}
                 <div id="photo-ayuda" className="form-text">JPG, PNG o WebP · máximo 2 MB.</div>
                 {fotoNueva && (
                   <button type="button" className="btn btn-link btn-sm p-0" onClick={quitarFoto}>Quitar la foto elegida</button>

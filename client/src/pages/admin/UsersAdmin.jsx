@@ -122,9 +122,12 @@ export default function UsersAdmin() {
   const irAPagina = (page) => pedir({ ...filtros, page })
 
   return (
-    <div className="container py-4">
-      <div className="d-flex align-items-center gap-2 mb-3">
-        <h1 className="h3 mb-0">Usuarios</h1>
+    <div className="py-2">
+      <div className="d-flex flex-wrap align-items-end gap-2 mb-3">
+        <div>
+          <span className="rotulo">{usuarios.length} CUENTAS</span>
+          <h1 className="h2 mb-0">Usuarios</h1>
+        </div>
         {usandoMock && <span className="badge text-bg-warning">Datos de prueba</span>}
       </div>
 

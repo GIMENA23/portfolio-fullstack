@@ -226,9 +226,13 @@ export default function ServicesAdmin() {
   const largoDesc = form.description.trim().length
 
   return (
-    <div className="container py-4">
-      <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 className="h3 mb-0 me-auto">Servicios</h1>
+    <div className="py-2">
+      <div className="d-flex flex-wrap align-items-end gap-2 mb-3">
+        <div className="me-auto">
+          <span className="rotulo">{servicios.length} SERVICIOS · EL ORDEN ES EL DEL SITIO</span>
+          <h1 className="h2 mb-0">Servicios</h1>
+        </div>
+        <a href="/servicios" className="small fw-semibold">Ver en el sitio ↗</a>
         {!formAbierto && (
           <button type="button" className="btn btn-primary" onClick={abrirNuevo} disabled={loading}>
             + Nuevo servicio

@@ -56,7 +56,9 @@ export async function request(path, { method = 'GET', body, query } = {}) {
 
   const json = await res.json().catch(() => ({}))
   if (!res.ok || json.ok === false) {
-    throw new ApiError(json.error || `Error ${res.status}`, res.status, json.details)
+    const sinRespuesta = res.status >= 500 && res.status !== 501 && !json.error
+    const mensaje = sinRespuesta ? 'No pudimos conectar con el servidor. Intentá de nuevo en unos minutos.' : json.error || `Error ${res.status}`
+    throw new ApiError(mensaje, res.status, json.details)
   }
   return json.data
 }

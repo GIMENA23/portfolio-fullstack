@@ -1,6 +1,21 @@
 // 🎨 DUEÑO: Integrante B
 import { useReveal, GuardaTejida } from '../../animations'
 import EncabezadoSeccion from '../EncabezadoSeccion.jsx'
+import bootstrapLogo from '../../assets/stack/bootstrap.svg'
+import expressLogo from '../../assets/stack/express.svg'
+import fastapiLogo from '../../assets/stack/fastapi.svg'
+import gitLogo from '../../assets/stack/git.svg'
+import html5Logo from '../../assets/stack/html5.svg'
+import javascriptLogo from '../../assets/stack/javascript.svg'
+import jsonLogo from '../../assets/stack/json.svg'
+import mongodbLogo from '../../assets/stack/mongodb.svg'
+import mongooseLogo from '../../assets/stack/mongoose.svg'
+import nodejsLogo from '../../assets/stack/nodejs.svg'
+import postgresqlLogo from '../../assets/stack/postgresql.svg'
+import postmanLogo from '../../assets/stack/postman.svg'
+import reactLogo from '../../assets/stack/react.svg'
+import vitejsLogo from '../../assets/stack/vitejs.svg'
+import vscodeLogo from '../../assets/stack/vscode.svg'
 
 const STACK_CATEGORIES = [
   {
@@ -12,22 +27,22 @@ const STACK_CATEGORIES = [
       {
         name: 'React',
         role: 'Librería UI / SPA',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',
+        icon: reactLogo,
       },
       {
         name: 'JavaScript (ES6+)',
         role: 'Lenguaje principal',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
+        icon: javascriptLogo,
       },
       {
         name: 'Bootstrap 5',
         role: 'Sistema de grillas y UI',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg',
+        icon: bootstrapLogo,
       },
       {
         name: 'HTML5 & CSS3',
         role: 'Maquetación semántica',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',
+        icon: html5Logo,
       },
     ],
   },
@@ -40,22 +55,22 @@ const STACK_CATEGORIES = [
       {
         name: 'Node.js',
         role: 'Entorno de ejecución',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',
+        icon: nodejsLogo,
       },
       {
         name: 'Express',
         role: 'Framework de API REST',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg',
+        icon: expressLogo,
       },
       {
         name: 'JWT & OAuth',
         role: 'Autenticación y sesiones',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-original.svg',
+        icon: jsonLogo,
       },
       {
         name: 'REST API',
         role: 'Arquitectura cliente-servidor',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg',
+        icon: fastapiLogo,
       },
     ],
   },
@@ -68,17 +83,17 @@ const STACK_CATEGORIES = [
       {
         name: 'MongoDB Atlas',
         role: 'Base de datos NoSQL',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg',
+        icon: mongodbLogo,
       },
       {
         name: 'Mongoose',
         role: 'ODM y modelado de datos',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongoose/mongoose-original.svg',
+        icon: mongooseLogo,
       },
       {
         name: 'SQL / Relacional',
         role: 'Consultas estructuradas',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg',
+        icon: postgresqlLogo,
       },
     ],
   },
@@ -91,22 +106,22 @@ const STACK_CATEGORIES = [
       {
         name: 'Git & GitHub',
         role: 'Control de versiones',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',
+        icon: gitLogo,
       },
       {
         name: 'Vite',
         role: 'Bundler frontend ultrarrápido',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg',
+        icon: vitejsLogo,
       },
       {
         name: 'VS Code',
         role: 'Entorno de desarrollo',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg',
+        icon: vscodeLogo,
       },
       {
         name: 'Postman',
         role: 'Pruebas de endpoints API',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg',
+        icon: postmanLogo,
       },
     ],
   },

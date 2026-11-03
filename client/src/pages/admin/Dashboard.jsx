@@ -158,13 +158,16 @@ export default function Dashboard() {
   const datosRegistros = registros.map((r) => ({ etiqueta: `Sem. ${fechaCorta(r.semana)}`, total: r.total }))
 
   return (
-    <div className="container py-4">
-      <div className="d-flex align-items-center gap-2 mb-3">
-        <h1 className="h3 mb-0">Dashboard</h1>
+    <div className="py-2">
+      <div className="d-flex flex-wrap align-items-end gap-2 mb-3">
+        <div>
+          <span className="rotulo">MÉTRICAS DEL SITIO</span>
+          <h1 className="h2 mb-0">Dashboard</h1>
+        </div>
         {usandoMock && <span className="badge text-bg-warning">Datos de prueba</span>}
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && <div className="alert alert-danger">⚠ {error}</div>}
 
       {/* Tarjetas KPI */}
       <div className="row g-3 mb-4">
@@ -200,7 +203,15 @@ export default function Dashboard() {
               </select>
             </div>
           </div>
-          {errorRango && <div className="text-danger small fw-semibold mt-2">{errorRango}</div>}
+          {errorRango && <div className="text-danger small fw-semibold mt-2">⚠ {errorRango}</div>}
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+            <code className="small text-secondary" style={{ overflowWrap: 'anywhere' }}>
+              GET /api/stats/visits?desde={rango.desde}&amp;hasta={rango.hasta}&amp;agrupar={rango.agrupar} · GET /api/stats/inquiries-by-type?desde={rango.desde}&amp;hasta={rango.hasta}
+            </code>
+            <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => setRango({ desde: haceDias(13), hasta: hoy(), agrupar: 'dia' })}>
+              Limpiar filtros
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,99 +1,83 @@
-// 🎨 DUEÑO: Integrante B (pantalla) · C (Google)
+// 🎨 DUEÑO: Integrante B — registro (Registro.dc.html): franja negra y formulario con reglas en vivo.
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import AuthLayout from '../components/AuthLayout.jsx'
+import PasswordReglas from '../components/PasswordReglas.jsx'
+import { passwordValida } from '../components/passwordReglas.js'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i
+const NOMBRE_REGEX = /^[\p{L}' ]+$/u
+
+const BENEFICIOS = ['Detalle completo de cada proyecto', 'Demos interactivas para probar', 'Acceso al código fuente']
 
 export default function Register() {
   const { register } = useAuth()
   const navigate = useNavigate()
 
-  const [form, setForm] = useState({
-    nombre: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  })
+  const [form, setForm] = useState({ nombre: '', email: '', password: '', confirmPassword: '', terms: false })
   const [fieldErrors, setFieldErrors] = useState({})
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const [tocados, setTocados] = useState({})
+  const [intentado, setIntentado] = useState(false)
 
-  const validate = () => {
+  const validate = (f = form) => {
     const errors = {}
-    const nombre = form.nombre.trim()
-    const email = form.email.trim()
+    const nombre = f.nombre.trim()
+    const email = f.email.trim().toLowerCase()
 
-    if (!nombre) {
-      errors.nombre = 'El nombre es obligatorio.'
-    } else if (nombre.length < 2 || nombre.length > 80) {
-      errors.nombre = 'El nombre debe tener entre 2 y 80 caracteres.'
-    }
+    if (!nombre) errors.nombre = 'Ingresá tu nombre y apellido.'
+    else if (nombre.length < 3) errors.nombre = 'Mínimo 3 letras.'
+    else if (nombre.length > 60) errors.nombre = 'Máximo 60 caracteres.'
+    else if (!NOMBRE_REGEX.test(nombre)) errors.nombre = 'Usá solo letras y espacios.'
+    else if (!nombre.includes(' ')) errors.nombre = 'Escribí nombre y apellido.'
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!email) {
-      errors.email = 'El correo electrónico es obligatorio.'
-    } else if (!emailRegex.test(email)) {
-      errors.email = 'Ingresá un formato de email válido.'
-    }
+    if (!email) errors.email = 'Ingresá tu email.'
+    else if (!EMAIL_REGEX.test(email)) errors.email = 'El email no es válido. Ejemplo: nombre@correo.com'
 
-    if (!form.password) {
-      errors.password = 'La contraseña es obligatoria.'
-    } else if (form.password.length < 6) {
-      errors.password = 'La contraseña debe tener al menos 6 caracteres.'
-    }
+    if (!passwordValida(f.password)) errors.password = 'La contraseña no cumple todas las reglas.'
 
-    if (form.password !== form.confirmPassword) {
-      errors.confirmPassword = 'Las contraseñas no coinciden.'
-    }
+    if (!f.confirmPassword) errors.confirmPassword = 'Repetí la contraseña.'
+    else if (f.confirmPassword !== f.password) errors.confirmPassword = 'Las contraseñas no coinciden.'
 
+    if (!f.terms) errors.terms = 'Tenés que aceptar para crear la cuenta.'
     return errors
   }
 
   const onChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-
-    if (fieldErrors[name]) {
-      setFieldErrors((prev) => {
-        const copy = { ...prev }
-        delete copy[name]
-        return copy
-      })
-    }
+    const { name, value, type, checked } = e.target
+    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
     if (error) setError('')
   }
+  const onBlur = (e) => setTocados((t) => ({ ...t, [e.target.name]: true }))
+
+  const errores = validate()
+  const apiErrores = fieldErrors
+  const mostrar = (k) => (apiErrores[k] || ((tocados[k] || intentado) && errores[k])) || ''
+  const cantidad = Object.keys(errores).length
 
   const onSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
-    const clientErrors = validate()
-    if (Object.keys(clientErrors).length > 0) {
-      setFieldErrors(clientErrors)
-      return
-    }
+    setIntentado(true)
+    if (cantidad > 0) return
 
     setFieldErrors({})
     setSending(true)
-
     try {
-      // Llamamos a register provisto por useAuth (el backend suele esperar { nombre, email, password })
       await register({
         nombre: form.nombre.trim(),
-        email: form.email.trim(),
+        email: form.email.trim().toLowerCase(),
         password: form.password,
       })
-
-      // Redirigir a proyectos después de registrarse exitosamente
       navigate('/proyectos', { replace: true })
     } catch (err) {
       if (Array.isArray(err.details) && err.details.length > 0) {
         const apiErrors = {}
         err.details.forEach((d) => {
           const key = d.field || d.path || d.param
-          if (key && !apiErrors[key]) {
-            apiErrors[key] = d.message || d.msg
-          }
+          if (key && !apiErrors[key]) apiErrors[key] = d.message || d.msg
         })
         setFieldErrors(apiErrors)
       }
@@ -103,159 +87,100 @@ export default function Register() {
     }
   }
 
+  const coincide = form.confirmPassword && form.confirmPassword === form.password && passwordValida(form.password)
+
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-md-7 col-lg-5" style={{ maxWidth: 460 }}>
-          <div className="card border-0 shadow-sm">
-            <div className="card-body p-4 p-md-5">
-              <div className="text-center mb-4">
-                <h1 className="h3 fw-bold mb-1">Crear una cuenta</h1>
-                <p className="text-secondary small mb-0">
-                  Completá tus datos para acceder a los proyectos y demos
-                </p>
-              </div>
+    <AuthLayout
+      variante="negro"
+      tab="registro"
+      rotulo="CUENTA GRATUITA"
+      titulo="Creá tu cuenta."
+      pie="Solo usamos tu email para tu cuenta."
+      lateral={
+        <ul className="list-unstyled d-flex flex-column gap-2 mb-0">
+          {BENEFICIOS.map((b) => (
+            <li key={b} className="d-flex gap-2">
+              <span style={{ color: 'var(--pc-dorado)' }} aria-hidden="true">◆</span>
+              {b}
+            </li>
+          ))}
+        </ul>
+      }
+    >
+      <button type="button" className="btn btn-google" onClick={() => setError('El registro con Google todavía no está disponible.')}>
+        {/* TODO (C): registro con Google (Google Identity Services) → loginWithGoogle(credential) */}
+        Registrarme con Google
+      </button>
+      <div className="separador-o">O CON TU EMAIL</div>
 
-              {error && (
-                <div className="alert alert-danger py-2 small" role="alert">
-                  {error}
-                </div>
-              )}
+      <form onSubmit={onSubmit} noValidate className="d-flex flex-column gap-3">
+        {error && <div className="alert alert-danger py-2 small mb-0 fw-semibold" role="alert">⚠ {error}</div>}
 
-              <form onSubmit={onSubmit} noValidate>
-                {/* Nombre */}
-                <div className="mb-3">
-                  <label htmlFor="nombre" className="form-label fw-medium">
-                    Nombre completo
-                  </label>
-                  <input
-                    id="nombre"
-                    name="nombre"
-                    type="text"
-                    className={`form-control ${fieldErrors.nombre ? 'is-invalid' : ''}`}
-                    placeholder="Ej: Ana Gómez"
-                    value={form.nombre}
-                    onChange={onChange}
-                    maxLength={80}
-                    disabled={sending}
-                    required
-                  />
-                  {fieldErrors.nombre && (
-                    <div className="invalid-feedback">{fieldErrors.nombre}</div>
-                  )}
-                </div>
-
-                {/* Email */}
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label fw-medium">
-                    Correo electrónico
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    className={`form-control ${fieldErrors.email ? 'is-invalid' : ''}`}
-                    placeholder="nombre@ejemplo.com"
-                    value={form.email}
-                    onChange={onChange}
-                    autoComplete="email"
-                    disabled={sending}
-                    required
-                  />
-                  {fieldErrors.email && (
-                    <div className="invalid-feedback">{fieldErrors.email}</div>
-                  )}
-                </div>
-
-                {/* Contraseña */}
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label fw-medium">
-                    Contraseña
-                  </label>
-                  <div className="input-group has-validation">
-                    <input
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      className={`form-control ${fieldErrors.password ? 'is-invalid' : ''}`}
-                      placeholder="Mínimo 6 caracteres"
-                      value={form.password}
-                      onChange={onChange}
-                      autoComplete="new-password"
-                      disabled={sending}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      tabIndex={-1}
-                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                    >
-                      {showPassword ? 'Ocultar' : 'Ver'}
-                    </button>
-                    {fieldErrors.password && (
-                      <div className="invalid-feedback">{fieldErrors.password}</div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Confirmar contraseña */}
-                <div className="mb-4">
-                  <label htmlFor="confirmPassword" className="form-label fw-medium">
-                    Confirmar contraseña
-                  </label>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showPassword ? 'text' : 'password'}
-                    className={`form-control ${fieldErrors.confirmPassword ? 'is-invalid' : ''}`}
-                    placeholder="Repetitla contraseña"
-                    value={form.confirmPassword}
-                    onChange={onChange}
-                    autoComplete="new-password"
-                    disabled={sending}
-                    required
-                  />
-                  {fieldErrors.confirmPassword && (
-                    <div className="invalid-feedback">{fieldErrors.confirmPassword}</div>
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100 py-2 fw-medium"
-                  disabled={sending}
-                >
-                  {sending ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                        aria-hidden="true"
-                      />
-                      Registrando cuenta…
-                    </>
-                  ) : (
-                    'Registrarme'
-                  )}
-                </button>
-              </form>
-
-              {/* TODO (C): Botón "Registrarme con Google" (Google Identity Services) */}
-
-              <hr className="my-4 text-muted" />
-
-              <p className="small text-center mb-0">
-                ¿Ya tenés cuenta?{' '}
-                <Link to="/login" className="fw-medium text-decoration-none">
-                  Ingresá acá
-                </Link>
-              </p>
-            </div>
-          </div>
+        <div>
+          <label htmlFor="nombre" className="form-label fw-semibold">Nombre y apellido</label>
+          <input
+            id="nombre" name="nombre" autoComplete="name"
+            className={`form-control ${mostrar('nombre') ? 'is-invalid' : ''}`}
+            value={form.nombre} onChange={onChange} onBlur={onBlur} disabled={sending}
+          />
+          {mostrar('nombre') && <div className="invalid-feedback">{mostrar('nombre')}</div>}
         </div>
-      </div>
-    </div>
+
+        <div>
+          <label htmlFor="email" className="form-label fw-semibold">Email</label>
+          <input
+            id="email" name="email" type="email" autoComplete="email"
+            className={`form-control ${mostrar('email') ? 'is-invalid' : ''}`}
+            value={form.email} onChange={onChange} onBlur={onBlur} disabled={sending}
+          />
+          {mostrar('email') && <div className="invalid-feedback">{mostrar('email')}</div>}
+        </div>
+
+        <div>
+          <label htmlFor="password" className="form-label fw-semibold">Contraseña</label>
+          <input
+            id="password" name="password" type="text" autoComplete="new-password"
+            className="form-control font-mono" style={{ borderColor: 'var(--pc-texto)' }}
+            value={form.password} onChange={onChange} onBlur={onBlur} disabled={sending}
+            aria-describedby="reglas"
+          />
+        </div>
+        <PasswordReglas id="reglas" password={form.password} grilla />
+
+        <div>
+          <label htmlFor="confirmPassword" className="form-label fw-semibold">Repetir contraseña</label>
+          <input
+            id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password"
+            className={`form-control ${mostrar('confirmPassword') ? 'is-invalid' : ''}`}
+            value={form.confirmPassword} onChange={onChange} onBlur={onBlur} disabled={sending}
+          />
+          {mostrar('confirmPassword') && <div className="invalid-feedback">{mostrar('confirmPassword')}</div>}
+          {coincide && <span className="campo-ok">✓ Las contraseñas coinciden</span>}
+        </div>
+
+        <div>
+          <label className="d-flex gap-2 align-items-start small fw-medium">
+            <input
+              type="checkbox" name="terms" className="form-check-input mt-1" style={{ width: 20, height: 20, flex: 'none' }}
+              checked={form.terms} onChange={onChange} disabled={sending}
+            />
+            <span>Acepto que mis datos se usen solo para gestionar mi cuenta.</span>
+          </label>
+          {mostrar('terms') && <span className="campo-error d-block mt-1">⚠ {mostrar('terms')}</span>}
+        </div>
+
+        <button type="submit" className="btn btn-primary" disabled={sending}>
+          {sending ? 'Creando cuenta…' : cantidad === 0 ? 'Crear cuenta y ver proyectos →' : 'Crear cuenta'}
+        </button>
+        {intentado && cantidad > 0 && (
+          <span role="alert" className="campo-error text-center" style={{ fontSize: '0.875rem' }}>
+            ⚠ Revisá {cantidad} campo(s) marcados en rojo.
+          </span>
+        )}
+        <span className="small text-secondary text-center">
+          ¿Ya tenés cuenta? <Link to="/login">Ingresá</Link>
+        </span>
+      </form>
+    </AuthLayout>
   )
 }

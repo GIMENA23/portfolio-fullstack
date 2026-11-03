@@ -1,8 +1,8 @@
 // 🎨 DUEÑO: Integrante B — reglas de contraseña nueva (Mi cuenta y Recuperar contraseña).
 export const REGLAS_PASSWORD = [
-  { id: 'largo', texto: 'Al menos 8 caracteres', ok: (p) => p.length >= 8 },
-  { id: 'mayuscula', texto: 'Una letra mayúscula', ok: (p) => /\p{Lu}/u.test(p) },
-  { id: 'minuscula', texto: 'Una letra minúscula', ok: (p) => /\p{Ll}/u.test(p) },
+  { id: 'largo', texto: '8 caracteres o más', ok: (p) => p.length >= 8 },
+  { id: 'mayuscula', texto: 'Una mayúscula', ok: (p) => /\p{Lu}/u.test(p) },
+  { id: 'minuscula', texto: 'Una minúscula', ok: (p) => /\p{Ll}/u.test(p) },
   { id: 'numero', texto: 'Un número', ok: (p) => /\d/.test(p) },
 ]
 

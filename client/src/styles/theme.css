@@ -596,7 +596,7 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
   font-size: clamp(1.75rem, 8vw, 4.5rem);
   line-height: 0.95; letter-spacing: -0.02em; margin: 0;
 }
-.pagina-titulo { font-size: clamp(1.75rem, 8vw, 3.5rem); overflow-wrap: anywhere; }
+.pagina-titulo { font-size: clamp(1.75rem, 8vw, 3.5rem); overflow-wrap: break-word; }
 .hero-texto { max-width: 34em; font-size: 1.1875rem; opacity: 0.94; margin: 0; }
 
 /* Cabecera de sección: número grande + rótulo + título */
@@ -733,6 +733,138 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
   .btn-sm { min-height: 44px; }
   .sec-num { font-size: 2.25rem; }
 }
+
+/* ───────────────────────── 5d. Acceso (Login / Registro) ───────────────────────── */
+.auth { min-height: 100vh; display: flex; flex-wrap: wrap; background: var(--pc-lana); color: var(--pc-texto); }
+.auth-franja { flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; background: var(--pc-negro); color: var(--pc-noche-texto); }
+.auth-franja-carmin { background: var(--pc-banda); color: var(--pc-sobre-banda); }
+[data-bs-theme='dark'] .auth-franja-carmin { background: var(--pc-lana-clara); border-right: var(--pc-borde); }
+.auth-franja h1, .auth-franja a { color: inherit; }
+.auth-franja .rotulo { color: var(--pc-dorado); }
+.auth-franja-inner {
+  flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 48px;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem) clamp(1.25rem, 0.5rem + 3.5vw, 3.5rem);
+}
+.auth-titulo { font-size: clamp(1.75rem, 8vw, 4rem); line-height: 0.95; letter-spacing: -0.02em; margin: 0; overflow-wrap: anywhere; }
+.auth-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--pc-font-titulo); font-weight: 800; font-size: 1.25rem; }
+.auth-logo:hover { color: inherit; }
+.logo-rombo-negro::before { background: #160f10; }
+.logo-rombo-negro { color: var(--pc-dorado); }
+.auth-lado { flex: 1 1 520px; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 48px clamp(1rem, 0.5rem + 2vw, 2rem); }
+.auth-form { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 16px; }
+.auth-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: var(--pc-borde); }
+.auth-tab {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px;
+  font-weight: 600; text-decoration: none; color: var(--pc-texto-suave);
+  border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+.auth-tab.on { color: var(--pc-texto); border-bottom-color: var(--pc-carmin); }
+.btn-google {
+  display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 13px;
+  font-weight: 600; font-size: 0.9375rem; background: var(--pc-blanco); color: var(--pc-texto);
+  border: 1.5px solid var(--pc-linea); border-radius: 0;
+}
+.btn-google:hover { border-color: var(--pc-texto); color: var(--pc-texto); background: var(--pc-blanco); }
+.separador-o { display: flex; align-items: center; gap: 12px; font-family: var(--pc-font-mono); font-size: 0.75rem; color: var(--pc-texto-suave); }
+.separador-o::before, .separador-o::after { content: ''; flex-grow: 1; height: 1px; background: var(--pc-linea); }
+.campo-error { font-size: 0.8125rem; font-weight: 600; color: var(--pc-error); }
+.campo-ok { font-size: 0.8125rem; font-weight: 600; color: var(--pc-exito); }
+.reglas-grid { list-style: none; margin: -4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; font-size: 0.8125rem; }
+.reglas-grid .ok { color: var(--pc-exito); font-weight: 500; }
+.reglas-grid .mal { color: var(--pc-error); font-weight: 500; }
+.demo-roles { border: 1px dashed var(--pc-linea); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.demo-roles .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.rol-btn { min-height: 44px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px 4px; font-size: 0.8125rem; font-weight: 600; border: 0; border-radius: 0; }
+.rol-admin { background: var(--pc-carmin); color: var(--pc-sobre-carmin); }
+.rol-operador { background: var(--pc-negro); color: var(--pc-dorado); }
+[data-bs-theme='dark'] .rol-operador { background: var(--pc-lana-clara); border: var(--pc-borde); }
+.rol-usuario { background: transparent; color: var(--pc-texto); border: 1.5px solid var(--pc-texto); }
+@media (max-width: 767.98px) {
+  .auth-franja-inner { gap: 20px; padding-block: 1.5rem; }
+  .auth-lado { padding-block: 2rem; align-items: flex-start; }
+}
+
+/* ───────────────────────── 5e. Contacto ───────────────────────── */
+.contacto-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 48px; align-items: start; }
+.contacto-form { background: var(--pc-lana-clara); border: var(--pc-borde); border-radius: var(--pc-radio); padding: clamp(1.25rem, 1rem + 1.5vw, 2rem); }
+.contacto-par { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; }
+.contacto-datos { display: flex; flex-direction: column; gap: 12px; font-size: 0.9375rem; border-top: 2px solid var(--pc-texto); padding-top: 16px; }
+.contacto-datos div { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.contacto-datos dt { font-family: var(--pc-font-mono); font-size: 0.75rem; font-weight: 400; color: var(--pc-texto-suave); width: 90px; }
+.contacto-datos dd { margin: 0; overflow-wrap: anywhere; }
+.selector-tipo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1.5px solid var(--pc-texto); }
+.selector-tipo button {
+  min-height: 44px; padding: 10px 8px; border: 0; background: transparent; color: var(--pc-texto);
+  font-weight: 600; font-size: 0.9375rem; cursor: pointer;
+}
+.selector-tipo button + button { border-left: 1.5px solid var(--pc-texto); }
+.selector-tipo button.on { background: var(--pc-negro); color: #efe9e1; }
+[data-bs-theme='dark'] .selector-tipo button.on { background: var(--pc-carmin); color: var(--pc-sobre-carmin); }
+@media (max-width: 900px) {
+  .contacto-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+}
+
+/* ───────────────────────── 5f. Bandeja del operador ───────────────────────── */
+.bandeja { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.bandeja-lista { flex: 3 1 520px; min-width: 0; overflow-x: auto; background: var(--pc-blanco); border: var(--pc-borde); border-radius: var(--pc-radio); }
+.bandeja-fila {
+  all: unset; box-sizing: border-box; width: 100%; min-height: 44px; cursor: pointer;
+  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 0.8fr) minmax(0, 1fr);
+  align-items: center; gap: 12px; padding: 10px 16px; font-size: 0.9375rem; border-bottom: var(--pc-borde);
+}
+.bandeja-fila:hover { background: var(--pc-lana-clara); }
+.bandeja-fila.activa { background: var(--pc-lana-clara); box-shadow: inset 3px 0 0 var(--pc-carmin); }
+.bandeja-fila:focus-visible { outline: 3px solid var(--pc-dorado); outline-offset: -3px; }
+.bandeja-cabecera {
+  cursor: default; font-family: var(--pc-font-mono); font-size: 0.6875rem; letter-spacing: 0.06em;
+  color: var(--pc-texto-suave); border-bottom: 2px solid var(--pc-linea);
+}
+.bandeja-cabecera:hover { background: transparent; }
+.bandeja-detalle {
+  flex: 2 1 340px; min-width: 0; background: var(--pc-blanco); border: var(--pc-borde); border-top: 3px solid var(--pc-carmin);
+  border-radius: var(--pc-radio); padding: 20px; display: flex; flex-direction: column; gap: 14px;
+}
+@media (max-width: 767.98px) {
+  /* Celular: lista → detalle (BandejaMovil.dc.html) */
+  .bandeja-fila { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; }
+  .bandeja-fila .col-tipo, .bandeja-fila .col-fecha, .bandeja-cabecera { display: none; }
+  .bandeja-fila > :nth-child(1) { grid-column: 1; grid-row: 1; }
+  .bandeja-fila > :nth-child(3) { grid-column: 1 / -1; grid-row: 2; }
+  .bandeja-fila > :nth-child(5) { grid-column: 2; grid-row: 1; }
+  .bandeja:not(.con-detalle) .bandeja-detalle { display: none; }
+  .bandeja.con-detalle .bandeja-lista { display: none; }
+}
+
+/* Menú del panel (grupos, íconos, tarjeta de usuario) */
+.panel-grupo { font-family: var(--pc-font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--pc-texto-suave); padding: 12px 12px 6px; }
+.panel-sidebar .nav-link svg { flex: none; }
+.panel-sidebar .nav-link.active svg { color: var(--pc-carmin); }
+.panel-usuario-card { background: var(--pc-blanco); border: var(--pc-borde); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.panel-avatar-grande { width: 40px; height: 40px; background: var(--pc-carmin); color: var(--pc-sobre-carmin); }
+.panel-operador .panel-avatar-grande { background: var(--pc-negro); color: var(--pc-dorado); }
+.panel-acciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.panel-acciones .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding-inline: 6px; min-height: 44px; }
+.panel-usuario-datos .rotulo { margin-top: 2px; }
+
+/* Navbar: «Ingresar» como link, avatar del usuario y links centrados */
+.nav-ingresar { color: var(--pc-texto) !important; font-weight: 600 !important; }
+.nav-ingresar:hover { color: var(--pc-carmin) !important; }
+.nav-pill-usuario {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 5px 14px 5px 5px;
+  background: var(--pc-blanco); border: 1.5px solid var(--pc-linea); color: var(--pc-texto);
+  text-decoration: none; font-size: 0.9375rem; font-weight: 600;
+}
+.nav-pill-usuario:hover { color: var(--pc-carmin); border-color: var(--pc-carmin); }
+.nav-avatar {
+  width: 32px; height: 32px; border-radius: var(--pc-radio-pill); display: grid; place-items: center;
+  background: var(--pc-negro); color: var(--pc-dorado); font-family: var(--pc-font-titulo); font-weight: 800; font-size: 0.8125rem;
+}
+@media (min-width: 992px) {
+  .navbar .navbar-collapse { flex-grow: 1; }
+}
+
+.numero-404 { font-family: var(--pc-font-titulo); font-weight: 800; font-size: clamp(6rem, 24vw, 13rem); line-height: 0.85; letter-spacing: -0.04em; color: var(--pc-negro); }
+[data-bs-theme='dark'] .numero-404 { color: var(--pc-carmin); }
 
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */

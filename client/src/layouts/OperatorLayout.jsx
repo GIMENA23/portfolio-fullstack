@@ -1,8 +1,8 @@
-// ⚙️ BASE DEL PROYECTO — layout del panel de operador.
+// ⚙️ BASE DEL PROYECTO — layout del panel de operador (menú de Bandeja.dc.html).
 import PanelLayout from './PanelLayout.jsx'
 
-const links = [{ to: '/operador', label: 'Bandeja de consultas', end: true }]
+const links = [{ to: '/operador', label: 'Consultas', end: true, icono: 'consultas' }]
 
 export default function OperatorLayout() {
-  return <PanelLayout title="Panel de operador" links={links} />
+  return <PanelLayout variante="operador" links={links} />
 }
