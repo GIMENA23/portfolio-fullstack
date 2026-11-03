@@ -43,7 +43,7 @@ const PASOS = [
 ]
 
 const PREGUNTAS = [
-  ['¿Cuánto tarda un proyecto?', 'Un sitio a medida suele llevar entre [X] y [Y] semanas. En la propuesta te paso un calendario con entregas semanales.'],
+  ['¿Cuánto tarda un proyecto?', 'Un sitio a medida suele llevar entre 4 y 8 semanas, según el alcance. En la propuesta te paso un calendario con entregas semanales.'],
   ['¿Cómo se paga?', 'En partes: un adelanto al empezar y el resto contra entregas. Todo queda por escrito en la propuesta.'],
   ['¿Qué pasa después de la entrega?', 'Incluyo un mes de soporte para corregir errores. Después podés contratar mantenimiento mensual.'],
   ['¿Trabajás con equipos que ya tienen un sistema?', 'Sí. Puedo sumarme a un proyecto existente, revisar el código y proponer mejoras.'],
@@ -85,7 +85,7 @@ function ListaServicios({ servicios }) {
                   ))}
                 </ul>
               )}
-              <Link to="/contacto" className="fw-semibold mt-auto">{extra.cta} →</Link>
+              <Link to={`/contacto?tipo=${/asesor/i.test(s.name) ? 'asesoria' : 'cotizacion'}&servicio=${encodeURIComponent(s.name)}`} className="fw-semibold mt-auto">{extra.cta} →</Link>
             </article>
           </div>
         )

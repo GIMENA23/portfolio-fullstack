@@ -185,7 +185,7 @@ export default function ProfileAdmin() {
   const agregarExperiencia = () => {
     const e = { period: nuevaExp.period.trim(), role: nuevaExp.role.trim(), detail: nuevaExp.detail.trim() }
     let problema = ''
-    if (e.period.length < 3 || e.period.length > 30) problema = 'El período debe tener entre 3 y 30 caracteres (ej.: [AÑO] — HOY).'
+    if (e.period.length < 3 || e.period.length > 30) problema = 'El período debe tener entre 3 y 30 caracteres (ej.: 2024 — HOY).'
     else if (e.role.length < 3 || e.role.length > 80) problema = 'El puesto debe tener entre 3 y 80 caracteres.'
     else if (e.detail.length > 150) problema = 'El detalle puede tener hasta 150 caracteres.'
     else if (experiencia.length >= 8) problema = 'Máximo 8 experiencias.'
@@ -388,7 +388,7 @@ export default function ProfileAdmin() {
               <div className="perfil-par">
                 <div>
                   <label htmlFor="exp-periodo" className="form-label fw-semibold">Período</label>
-                  <input id="exp-periodo" className="form-control" value={nuevaExp.period} onChange={(e) => setNuevaExp({ ...nuevaExp, period: e.target.value })} placeholder="[AÑO] — HOY" maxLength={30} />
+                  <input id="exp-periodo" className="form-control" value={nuevaExp.period} onChange={(e) => setNuevaExp({ ...nuevaExp, period: e.target.value })} placeholder="2024 — HOY" maxLength={30} />
                 </div>
                 <div>
                   <label htmlFor="exp-puesto" className="form-label fw-semibold">Puesto</label>

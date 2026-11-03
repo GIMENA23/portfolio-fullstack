@@ -118,7 +118,7 @@ function Datos() {
 function Seguridad() {
   const { user, updateUser } = useAuth()
   // Quien entró solo con Google todavía no tiene contraseña: no hay una «actual» que pedir.
-  const tieneContrasena = !user?.providers || user.providers.includes('email')
+  const tieneContrasena = Array.isArray(user?.providers) ? user.providers.includes('email') : true
   const [actual, setActual] = useState('')
   const [password, setPassword] = useState('')
   const [repetir, setRepetir] = useState('')
@@ -139,8 +139,10 @@ function Seguridad() {
   const guardar = async (e) => {
     e.preventDefault()
     setAviso('')
-    const err = validarNuevaPassword(password, repetir)
+    // Mismo orden que el formulario: primero la contraseña actual, después la nueva y su repetición.
+    const err = {}
     if (tieneContrasena && !actual) err.currentPassword = 'Ingresá tu contraseña actual.'
+    Object.assign(err, validarNuevaPassword(password, repetir))
     setErrores(err)
     if (Object.keys(err).length) return
 
@@ -157,9 +159,10 @@ function Seguridad() {
       } else if (ex.details?.length) {
         const delBack = {}
         ex.details.forEach((d) => {
-          delBack[d.field ?? 'general'] = d.message
+          delBack[d.field === 'passwordConfirm' ? 'repetir' : (d.field ?? 'general')] = d.message
         })
-        setErrores(delBack)
+        // La contraseña actual va primero, igual que en el formulario.
+        setErrores({ ...(delBack.currentPassword && { currentPassword: delBack.currentPassword }), ...delBack })
       } else {
         setErrores({ general: ex.message })
       }
@@ -183,6 +186,7 @@ function Seguridad() {
             value={actual}
             onChange={(e) => setActual(e.target.value)}
             autoComplete="current-password"
+            aria-invalid={!!errores.currentPassword}
             disabled={guardando}
           />
           {errores.currentPassword && <div className="invalid-feedback">{errores.currentPassword}</div>}
@@ -362,7 +366,7 @@ export default function Cuenta() {
       <div className="row justify-content-center">
         <div className="col-lg-8">
 
-          <ul className="nav nav-tabs flex-nowrap overflow-auto mb-4" role="tablist">
+          <ul className="nav nav-tabs tabs-cuenta mb-4" role="tablist">
             {TABS.map((t) => (
               <li className="nav-item" role="presentation" key={t.id}>
                 <button

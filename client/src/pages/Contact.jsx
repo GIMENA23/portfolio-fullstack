@@ -1,5 +1,6 @@
 // 🎨 DUEÑO: Integrante B — contacto (Contacto.dc.html): título sobre lana, datos 1/3 y formulario 2/3.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { inquiriesApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { EnviadoLottie, GuardaTejida, TituloAnimado } from '../animations'
@@ -54,10 +55,28 @@ function validar(f, adjunto) {
   return e
 }
 
+const PREFIJO_ASUNTO = { cotizacion: 'Cotización', asesoria: 'Asesoría' }
+
+// Viene de «Pedir cotización» en Servicios: /contacto?tipo=cotizacion&servicio=<nombre>
+function datosIniciales(params, user) {
+  const tipo = TIPOS.some((t) => t.id === params.get('tipo')) ? params.get('tipo') : 'general'
+  const servicio = (params.get('servicio') ?? '').trim().slice(0, 100)
+  const prefijo = PREFIJO_ASUNTO[tipo]
+  return {
+    ...INICIAL,
+    nombre: user?.name ?? '',
+    email: user?.email ?? '',
+    tipo,
+    asunto: prefijo && servicio ? `${prefijo}: ${servicio}` : '',
+  }
+}
+
 export default function Contact() {
   const { user } = useAuth()
+  const [params] = useSearchParams()
+  const inputAdjunto = useRef(null)
 
-  const [form, setForm] = useState(() => ({ ...INICIAL, nombre: user?.name ?? '', email: user?.email ?? '' }))
+  const [form, setForm] = useState(() => datosIniciales(params, user))
   const [adjunto, setAdjunto] = useState(null)
   const [tocados, setTocados] = useState({})
   const [intentado, setIntentado] = useState(false)
@@ -88,6 +107,11 @@ export default function Contact() {
     setAdjunto({ file, problema })
   }
 
+  const quitarAdjunto = () => {
+    if (inputAdjunto.current) inputAdjunto.current.value = ''
+    setAdjunto(null)
+  }
+
   const enviar = async (e) => {
     e.preventDefault()
     setGeneralError('')
@@ -113,6 +137,7 @@ export default function Contact() {
         cuerpo.append('adjunto', adjunto.file)
       }
       await inquiriesApi.create(cuerpo)
+      quitarAdjunto()
       setEnviado(true)
     } catch (err) {
       if (Array.isArray(err.details) && err.details.length > 0) {
@@ -265,10 +290,22 @@ export default function Contact() {
                 accept=".pdf,.jpg,.jpeg,.png"
                 className={`form-control ${mostrar('adjunto') ? 'is-invalid' : ''}`}
                 onChange={elegirAdjunto}
+                ref={inputAdjunto}
                 disabled={enviando}
               />
               {mostrar('adjunto') && <div className="invalid-feedback">{mostrar('adjunto')}</div>}
               {adjunto && !adjunto.problema && <span className="campo-ok">✓ {adjunto.file.name} listo para enviar</span>}
+              {adjunto && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-secondary mt-2 d-block"
+                  onClick={quitarAdjunto}
+                  disabled={enviando}
+                  aria-label={`Quitar archivo ${adjunto.file.name}`}
+                >
+                  Quitar archivo
+                </button>
+              )}
             </div>
 
             {generalError && <div className="alert alert-danger mb-0 fw-semibold" role="alert">⚠ {generalError}</div>}
