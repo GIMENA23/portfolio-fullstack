@@ -11,7 +11,9 @@
 //   registrations    → [{ semana: 'AAAA-MM-DD', total }]     (?desde&hasta)
 
 import { useEffect, useState } from 'react'
-import { statsApi } from '../../services/api.js'
+import { statsApi, inquiriesApi } from '../../services/api.js'
+import EstadoConsulta from '../../components/EstadoConsulta.jsx'
+import { mockInquiries } from '../operator/mockInquiries.js'
 import { NumeroAnimado, GuardaLoader, opcionesGrafico, estiloDataset, useColoresGrafico } from '../../animations'
 import {
   Chart as ChartJS,
@@ -34,10 +36,10 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarEleme
 const TIPOS = { general: 'General', cotizacion: 'Cotización', asesoria: 'Asesoría' }
 
 const KPIS = [
-  { clave: 'visits', label: 'Visitas al sitio' },
-  { clave: 'users', label: 'Usuarios registrados' },
-  { clave: 'logins', label: 'Accesos autenticados' },
-  { clave: 'inquiries', label: 'Consultas recibidas' },
+  { clave: 'visits', label: 'Visitas al sitio', nota: 'Contador general del sitio' },
+  { clave: 'users', label: 'Usuarios registrados', nota: 'Cuentas creadas en el sitio' },
+  { clave: 'logins', label: 'Accesos autenticados', nota: 'Ingresos con cuenta' },
+  { clave: 'inquiries', label: 'Consultas recibidas', nota: 'En el período elegido' },
 ]
 
 const hoy = () => new Date().toISOString().slice(0, 10)
@@ -94,6 +96,16 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [usandoMock, setUsandoMock] = useState(false)
+  const [tipo, setTipo] = useState('') // filtro de consultas (en el navegador)
+  const [ultimas, setUltimas] = useState([])
+
+  // Últimas consultas (las responde el operador)
+  useEffect(() => {
+    inquiriesApi
+      .list({ page: 1 })
+      .then((d) => setUltimas((d.items ?? d).slice(0, 4)))
+      .catch(() => setUltimas(mockInquiries.slice(0, 4))) // datos de prueba si la API todavía no responde
+  }, [])
 
   // Totales (no dependen del rango)
   useEffect(() => {
@@ -149,60 +161,85 @@ export default function Dashboard() {
     setRango(nuevo)
   }
 
+  const dias = Math.max(1, Math.round((new Date(`${rango.hasta}T12:00:00`) - new Date(`${rango.desde}T12:00:00`)) / 86400000) + 1)
   const totalVisitas = visitas.reduce((s, v) => s + v.total, 0)
   const datosVisitas = visitas.map((v) => ({
     etiqueta: rango.agrupar === 'semana' ? `Sem. ${fechaCorta(v.fecha)}` : fechaCorta(v.fecha),
     total: v.total,
   }))
-  const datosTipo = porTipo.map((t) => ({ etiqueta: TIPOS[t.tipo] ?? t.tipo, total: t.total }))
+  const datosTipo = porTipo.filter((t) => !tipo || t.tipo === tipo).map((t) => ({ etiqueta: TIPOS[t.tipo] ?? t.tipo, total: t.total }))
   const datosRegistros = registros.map((r) => ({ etiqueta: `Sem. ${fechaCorta(r.semana)}`, total: r.total }))
 
   return (
-    <div className="container py-4">
-      <div className="d-flex align-items-center gap-2 mb-3">
-        <h1 className="h3 mb-0">Dashboard</h1>
+    <div className="py-2">
+      <div className="d-flex flex-wrap align-items-end gap-2 mb-3">
+        <div>
+          <span className="rotulo">MÉTRICAS DEL SITIO</span>
+          <h1 className="h2 mb-0">Dashboard</h1>
+        </div>
         {usandoMock && <span className="badge text-bg-warning">Datos de prueba</span>}
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && <div className="alert alert-danger">⚠ {error}</div>}
 
       {/* Tarjetas KPI */}
       <div className="row g-3 mb-4">
         {KPIS.map((k, i) => (
           <div key={k.clave} className="col-6 col-lg-3">
-            <div className="kpi h-100">
+            <div className={`kpi h-100 ${k.clave === 'inquiries' ? 'kpi-atencion' : ''}`}>
               <div className="kpi-valor">
-                {resumen ? <NumeroAnimado valor={resumen[k.clave] ?? 0} delay={i * 120} /> : '—'}
+                {resumen ? <NumeroAnimado valor={k.clave === 'inquiries' && tipo ? (porTipo.find((t) => t.tipo === tipo)?.total ?? 0) : (resumen[k.clave] ?? 0)} delay={i * 120} /> : '—'}
               </div>
-              <div className="kpi-label mt-2">{k.label}</div>
+              <div className="kpi-label mt-2">{k.clave === 'visits' ? `Visitas · ${dias} días` : k.clave === 'inquiries' && tipo ? `Consultas · ${TIPOS[tipo]}` : k.label}</div>
+              <div className="kpi-nota">{k.nota}</div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Filtro de fechas */}
-      <div className="card mb-4">
-        <div className="card-body">
-          <div className="row g-2 align-items-end">
-            <div className="col-6 col-md-4">
+      {/* Consulta parametrizada (como en Dashboard.dc.html) */}
+      <section className="card mb-4" aria-label="Consulta parametrizada">
+        <div className="card-body d-flex flex-column gap-3">
+          <div className="filtros-dashboard">
+            <div>
               <label htmlFor="desde" className="form-label">Desde</label>
-              <input id="desde" name="desde" type="date" max={hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.desde} onChange={cambiarRango} />
+              <input id="desde" name="desde" type="date" max={rango.hasta < hoy() ? rango.hasta : hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.desde} onChange={cambiarRango} />
             </div>
-            <div className="col-6 col-md-4">
+            <div>
               <label htmlFor="hasta" className="form-label">Hasta</label>
-              <input id="hasta" name="hasta" type="date" max={hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.hasta} onChange={cambiarRango} />
+              <input id="hasta" name="hasta" type="date" min={rango.desde} max={hoy()} className={`form-control ${errorRango ? 'is-invalid' : ''}`} value={rango.hasta} onChange={cambiarRango} />
             </div>
-            <div className="col-12 col-md-4">
-              <label htmlFor="agrupar" className="form-label">Visitas por</label>
-              <select id="agrupar" name="agrupar" className="form-select" value={rango.agrupar} onChange={cambiarRango}>
-                <option value="dia">Día</option>
-                <option value="semana">Semana</option>
+            <div>
+              <label htmlFor="tipo" className="form-label">Tipo de consulta</label>
+              <select id="tipo" className="form-select" value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                <option value="">Todas</option>
+                {Object.entries(TIPOS).map(([valor, label]) => (
+                  <option key={valor} value={valor}>{label}</option>
+                ))}
               </select>
             </div>
+            <div role="group" aria-label="Agrupar por">
+              <span className="form-label d-block">Agrupar por</span>
+              <div className="segmentado">
+                {[['dia', 'Día'], ['semana', 'Semana']].map(([valor, label]) => (
+                  <button key={valor} type="button" aria-pressed={rango.agrupar === valor} className={rango.agrupar === valor ? 'on' : ''} onClick={() => cambiarRango({ target: { name: 'agrupar', value: valor } })}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="align-self-end">
+              <button type="button" className="btn btn-outline-primary" onClick={() => { setTipo(''); setErrorRango(''); setRango({ desde: haceDias(13), hasta: hoy(), agrupar: 'dia' }) }}>
+                Limpiar filtros
+              </button>
+            </div>
           </div>
-          {errorRango && <div className="text-danger small fw-semibold mt-2">{errorRango}</div>}
+          {errorRango && <div className="campo-error">⚠ {errorRango}</div>}
+          <code className="small text-secondary" style={{ overflowWrap: 'anywhere' }}>
+            GET /api/stats/visits?desde={rango.desde}&amp;hasta={rango.hasta}&amp;agrupar={rango.agrupar} · GET /api/stats/inquiries-by-type?desde={rango.desde}&amp;hasta={rango.hasta}&amp;tipo={tipo || 'todas'}
+          </code>
         </div>
-      </div>
+      </section>
 
       {/* Gráficos */}
       {loading ? (
@@ -279,6 +316,27 @@ export default function Dashboard() {
                 }}
               />
             </Grafico>
+          </div>
+
+          <div className="col-12 col-md-6 col-lg-12">
+            <div className="card h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-baseline mb-3">
+                  <h2 className="h6 mb-0">Últimas consultas</h2>
+                  <span className="small text-muted">Las responde el operador</span>
+                </div>
+                <ul className="list-unstyled d-flex flex-column gap-2 mb-0">
+                  {ultimas.map((q) => (
+                    <li key={q._id} className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                      <strong>{q.name}</strong>
+                      <span className="text-muted">{TIPOS[q.type] ?? q.type}</span>
+                      <EstadoConsulta status={q.status} />
+                    </li>
+                  ))}
+                  {ultimas.length === 0 && <li className="text-muted">Todavía no hay consultas.</li>}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       )}

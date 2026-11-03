@@ -1,6 +1,21 @@
 // 🎨 DUEÑO: Integrante B
-import { useState } from 'react'
-import { useReveal } from '../../animations'
+import { useReveal, GuardaTejida } from '../../animations'
+import EncabezadoSeccion from '../EncabezadoSeccion.jsx'
+import bootstrapLogo from '../../assets/stack/bootstrap.svg'
+import expressLogo from '../../assets/stack/express.svg'
+import fastapiLogo from '../../assets/stack/fastapi.svg'
+import gitLogo from '../../assets/stack/git.svg'
+import html5Logo from '../../assets/stack/html5.svg'
+import javascriptLogo from '../../assets/stack/javascript.svg'
+import jsonLogo from '../../assets/stack/json.svg'
+import mongodbLogo from '../../assets/stack/mongodb.svg'
+import mongooseLogo from '../../assets/stack/mongoose.svg'
+import nodejsLogo from '../../assets/stack/nodejs.svg'
+import postgresqlLogo from '../../assets/stack/postgresql.svg'
+import postmanLogo from '../../assets/stack/postman.svg'
+import reactLogo from '../../assets/stack/react.svg'
+import vitejsLogo from '../../assets/stack/vitejs.svg'
+import vscodeLogo from '../../assets/stack/vscode.svg'
 
 const STACK_CATEGORIES = [
   {
@@ -12,22 +27,22 @@ const STACK_CATEGORIES = [
       {
         name: 'React',
         role: 'Librería UI / SPA',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',
+        icon: reactLogo,
       },
       {
         name: 'JavaScript (ES6+)',
         role: 'Lenguaje principal',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
+        icon: javascriptLogo,
       },
       {
         name: 'Bootstrap 5',
         role: 'Sistema de grillas y UI',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg',
+        icon: bootstrapLogo,
       },
       {
         name: 'HTML5 & CSS3',
         role: 'Maquetación semántica',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',
+        icon: html5Logo,
       },
     ],
   },
@@ -40,45 +55,45 @@ const STACK_CATEGORIES = [
       {
         name: 'Node.js',
         role: 'Entorno de ejecución',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',
+        icon: nodejsLogo,
       },
       {
         name: 'Express',
         role: 'Framework de API REST',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg',
+        icon: expressLogo,
       },
       {
         name: 'JWT & OAuth',
         role: 'Autenticación y sesiones',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-original.svg',
+        icon: jsonLogo,
       },
       {
         name: 'REST API',
         role: 'Arquitectura cliente-servidor',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg',
+        icon: fastapiLogo,
       },
     ],
   },
   {
     id: 'database',
-    title: 'Bases de Datos',
+    title: 'Datos',
     badge: 'Persistencia & Modelado',
     description: 'Almacenamiento en la nube, esquemas validados y consultas optimizadas.',
     items: [
       {
         name: 'MongoDB Atlas',
         role: 'Base de datos NoSQL',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg',
+        icon: mongodbLogo,
       },
       {
         name: 'Mongoose',
         role: 'ODM y modelado de datos',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongoose/mongoose-original.svg',
+        icon: mongooseLogo,
       },
       {
         name: 'SQL / Relacional',
         role: 'Consultas estructuradas',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg',
+        icon: postgresqlLogo,
       },
     ],
   },
@@ -91,126 +106,67 @@ const STACK_CATEGORIES = [
       {
         name: 'Git & GitHub',
         role: 'Control de versiones',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',
+        icon: gitLogo,
       },
       {
         name: 'Vite',
         role: 'Bundler frontend ultrarrápido',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg',
+        icon: vitejsLogo,
       },
       {
         name: 'VS Code',
         role: 'Entorno de desarrollo',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg',
+        icon: vscodeLogo,
       },
       {
         name: 'Postman',
         role: 'Pruebas de endpoints API',
-        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg',
+        icon: postmanLogo,
       },
     ],
   },
 ]
 
 export default function Stack() {
-  const revealRef = useReveal()
-  const [activeTab, setActiveTab] = useState('all')
-
-  const visibleCategories =
-    activeTab === 'all'
-      ? STACK_CATEGORIES
-      : STACK_CATEGORIES.filter((cat) => cat.id === activeTab)
+  const ref = useReveal()
 
   return (
-    <section id="stack" ref={revealRef} className="container py-5">
-      {/* Encabezado de la sección */}
-      <div className="text-center mb-4">
-        <span className="badge rounded-pill text-bg-light border px-3 py-2 mb-2 text-secondary">
-          Arquitectura MERN
-        </span>
-        <h2 className="fw-bold mb-2">Tecnologías del Stack Fullstack</h2>
-        <p className="text-secondary mb-4 mx-auto" style={{ maxWidth: '640px' }}>
-          Herramientas y lenguajes utilizados para diseñar, construir y desplegar aplicaciones modernas de extremo a extremo.
-        </p>
-
-        {/* Botones de filtro por área */}
-        <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
-          <button
-            type="button"
-            onClick={() => setActiveTab('all')}
-            className={`btn btn-sm rounded-pill px-3 ${
-              activeTab === 'all' ? 'btn-primary shadow-sm' : 'btn-outline-secondary'
-            }`}
-          >
-            Todo el stack
-          </button>
-          {STACK_CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setActiveTab(cat.id)}
-              className={`btn btn-sm rounded-pill px-3 ${
-                activeTab === cat.id ? 'btn-primary shadow-sm' : 'btn-outline-secondary'
-              }`}
-            >
-              {cat.title}
-            </button>
-          ))}
+    <section id="stack" ref={ref} className="sec-negra">
+      <GuardaTejida fina />
+      <div className="sec-inner d-flex flex-column gap-4">
+        <div className="sec-cabecera" data-reveal>
+          <EncabezadoSeccion num="02" rotulo="STACK · CON QUÉ TRABAJO" titulo="Herramientas de punta a punta" dorado />
+          <p className="mb-0" style={{ maxWidth: '32em', color: 'var(--pc-noche-suave)', fontSize: '0.9375rem' }}>
+            Las mismas tecnologías que se ven en las clases de Lenguajes IV, aplicadas a proyectos reales.
+          </p>
         </div>
-      </div>
 
-      {/* Grilla de categorías y tecnologías */}
-      <div className="row g-4">
-        {visibleCategories.map((category) => (
-          <div
-            key={category.id}
-            className={activeTab === 'all' ? 'col-12 col-lg-6' : 'col-12'}
-          >
-            <div className="card h-100 border-0 shadow-sm">
-              <div className="card-body p-4">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h3 className="h5 fw-bold mb-0">{category.title}</h3>
-                  <span className="badge rounded-pill text-bg-light border text-secondary">
-                    {category.badge}
-                  </span>
-                </div>
-
-                <p className="text-secondary small mb-4">{category.description}</p>
-
-                <div className="row g-3">
-                  {category.items.map((tech) => (
-                    <div key={tech.name} className="col-12 col-sm-6">
-                      <div className="d-flex align-items-center gap-3 p-3 rounded-3 bg-light border h-100">
-                        <img
-                          src={tech.icon}
-                          alt={tech.name}
-                          width="36"
-                          height="36"
-                          loading="lazy"
-                          style={{ objectFit: 'contain' }}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                          }}
-                        />
-                        <div>
-                          <div className="fw-semibold small text-body">
-                            {tech.name}
-                          </div>
-                          <div
-                            className="text-muted"
-                            style={{ fontSize: '0.78rem' }}
-                          >
-                            {tech.role}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+        <div className="row g-3">
+          {STACK_CATEGORIES.map((cat) => (
+            <div key={cat.id} className="col-12 col-sm-6 col-lg-3" data-reveal>
+              <div className="celda-stack">
+                <h3>{cat.title}</h3>
+                <ul className="list-unstyled d-flex flex-wrap gap-2 mb-0">
+                  {cat.items.map((tech) => (
+                    <li key={tech.name} className="chip-stack" title={tech.role}>
+                      <img
+                        src={tech.icon}
+                        alt=""
+                        width="20"
+                        height="20"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
+                      />
+                      {tech.name}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )

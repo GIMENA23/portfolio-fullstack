@@ -5,10 +5,10 @@
 export const TIPOS = { general: 'General', cotizacion: 'Cotización', asesoria: 'Asesoría' }
 
 export const ESTADOS = {
-  nueva: { label: 'Nueva', color: 'primary' },
-  en_proceso: { label: 'En proceso', color: 'warning' },
-  respondida: { label: 'Respondida', color: 'success' },
-  cerrada: { label: 'Cerrada', color: 'secondary' },
+  nueva: { label: 'Nueva', color: 'primary', clase: 'estado-nueva', icono: '●' },
+  en_proceso: { label: 'En proceso', color: 'warning', clase: 'estado-en-proceso', icono: '◐' },
+  respondida: { label: 'Respondida', color: 'success', clase: 'estado-respondida', icono: '✓' },
+  cerrada: { label: 'Cerrada', color: 'secondary', clase: 'estado-cerrada', icono: '–' },
 }
 
 export const formatoFecha = (iso) =>

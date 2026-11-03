@@ -148,7 +148,7 @@ export default function Recuperar() {
                       <button type="button" className="btn btn-outline-secondary" onClick={() => setVer(!ver)} aria-label={ver ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
                         {ver ? 'Ocultar' : 'Ver'}
                       </button>
-                      {errores.password && <div className="invalid-feedback">⚠ {errores.password}</div>}
+                      {errores.password && <div className="invalid-feedback">{errores.password}</div>}
                     </div>
                     <PasswordReglas id="reglas" password={password} />
                   </div>
@@ -163,7 +163,7 @@ export default function Recuperar() {
                       autoComplete="new-password"
                       disabled={guardando}
                     />
-                    {errores.repetir && <div className="invalid-feedback">⚠ {errores.repetir}</div>}
+                    {errores.repetir && <div className="invalid-feedback">{errores.repetir}</div>}
                   </div>
                   <button type="submit" className="btn btn-primary w-100" disabled={guardando}>
                     {guardando ? 'Guardando…' : 'Cambiar contraseña'}
@@ -205,7 +205,7 @@ export default function Recuperar() {
                       maxLength={120}
                       disabled={guardando}
                     />
-                    {errores.email && <div className="invalid-feedback">⚠ {errores.email}</div>}
+                    {errores.email && <div className="invalid-feedback">{errores.email}</div>}
                   </div>
                   <button type="submit" className="btn btn-primary w-100" disabled={guardando}>
                     {guardando ? 'Enviando…' : 'Enviar enlace'}

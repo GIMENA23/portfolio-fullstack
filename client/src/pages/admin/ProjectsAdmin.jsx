@@ -16,6 +16,15 @@ const LIMITES = {
 const TIPOS_IMAGEN = ['image/jpeg', 'image/png', 'image/webp']
 const URL_VALIDA = /^https?:\/\/[^\s.]+\.[^\s]{2,}$/
 
+const ultimaModificacion = (p) => {
+  const f = p?.updatedAt ? new Date(p.updatedAt) : null
+  if (!f || Number.isNaN(f.getTime())) return 'Los cambios se ven en el sitio al guardar.'
+  const dias = Math.floor((Date.now() - f.getTime()) / 86400000)
+  return `Última modificación: ${dias <= 0 ? 'hoy' : dias === 1 ? 'hace 1 día' : `hace ${dias} días`}`
+}
+
+const TONOS = ['tono-carmin', 'tono-negro', 'tono-vicuna', 'tono-exito', 'tono-oro', 'tono-suave']
+
 const VACIO = {
   title: '',
   summary: '',
@@ -283,9 +292,12 @@ export default function ProjectsAdmin() {
   const campo = (name) => `form-control ${errores[name] ? 'is-invalid' : ''}`
 
   return (
-    <div className="container py-4">
-      <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 className="h3 mb-0 me-auto">Proyectos y demos</h1>
+    <div className="py-2">
+      <div className="d-flex flex-wrap align-items-end gap-2 mb-3">
+        <div className="me-auto">
+          <span className="rotulo">{proyectos.length} PROYECTOS · {proyectos.filter((p) => p.visible !== false).length} VISIBLES</span>
+          <h1 className="h2 mb-0">Proyectos y demos</h1>
+        </div>
         {!formAbierto && (
           <button type="button" className="btn btn-primary" onClick={abrirNuevo} disabled={loading}>
             + Nuevo proyecto
@@ -302,61 +314,121 @@ export default function ProjectsAdmin() {
       {aviso && <div className="alert alert-success py-2" role="status">{aviso}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {formAbierto && (
-        <form className="card mb-4" onSubmit={guardar} noValidate>
+      <div className="admin-split">
+        <div className="admin-split-main">
+          {loading && <GuardaLoader texto="Cargando proyectos…" />}
+
+          {!loading && !error && proyectos.length === 0 && (
+            <div className="alert alert-light border">Todavía no hay proyectos cargados.</div>
+          )}
+
+          {!loading && proyectos.length > 0 && (
+            <div className="table-responsive">
+              <table className="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th style={{ width: 80 }}><span className="visually-hidden">Imagen</span></th>
+                    <th>Proyecto</th>
+                    <th className="d-none d-lg-table-cell">Stack</th>
+                    <th>Visible</th>
+                    <th className="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {proyectos.map((p, idx) => (
+                    <tr key={p._id} className={editandoId === p._id ? 'fila-activa' : ''}>
+                      <td>
+                        {p.images?.[0] ? (
+                          <img src={p.images[0]} alt="" className="border" style={{ width: 64, height: 48, objectFit: 'cover' }} />
+                        ) : (
+                          <span className={`cuadro-proyecto ${TONOS[idx % TONOS.length]}`} aria-hidden="true" />
+                        )}
+                      </td>
+                      <td>
+                        <div className="fw-semibold">{p.title}</div>
+                      </td>
+                      <td className="d-none d-lg-table-cell stack-mono">{(p.stack ?? []).join(', ')}</td>
+                      <td>
+                        <span className="visible-texto">
+                          <span aria-hidden="true">{p.visible === false ? '–' : '✓'}</span> {p.visible === false ? 'borrador' : 'sí'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="d-flex flex-wrap justify-content-end align-items-center gap-1">
+                          {confirmarId === p._id ? (
+                            <>
+                              <span className="small text-nowrap">¿Eliminar «{p.title}»?</span>
+                              <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(p._id)} disabled={eliminando}>Eliminar</button>
+                              <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setConfirmarId(null)} disabled={eliminando}>Cancelar</button>
+                            </>
+                          ) : (
+                            <>
+                              <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => abrirEditar(p)}>Editar</button>
+                              <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => setConfirmarId(p._id)} aria-label={`Eliminar ${p.title}`}>Eliminar</button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        <aside className="admin-split-lateral">
+          {formAbierto ? (
+        <form className={`card admin-form ${editandoId ? 'modo-editando' : 'modo-nuevo'}`} onSubmit={guardar} noValidate aria-label={editandoId ? 'Editar proyecto' : 'Nuevo proyecto'}>
+          <div className="admin-modo d-flex justify-content-between align-items-start gap-2">
+            <div style={{ minWidth: 0 }}>
+              <span className="admin-modo-badge">{editandoId ? 'EDITANDO' : 'NUEVO'}</span>
+              <h2 className="mb-0">{editandoId ? `Editando · ${form.title || '…'}` : 'Nuevo proyecto'}</h2>
+              <span className="admin-modo-sub">{editandoId ? ultimaModificacion(proyectos.find((x) => x._id === editandoId)) : 'Completá los campos con * para poder crearlo.'}</span>
+            </div>
+            <button type="button" className="cerrar-form" onClick={cerrarForm} aria-label="Cerrar formulario" disabled={guardando}>✕</button>
+          </div>
           <div className="card-body">
-            <h2 className="h5 mb-3">{editandoId ? 'Editar proyecto' : 'Nuevo proyecto'}</h2>
             {errores.general && <div className="alert alert-danger">{errores.general}</div>}
 
             <div className="row g-3">
-              <div className="col-12 col-md-7">
+              <div className="col-12">
                 <label htmlFor="title" className="form-label">Título *</label>
                 <input id="title" name="title" className={campo('title')} value={form.title} onChange={cambiar} maxLength={LIMITES.tituloMax} autoFocus />
                 {errores.title && <div className="invalid-feedback">{errores.title}</div>}
               </div>
 
-              <div className="col-12 col-md-5">
-                <label htmlFor="stack" className="form-label">Tecnologías *</label>
-                <input id="stack" name="stack" className={campo('stack')} value={form.stack} onChange={cambiar} placeholder="React, Express, MongoDB" aria-describedby="stack-ayuda" />
-                {errores.stack ? (
-                  <div className="invalid-feedback">{errores.stack}</div>
-                ) : (
-                  <div id="stack-ayuda" className="form-text">Separadas por coma.</div>
-                )}
+              <div className="col-12">
+                <label htmlFor="stack" className="form-label">Tecnologías * <span className="form-hint">Separadas por coma</span></label>
+                <input id="stack" name="stack" className={campo('stack')} value={form.stack} onChange={cambiar} placeholder="React, Express, MongoDB"  />
+                {errores.stack && <div className="invalid-feedback">{errores.stack}</div>}
               </div>
 
               <div className="col-12">
-                <label htmlFor="summary" className="form-label">Resumen *</label>
-                <input id="summary" name="summary" className={campo('summary')} value={form.summary} onChange={cambiar} maxLength={LIMITES.resumenMax} aria-describedby="summary-ayuda" />
+                <label htmlFor="summary" className="form-label">Resumen * <span className="form-hint">Se ve en la tarjeta · {form.summary.trim().length} / {LIMITES.resumenMax}</span></label>
+                <input id="summary" name="summary" className={campo('summary')} value={form.summary} onChange={cambiar} maxLength={LIMITES.resumenMax}  />
                 {errores.summary && <div className="invalid-feedback">{errores.summary}</div>}
-                <div id="summary-ayuda" className="form-text">
-                  Se ve en la tarjeta del proyecto · {form.summary.trim().length}/{LIMITES.resumenMax}
-                </div>
               </div>
 
               <div className="col-12">
-                <label htmlFor="description" className="form-label">Descripción *</label>
-                <textarea id="description" name="description" rows={4} className={campo('description')} value={form.description} onChange={cambiar} maxLength={LIMITES.descMax} aria-describedby="desc-ayuda" />
+                <label htmlFor="description" className="form-label">Descripción * <span className="form-hint">{form.description.trim().length} / {LIMITES.descMax} · mínimo {LIMITES.descMin}</span></label>
+                <textarea id="description" name="description" rows={4} className={campo('description')} value={form.description} onChange={cambiar} maxLength={LIMITES.descMax}  />
                 {errores.description && <div className="invalid-feedback">{errores.description}</div>}
-                <div id="desc-ayuda" className="form-text">
-                  {form.description.trim().length}/{LIMITES.descMax} · mínimo {LIMITES.descMin}
-                </div>
               </div>
 
-              <div className="col-12 col-md-6">
+              <div className="col-12">
                 <label htmlFor="demoUrl" className="form-label">URL de la demo</label>
                 <input id="demoUrl" name="demoUrl" type="url" className={campo('demoUrl')} value={form.demoUrl} onChange={cambiar} placeholder="https://…" />
                 {errores.demoUrl && <div className="invalid-feedback">{errores.demoUrl}</div>}
               </div>
 
-              <div className="col-12 col-md-6">
+              <div className="col-12">
                 <label htmlFor="repoUrl" className="form-label">URL del repositorio</label>
                 <input id="repoUrl" name="repoUrl" type="url" className={campo('repoUrl')} value={form.repoUrl} onChange={cambiar} placeholder="https://github.com/…" />
                 {errores.repoUrl && <div className="invalid-feedback">{errores.repoUrl}</div>}
               </div>
 
               <div className="col-12">
-                <span className="form-label d-block">Imágenes ({totalImagenes}/{LIMITES.imagenesMax})</span>
+                <span className="form-label d-block">Imágenes <span className="form-hint">JPG, PNG o WebP · máx. 2 MB cada una · hasta {LIMITES.imagenesMax} ({totalImagenes}/{LIMITES.imagenesMax})</span></span>
                 <div className="d-flex flex-wrap gap-2 mb-2">
                   {existentes.map((url) => (
                     <figure key={url} className="position-relative mb-0">
@@ -383,10 +455,9 @@ export default function ProjectsAdmin() {
                   className={`form-control ${errores.images ? 'is-invalid' : ''}`}
                   onChange={elegirImagenes}
                   disabled={totalImagenes >= LIMITES.imagenesMax}
-                  aria-describedby="images-ayuda"
+                  
                 />
                 {errores.images && <div className="invalid-feedback">{errores.images}</div>}
-                <div id="images-ayuda" className="form-text">JPG, PNG o WebP · máximo 2 MB cada una.</div>
               </div>
 
               <div className="col-12 d-flex flex-wrap gap-4">
@@ -401,90 +472,23 @@ export default function ProjectsAdmin() {
               </div>
             </div>
 
-            <div className="d-flex justify-content-end gap-2 mt-4">
+            <div className="d-flex flex-wrap align-items-center justify-content-end gap-2 mt-4">
+              {Object.keys(errores).some((k) => errores[k]) && <span className="campo-error me-auto">Revisá los campos marcados.</span>}
               <button type="button" className="btn btn-outline-secondary" onClick={cerrarForm} disabled={guardando}>Cancelar</button>
               <button type="submit" className="btn btn-primary" disabled={guardando}>
-                {guardando ? 'Guardando…' : editandoId ? 'Guardar cambios' : 'Crear proyecto'}
+                {guardando ? 'Guardando…' : editandoId ? 'Guardar cambios' : 'Crear'}
               </button>
             </div>
           </div>
         </form>
-      )}
-
-      {loading && <GuardaLoader texto="Cargando proyectos…" />}
-
-      {!loading && !error && proyectos.length === 0 && (
-        <div className="alert alert-light border">Todavía no hay proyectos cargados.</div>
-      )}
-
-      {!loading && proyectos.length > 0 && (
-        <div className="table-responsive">
-          <table className="table align-middle">
-            <thead>
-              <tr>
-                <th className="d-none d-sm-table-cell" style={{ width: 96 }}><span className="visually-hidden">Imagen</span></th>
-                <th>Proyecto</th>
-                <th className="d-none d-md-table-cell">Estado</th>
-                <th className="text-end"><span className="visually-hidden">Acciones</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              {proyectos.map((p) => (
-                <tr key={p._id} className={editandoId === p._id ? 'table-active' : ''}>
-                  <td className="d-none d-sm-table-cell">
-                    {p.images?.[0] ? (
-                      <img src={p.images[0]} alt="" className="rounded border" style={{ width: 80, height: 56, objectFit: 'cover' }} />
-                    ) : (
-                      <div className="rounded border small text-muted d-flex align-items-center justify-content-center" style={{ width: 80, height: 56 }}>
-                        Sin imagen
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <div className="fw-semibold">{p.title}</div>
-                    <div className="small text-muted">{p.summary}</div>
-                    <div className="d-flex flex-wrap gap-1 mt-1">
-                      {(p.stack ?? []).map((t) => (
-                        <span key={t} className="badge text-bg-light border">{t}</span>
-                      ))}
-                    </div>
-                    <div className="d-md-none mt-1 d-flex gap-1">
-                      {p.featured && <span className="badge text-bg-warning">Destacado</span>}
-                      {p.visible === false && <span className="badge text-bg-secondary">Oculto</span>}
-                    </div>
-                  </td>
-                  <td className="d-none d-md-table-cell">
-                    <div className="d-flex flex-column align-items-start gap-1">
-                      {p.visible === false ? (
-                        <span className="badge text-bg-secondary">Oculto</span>
-                      ) : (
-                        <span className="badge text-bg-success">Visible</span>
-                      )}
-                      {p.featured && <span className="badge text-bg-warning">Destacado</span>}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex flex-column flex-sm-row justify-content-end align-items-stretch align-items-sm-center gap-1">
-                      {confirmarId === p._id ? (
-                        <>
-                          <span className="small text-nowrap">¿Eliminar?</span>
-                          <button type="button" className="btn btn-sm btn-danger" onClick={() => eliminar(p._id)} disabled={eliminando}>Sí</button>
-                          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setConfirmarId(null)} disabled={eliminando}>No</button>
-                        </>
-                      ) : (
-                        <>
-                          <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => abrirEditar(p)}>Editar</button>
-                          <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => setConfirmarId(p._id)}>Eliminar</button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+          ) : (
+            <div className="admin-vacio">
+              <strong>Ningún proyecto seleccionado</strong>
+              <span>Tocá «Editar» en un proyecto de la tabla o creá uno nuevo.</span>
+            </div>
+          )}
+        </aside>
+      </div>
     </div>
   )
 }

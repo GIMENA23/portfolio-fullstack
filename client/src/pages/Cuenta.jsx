@@ -7,11 +7,14 @@ import { useNavigate } from 'react-router-dom'
 import { authApi, inquiriesApi, backendPendiente } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { GuardaLoader } from '../animations'
+import HeroPagina from '../components/HeroPagina.jsx'
 import PasswordReglas from '../components/PasswordReglas.jsx'
 import ResumenErrores from '../components/ResumenErrores.jsx'
 import { validarNuevaPassword } from '../components/passwordReglas.js'
 import { TIPOS, formatoFecha } from './operator/inquiryLabels.js'
 import { mockMisConsultas } from './mockCuenta.js'
+import EstadoConsulta from '../components/EstadoConsulta.jsx'
+import ErrorAmable from '../components/ErrorAmable.jsx'
 
 const TABS = [
   { id: 'datos', label: 'Mis datos' },
@@ -19,14 +22,6 @@ const TABS = [
   { id: 'consultas', label: 'Mis consultas' },
   { id: 'eliminar', label: 'Eliminar cuenta' },
 ]
-
-// Estado de consulta: siempre ícono + texto (clases .estado-* de theme.css)
-const ESTADOS = {
-  nueva: { clase: 'estado-nueva', icono: '●', label: 'Nueva' },
-  en_proceso: { clase: 'estado-en-proceso', icono: '◐', label: 'En proceso' },
-  respondida: { clase: 'estado-respondida', icono: '✓', label: 'Respondida' },
-  cerrada: { clase: 'estado-cerrada', icono: '○', label: 'Cerrada' },
-}
 
 const NOMBRE_REGEX = /^[\p{L}]+(?: [\p{L}]+)*$/u
 
@@ -104,7 +99,7 @@ function Datos() {
           autoComplete="name"
           disabled={guardando}
         />
-        {errores.nombre && <div className="invalid-feedback">⚠ {errores.nombre}</div>}
+        {errores.nombre && <div className="invalid-feedback">{errores.nombre}</div>}
         <div className="form-text">Entre 3 y 60 caracteres, solo letras y espacios.</div>
       </div>
       <div className="mb-4">
@@ -185,7 +180,7 @@ function Seguridad() {
           <button type="button" className="btn btn-outline-secondary" onClick={() => setVer(!ver)} aria-label={ver ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
             {ver ? 'Ocultar' : 'Ver'}
           </button>
-          {errores.password && <div className="invalid-feedback">⚠ {errores.password}</div>}
+          {errores.password && <div className="invalid-feedback">{errores.password}</div>}
         </div>
         <PasswordReglas id="reglas" password={password} />
       </div>
@@ -200,7 +195,7 @@ function Seguridad() {
           autoComplete="new-password"
           disabled={guardando}
         />
-        {errores.repetir && <div className="invalid-feedback">⚠ {errores.repetir}</div>}
+        {errores.repetir && <div className="invalid-feedback">{errores.repetir}</div>}
       </div>
       <button type="submit" className="btn btn-primary" disabled={guardando}>
         {guardando ? 'Guardando…' : 'Cambiar contraseña'}
@@ -241,7 +236,7 @@ function MisConsultas() {
   }, [])
 
   if (cargando) return <GuardaLoader texto="Cargando tus consultas…" />
-  if (error) return <div className="alert alert-danger" role="alert">⚠ {error}</div>
+  if (error) return <ErrorAmable mensaje={error} onReintentar={() => window.location.reload()} />
   if (consultas.length === 0) return <p className="text-secondary mb-0">Todavía no enviaste ninguna consulta.</p>
 
   return (
@@ -249,16 +244,13 @@ function MisConsultas() {
       {soloPantalla && <p className="small text-muted">Modo prueba: estas consultas son de ejemplo.</p>}
       <ul className="list-unstyled d-flex flex-column gap-3 mb-0">
         {consultas.map((c) => {
-          const est = ESTADOS[c.status] ?? ESTADOS.nueva
           const respuesta = c.replies?.[c.replies.length - 1]
           return (
             <li key={c._id} className="card">
               <div className="card-body">
                 <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                   <h3 className="h6 mb-0">{c.subject}</h3>
-                  <span className={`estado ${est.clase}`}>
-                    <span aria-hidden="true">{est.icono}</span> {est.label}
-                  </span>
+                  <EstadoConsulta status={c.status} />
                 </div>
                 <p className="rotulo mb-2">{TIPOS[c.type] ?? c.type} · {formatoFecha(c.createdAt)}</p>
                 <p className="mb-0 text-secondary">{c.message}</p>
@@ -340,11 +332,11 @@ export default function Cuenta() {
   const Panel = PANELES[tab]
 
   return (
+    <>
+    <HeroPagina rotulo="USUARIO REGISTRADO" titulo="Mi cuenta" />
     <div className="container py-5">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <p className="rotulo mb-2">Mi cuenta</p>
-          <h1 className="h2 mb-4">Tu cuenta</h1>
 
           <ul className="nav nav-tabs flex-nowrap overflow-auto mb-4" role="tablist">
             {TABS.map((t) => (
@@ -370,5 +362,6 @@ export default function Cuenta() {
         </div>
       </div>
     </div>
+    </>
   )
 }
