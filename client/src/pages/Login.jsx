@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import AuthLayout from '../components/AuthLayout.jsx'
+import BotonGoogle from '../components/BotonGoogle.jsx'
 import { inicioPorRol, rutaPermitida } from '../services/rutas.js'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -84,8 +85,20 @@ export default function Login() {
     setError('')
   }
 
-  // TODO (C): login con Google (Google Identity Services) → loginWithGoogle(credential)
-  const onGoogle = () => setError('El ingreso con Google todavía no está disponible.')
+  const onGoogle = async (credential) => {
+    setError('')
+    setSending(true)
+    try {
+      const user = await loginWithGoogle(credential)
+      const quiso = location.state?.from
+      const destino = user.role === 'user' && rutaPermitida(user.role, quiso) ? quiso : inicioPorRol(user.role)
+      navigate(destino, { replace: true })
+    } catch (err) {
+      setError(err.message || 'No se pudo ingresar con Google.')
+    } finally {
+      setSending(false)
+    }
+  }
 
   return (
     <AuthLayout
@@ -96,13 +109,7 @@ export default function Login() {
       pie="Gratis · sin tarjeta · solo tu email"
       lateral={<p className="mb-0" style={{ maxWidth: '28em', opacity: 0.94 }}>Con tu cuenta ves el detalle de cada proyecto, el código y las demos interactivas.</p>}
     >
-      <button type="button" className="btn btn-google" onClick={onGoogle}>
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 7v10M7 12h10" />
-        </svg>
-        Continuar con Google
-      </button>
+      <BotonGoogle onCredential={onGoogle} onError={setError} disabled={sending} />
       <div className="separador-o">O CON TU EMAIL</div>
 
       {location.state?.from && (

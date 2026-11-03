@@ -105,8 +105,14 @@ export default function Contact() {
       }
       if (form.telefono) payload.telefono = form.telefono
       if (form.tipo === 'cotizacion') payload.presupuesto = form.presupuesto
-      // TODO (C): recibir el adjunto (multipart) cuando el backend lo soporte; hoy solo se valida en el navegador.
-      await inquiriesApi.create(payload)
+      let cuerpo = payload
+      if (adjunto?.file) {
+        // Con archivo va multipart: los mismos campos y el archivo en «adjunto».
+        cuerpo = new FormData()
+        Object.entries(payload).forEach(([k, v]) => cuerpo.append(k, v))
+        cuerpo.append('adjunto', adjunto.file)
+      }
+      await inquiriesApi.create(cuerpo)
       setEnviado(true)
     } catch (err) {
       if (Array.isArray(err.details) && err.details.length > 0) {
@@ -174,7 +180,7 @@ export default function Contact() {
             <EnviadoLottie />
             <h2 className="sec-titulo mb-0" style={{ color: 'inherit' }}>¡Consulta enviada!</h2>
             <p className="mb-0" style={{ color: 'var(--pc-noche-suave)' }}>
-              Te llegó una copia a tu email. Martina te responde en menos de 48 horas hábiles.
+              Recibimos tu consulta. Te respondemos por email en menos de 48 h hábiles.
             </p>
             <div className="align-self-stretch"><GuardaTejida fina alCargar delay={200} /></div>
             <button type="button" className="btn btn-outline-light" onClick={reiniciar}>Enviar otra consulta</button>

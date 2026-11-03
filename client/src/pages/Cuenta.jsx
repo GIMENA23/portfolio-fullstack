@@ -4,7 +4,7 @@
 // (si todavía no existen, se usan los datos de prueba de mockCuenta.js).
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authApi, inquiriesApi, backendPendiente } from '../services/api.js'
+import { authApi, inquiriesApi, backendPendiente, tokenStorage } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { GuardaLoader } from '../animations'
 import HeroPagina from '../components/HeroPagina.jsx'
@@ -116,6 +116,10 @@ function Datos() {
 
 /* ───────────── Seguridad ───────────── */
 function Seguridad() {
+  const { user, updateUser } = useAuth()
+  // Quien entró solo con Google todavía no tiene contraseña: no hay una «actual» que pedir.
+  const tieneContrasena = !user?.providers || user.providers.includes('email')
+  const [actual, setActual] = useState('')
   const [password, setPassword] = useState('')
   const [repetir, setRepetir] = useState('')
   const [ver, setVer] = useState(false)
@@ -127,6 +131,7 @@ function Seguridad() {
   const terminar = (pantalla) => {
     setSoloPantalla(pantalla)
     setAviso('Contraseña actualizada.')
+    setActual('')
     setPassword('')
     setRepetir('')
   }
@@ -135,12 +140,16 @@ function Seguridad() {
     e.preventDefault()
     setAviso('')
     const err = validarNuevaPassword(password, repetir)
+    if (tieneContrasena && !actual) err.currentPassword = 'Ingresá tu contraseña actual.'
     setErrores(err)
     if (Object.keys(err).length) return
 
     setGuardando(true)
     try {
-      await authApi.updateMe({ password })
+      const r = await authApi.updateMe(tieneContrasena ? { password, currentPassword: actual } : { password })
+      // Cambiar la contraseña invalida los tokens viejos: guardamos el nuevo para no cerrar la sesión.
+      if (r?.token) tokenStorage.set(r.token)
+      if (r?.providers) updateUser({ providers: r.providers })
       terminar(false)
     } catch (ex) {
       if (backendPendiente(ex)) {
@@ -161,9 +170,24 @@ function Seguridad() {
 
   return (
     <form onSubmit={guardar} noValidate>
-      <ResumenErrores errores={errores} etiquetas={{ password: 'Nueva contraseña', repetir: 'Repetir contraseña' }} />
+      <ResumenErrores errores={errores} etiquetas={{ currentPassword: 'Contraseña actual', password: 'Nueva contraseña', repetir: 'Repetir contraseña' }} />
       {errores.general && <div className="alert alert-danger" role="alert">⚠ {errores.general}</div>}
       <Aviso texto={aviso} soloPantalla={soloPantalla} />
+      {tieneContrasena && (
+        <div className="mb-3">
+          <label htmlFor="actual" className="form-label fw-medium">Contraseña actual</label>
+          <input
+            id="actual"
+            type={ver ? 'text' : 'password'}
+            className={`form-control ${errores.currentPassword ? 'is-invalid' : ''}`}
+            value={actual}
+            onChange={(e) => setActual(e.target.value)}
+            autoComplete="current-password"
+            disabled={guardando}
+          />
+          {errores.currentPassword && <div className="invalid-feedback">{errores.currentPassword}</div>}
+        </div>
+      )}
       <div className="mb-3">
         <label htmlFor="password" className="form-label fw-medium">Nueva contraseña</label>
         <div className="input-group has-validation">
