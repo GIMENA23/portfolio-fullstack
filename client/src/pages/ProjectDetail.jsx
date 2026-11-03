@@ -15,10 +15,17 @@ function Contenido({ project }) {
   const [shareFeedback, setShareFeedback] = useState('')
 
   const images = Array.isArray(project.images) ? project.images.filter(Boolean) : []
-  const tono = TONOS[(project._id?.charCodeAt?.(project._id.length - 1) ?? 0) % TONOS.length]
+  const inicio = project._id?.charCodeAt?.(project._id.length - 1) ?? 0
+  // Sin imágenes cargadas, el prototipo muestra 4 capturas de color: hacemos lo mismo.
+  const capturas = images.length > 0
+    ? images.map((url) => ({ url }))
+    : [0, 1, 2, 3].map((k) => ({ tono: TONOS[(inicio + k) % TONOS.length] }))
+  const captura = capturas[activeImage] ?? capturas[0]
   const stack = Array.isArray(project.stack) ? project.stack : []
   const features = Array.isArray(project.features) ? project.features.filter(Boolean) : []
-  const tieneRelato = !!(project.problem || project.solution)
+  // Si el proyecto no trae el relato, usamos el resumen (problema) y la descripción (solución).
+  const problema = project.problem || project.summary
+  const solucion = project.solution || project.description
 
   // Web Share API con respaldo al portapapeles
   const handleShare = async () => {
@@ -71,57 +78,49 @@ function Contenido({ project }) {
       </section>
 
       <section className="sec-inner d-flex flex-column gap-3" style={{ paddingTop: '1rem', paddingBottom: '1.5rem' }}>
-        <div className={`foto-proyecto ${tono}`} style={{ height: 'clamp(220px, 40vw, 440px)', alignItems: 'center', justifyContent: 'center' }}>
-          {images[activeImage] && <img src={images[activeImage]} alt={`${project.title}, imagen ${activeImage + 1}`} />}
+        <div className={`captura-grande ${captura.tono ?? 'tono-negro'}`} style={{ height: 'clamp(220px, 40vw, 440px)' }}>
+          {captura.url ? (
+            <img src={captura.url} alt={`${project.title}, imagen ${activeImage + 1}`} />
+          ) : (
+            <span>CAPTURA {activeImage + 1} DE {capturas.length}</span>
+          )}
         </div>
-        {images.length > 1 && (
-          <div className="d-flex flex-wrap gap-2">
-            {images.map((url, i) => (
-              <button
-                key={url}
-                type="button"
-                aria-label={`Ver imagen ${i + 1}`}
-                aria-pressed={i === activeImage}
-                onClick={() => setActiveImage(i)}
-                style={{ width: 72, height: 54, padding: 0, border: `2px solid ${i === activeImage ? 'var(--pc-carmin)' : 'var(--pc-linea)'}`, background: 'none' }}
-              >
-                <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="d-flex flex-wrap gap-2" role="group" aria-label="Capturas del proyecto">
+          {capturas.map((c, i) => (
+            <button
+              key={c.url ?? i}
+              type="button"
+              aria-label={`Ver captura ${i + 1}`}
+              aria-pressed={i === activeImage}
+              className={`captura-mini ${c.tono ?? ''} ${i === activeImage ? 'on' : ''}`}
+              onClick={() => setActiveImage(i)}
+            >
+              {c.url && <img src={c.url} alt="" />}
+            </button>
+          ))}
+        </div>
       </section>
 
       <div className="sec-inner" style={{ paddingTop: 0, paddingBottom: 0 }}><GuardaTejida fina /></div>
 
       <section ref={ref} className="sec-inner d-flex flex-wrap gap-5" style={{ paddingTop: '2.5rem', paddingBottom: '6rem' }}>
         <div data-reveal className="d-flex flex-column gap-3" style={{ flex: '2 1 460px', minWidth: 0 }}>
-          {tieneRelato ? (
+          {problema && (
             <>
-              {project.problem && (
-                <>
-                  <h2 className="sec-titulo-chico">El problema</h2>
-                  <p className="mb-0">{project.problem}</p>
-                </>
-              )}
-              {project.solution && (
-                <>
-                  <h2 className="sec-titulo-chico mt-3">La solución</h2>
-                  <p className="mb-0">{project.solution}</p>
-                </>
-              )}
-              {features.length > 0 && (
-                <ul className="d-flex flex-column gap-2 mb-0 ps-4">
-                  {features.map((f) => <li key={f}>{f}</li>)}
-                </ul>
-              )}
+              <h2 className="sec-titulo-chico">El problema</h2>
+              <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>{problema}</p>
             </>
-          ) : (
+          )}
+          {solucion && (
             <>
-              <h2 className="sec-titulo-chico">Sobre el proyecto</h2>
-              {project.summary && <p className="mb-0">{project.summary}</p>}
-              {project.description && <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>{project.description}</p>}
+              <h2 className="sec-titulo-chico mt-3">La solución</h2>
+              <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>{solucion}</p>
             </>
+          )}
+          {features.length > 0 && (
+            <ul className="d-flex flex-column gap-2 mb-0 ps-4">
+              {features.map((f) => <li key={f}>{f}</li>)}
+            </ul>
           )}
 
           {project.demoUrl && showEmbedDemo && (

@@ -1052,6 +1052,14 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
 .ficha-valor { margin: 0; font-weight: 600; }
 .chip-tec { font-family: var(--pc-font-mono); font-size: 0.75rem; padding: 4px 8px; background: var(--pc-lana); border: var(--pc-borde); }
 
+/* Capturas del detalle de proyecto (Detalle.dc.html) */
+.captura-grande { position: relative; display: flex; align-items: center; justify-content: center; background: var(--tono, var(--pc-negro)); color: #fff4ec; font-family: var(--pc-font-mono); font-size: 0.875rem; letter-spacing: 0.06em; overflow: hidden; }
+.captura-grande img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.captura-mini { position: relative; width: 150px; height: 90px; padding: 0; border: 0; background: var(--tono, var(--pc-linea)); overflow: hidden; }
+.captura-mini img { width: 100%; height: 100%; object-fit: cover; }
+.captura-mini.on { outline: 3px solid var(--pc-dorado); outline-offset: 2px; }
+@media (max-width: 575.98px) { .captura-mini { width: 22%; height: 56px; } }
+
 /* ───────────────────────── 6. Animaciones de apoyo ───────────────────────── */
 /* Estado inicial para el «reveal» al hacer scroll (lo activa animations/index.js) */
 .reveal { opacity: 0; transform: translateY(24px); }
