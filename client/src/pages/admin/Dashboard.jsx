@@ -235,9 +235,12 @@ export default function Dashboard() {
             </div>
           </div>
           {errorRango && <div className="campo-error">⚠ {errorRango}</div>}
-          <code className="small text-secondary" style={{ overflowWrap: 'anywhere' }}>
-            GET /api/stats/visits?desde={rango.desde}&amp;hasta={rango.hasta}&amp;agrupar={rango.agrupar} · GET /api/stats/inquiries-by-type?desde={rango.desde}&amp;hasta={rango.hasta}&amp;tipo={tipo || 'todas'}
-          </code>
+          <div className="consulta-api">
+            <span className="rotulo">CONSULTA A LA API</span>
+            <code>
+              GET /api/stats/visits?desde={rango.desde}&amp;hasta={rango.hasta}&amp;agrupar={rango.agrupar} · GET /api/stats/inquiries-by-type?desde={rango.desde}&amp;hasta={rango.hasta}&amp;tipo={tipo || 'todas'}
+            </code>
+          </div>
         </div>
       </section>
 

@@ -14,8 +14,8 @@ export const mockPerfil = {
   stack: ['React', 'Node.js', 'Express', 'MongoDB', 'Bootstrap'],
   photo: '',
   experience: [
-    { period: '[AÑO] — HOY', role: 'Desarrolladora fullstack independiente', detail: 'Sistemas a medida para pymes de Salta y Jujuy.' },
-    { period: '[AÑO] — [AÑO]', role: 'Desarrolladora backend · [EMPRESA]', detail: 'APIs REST y bases de datos para un equipo de producto.' },
-    { period: '[AÑO] — [AÑO]', role: 'Ingeniería en Informática · UCASAL', detail: 'Formación en desarrollo de software y sistemas.' },
+    { period: '2024 — HOY', role: 'Desarrolladora fullstack independiente', detail: 'Sistemas a medida para pymes de Salta y Jujuy.' },
+    { period: '2021 — 2024', role: 'Desarrolladora backend en un estudio de software', detail: 'APIs REST y bases de datos.' },
+    { period: '2016 — 2021', role: 'Ingeniería en Informática · UCASAL', detail: 'Formación en desarrollo de software.' },
   ],
 }

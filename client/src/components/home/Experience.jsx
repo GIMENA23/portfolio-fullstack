@@ -1,30 +1,36 @@
 // 🎨 DUEÑO: Integrante B — 05 Experiencia (Main.dc.html): línea de tiempo con rombos
 // + actividad real del repositorio desde la API pública de GitHub.
 import { useEffect, useState } from 'react'
+import { profileApi } from '../../services/api.js'
 import { useReveal, GuardaLoader, GuardaTejida } from '../../animations'
 import EncabezadoSeccion from '../EncabezadoSeccion.jsx'
 
 const REPO = 'GIMENA23/portfolio-fullstack'
 const REPO_URL = `https://github.com/${REPO}`
 
-// Años y empresas: placeholders hasta tener los datos reales.
-const TIMELINE = [
-  {
-    periodo: '[AÑO] — HOY',
-    rol: 'Desarrolladora fullstack independiente',
-    texto: 'Sistemas a medida para pymes de Salta y Jujuy.',
-  },
-  {
-    periodo: '[AÑO] — [AÑO]',
-    rol: 'Desarrolladora backend · [EMPRESA]',
-    texto: 'APIs REST y bases de datos para un equipo de producto.',
-  },
-  {
-    periodo: '[AÑO] — [AÑO]',
-    rol: 'Ingeniería en Informática · UCASAL',
-    texto: 'Formación en desarrollo de software y sistemas.',
-  },
+// Respaldo si la API no responde: los mismos datos que tiene hoy el perfil.
+const EXPERIENCIA_RESPALDO = [
+  { period: '2024 — HOY', role: 'Desarrolladora fullstack independiente', detail: 'Sistemas a medida para pymes de Salta y Jujuy.' },
+  { period: '2021 — 2024', role: 'Desarrolladora backend en un estudio de software', detail: 'APIs REST y bases de datos.' },
+  { period: '2016 — 2021', role: 'Ingeniería en Informática · UCASAL', detail: 'Formación en desarrollo de software.' },
 ]
+
+function useExperiencia() {
+  const [experiencia, setExperiencia] = useState(EXPERIENCIA_RESPALDO)
+  useEffect(() => {
+    let activo = true
+    profileApi
+      .get()
+      .then((p) => {
+        if (activo && Array.isArray(p?.experience) && p.experience.length > 0) setExperiencia(p.experience)
+      })
+      .catch(() => {}) // sin API: queda el respaldo
+    return () => {
+      activo = false
+    }
+  }, [])
+  return experiencia
+}
 
 const fechaCorta = (iso) => new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
@@ -110,6 +116,7 @@ function ActividadGithub() {
 
 export default function Experience() {
   const ref = useReveal()
+  const experiencia = useExperiencia()
 
   return (
     <>
@@ -122,12 +129,12 @@ export default function Experience() {
               <p className="mb-0 text-secondary small">Trabajo independiente, equipos de producto y formación en la UCASAL.</p>
             </div>
             <ol data-reveal className="linea-tiempo" style={{ flex: '2 1 480px', minWidth: 0 }}>
-              {TIMELINE.map((t) => (
-                <li key={t.rol}>
+              {experiencia.map((t, i) => (
+                <li key={`${t.period}-${i}`}>
                   <span className="hito" aria-hidden="true" />
-                  <span className="linea-fecha">{t.periodo}</span>
-                  <strong className="linea-rol">{t.rol}</strong>
-                  <p className="mb-0 small text-secondary">{t.texto}</p>
+                  <span className="linea-fecha">{t.period}</span>
+                  <strong className="linea-rol">{t.role}</strong>
+                  <p className="mb-0 small text-secondary">{t.detail}</p>
                 </li>
               ))}
             </ol>

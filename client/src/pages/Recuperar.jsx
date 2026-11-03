@@ -9,7 +9,7 @@ import { EnviadoLottie } from '../animations'
 import PasswordReglas from '../components/PasswordReglas.jsx'
 import ResumenErrores from '../components/ResumenErrores.jsx'
 import { validarNuevaPassword } from '../components/passwordReglas.js'
-import { simularEnvio, TOKEN_DE_PRUEBA } from './mockRecuperar.js'
+import { simularEnvio } from './mockRecuperar.js'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const TOKEN_REGEX = /^[\w.-]{10,200}$/
@@ -177,11 +177,7 @@ export default function Recuperar() {
                   <div className="alert alert-success" role="status">
                     ✓ Si el email existe, te enviamos un enlace para cambiar la contraseña.
                   </div>
-                  <p className="text-secondary">Abrí el enlace del correo para seguir con el paso 3. Si no llega, revisá la carpeta de spam.</p>
-                  {/* TODO (C): quitar este enlace de prueba cuando el backend mande el email real */}
-                  <p className="small text-muted mb-3">
-                    Modo prueba: <Link to={`/recuperar?token=${TOKEN_DE_PRUEBA}`}>abrir enlace de ejemplo</Link>
-                  </p>
+                  <p className="text-secondary mb-3">Abrí el enlace del correo para seguir con el paso 3. Si no llega, revisá la carpeta de spam.</p>
                   <button type="button" className="btn btn-outline-secondary" onClick={() => setEnviado(false)}>
                     Usar otro email
                   </button>

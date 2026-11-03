@@ -1086,3 +1086,15 @@ a { text-underline-offset: 3px; transition: color var(--pc-dur-rapida) ease; }
   padding: 2rem;
   background: var(--pc-lana-clara);
 }
+
+/* Mi cuenta · pestañas: en escritorio entran enteras (sin scroll); en celular se deslizan sin barra visible */
+.tabs-cuenta { flex-wrap: nowrap; }
+.tabs-cuenta .nav-link { white-space: nowrap; }
+@media (max-width: 767.98px) {
+  .tabs-cuenta { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; }
+  .tabs-cuenta::-webkit-scrollbar { display: none; }
+}
+
+/* Dashboard · consulta a la API (texto chico en mono, con salto de línea en celular) */
+.consulta-api { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+.consulta-api code { font-family: var(--pc-font-mono); font-size: 0.75rem; line-height: 1.5; color: var(--bs-secondary-color); white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
