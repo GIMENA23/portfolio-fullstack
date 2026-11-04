@@ -78,7 +78,7 @@ function Contenido({ project }) {
       </section>
 
       <section className="sec-inner d-flex flex-column gap-3" style={{ paddingTop: '1rem', paddingBottom: '1.5rem' }}>
-        <div className={`captura-grande ${captura.tono ?? 'tono-negro'}`} style={{ height: 'clamp(220px, 40vw, 440px)' }}>
+        <div className={`captura-grande ${captura.tono ?? 'tono-negro'}`}>
           {captura.url ? (
             <img src={captura.url} alt={`${project.title}, imagen ${activeImage + 1}`} />
           ) : (
@@ -147,10 +147,12 @@ function Contenido({ project }) {
             <span className="ficha-rotulo">ROL</span>
             <p className="ficha-valor">{project.role || 'Diseño, backend y frontend'}</p>
           </div>
-          <div>
-            <span className="ficha-rotulo">DURACIÓN</span>
-            <p className="ficha-valor">{project.duration || '[SEMANAS]'}</p>
-          </div>
+          {project.duration?.trim() && (
+            <div>
+              <span className="ficha-rotulo">DURACIÓN</span>
+              <p className="ficha-valor">{project.duration.trim()}</p>
+            </div>
+          )}
           {stack.length > 0 && (
             <div className="d-flex flex-column gap-2">
               <span className="ficha-rotulo">TECNOLOGÍAS</span>

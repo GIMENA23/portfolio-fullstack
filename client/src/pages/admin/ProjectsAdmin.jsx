@@ -30,6 +30,7 @@ const VACIO = {
   summary: '',
   description: '',
   stack: '',
+  duration: '',
   demoUrl: '',
   repoUrl: '',
   featured: false,
@@ -107,6 +108,8 @@ export default function ProjectsAdmin() {
     else if (stack.some((t) => t.length > LIMITES.tecMax)) e.stack = `Cada tecnología puede tener hasta ${LIMITES.tecMax} caracteres.`
     else if (new Set(stack.map((t) => t.toLowerCase())).size !== stack.length) e.stack = 'Hay tecnologías repetidas.'
 
+    if (f.duration.trim().length > 30) e.duration = 'Máximo 30 caracteres.'
+
     if (f.demoUrl.trim() && !URL_VALIDA.test(f.demoUrl.trim())) e.demoUrl = 'Ingresá una URL que empiece con http:// o https://'
     if (f.repoUrl.trim() && !URL_VALIDA.test(f.repoUrl.trim())) e.repoUrl = 'Ingresá una URL que empiece con http:// o https://'
 
@@ -177,6 +180,7 @@ export default function ProjectsAdmin() {
       summary: p.summary ?? '',
       description: p.description ?? '',
       stack: (p.stack ?? []).join(', '),
+      duration: p.duration ?? '',
       demoUrl: p.demoUrl ?? '',
       repoUrl: p.repoUrl ?? '',
       featured: !!p.featured,
@@ -207,6 +211,7 @@ export default function ProjectsAdmin() {
     const fd = new FormData()
     fd.append('title', form.title.trim())
     fd.append('summary', form.summary.trim())
+    fd.append('duration', form.duration.trim())
     fd.append('description', form.description.trim())
     fd.append('demoUrl', form.demoUrl.trim())
     fd.append('repoUrl', form.repoUrl.trim())
@@ -240,6 +245,7 @@ export default function ProjectsAdmin() {
           summary: form.summary.trim(),
           description: form.description.trim(),
           stack: aStack(form.stack),
+          duration: form.duration.trim(),
           demoUrl: form.demoUrl.trim(),
           repoUrl: form.repoUrl.trim(),
           featured: form.featured,
@@ -413,6 +419,12 @@ export default function ProjectsAdmin() {
                 <label htmlFor="description" className="form-label">Descripción * <span className="form-hint">{form.description.trim().length} / {LIMITES.descMax} · mínimo {LIMITES.descMin}</span></label>
                 <textarea id="description" name="description" rows={4} className={campo('description')} value={form.description} onChange={cambiar} maxLength={LIMITES.descMax}  />
                 {errores.description && <div className="invalid-feedback">{errores.description}</div>}
+              </div>
+
+              <div className="col-12">
+                <label htmlFor="duration" className="form-label">Duración <span className="form-hint">Opcional · {form.duration.trim().length} / 30</span></label>
+                <input id="duration" name="duration" className={campo('duration')} value={form.duration} onChange={cambiar} maxLength={30} placeholder="8 semanas" />
+                {errores.duration && <div className="invalid-feedback">{errores.duration}</div>}
               </div>
 
               <div className="col-12">
