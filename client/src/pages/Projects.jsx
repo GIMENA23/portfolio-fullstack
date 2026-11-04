@@ -17,7 +17,7 @@ function Grilla({ items, logueada }) {
       {items.map((p, i) => (
         <div key={p._id} className="col-12 col-md-6 col-lg-4" data-reveal>
           <article className="tarjeta-proyecto h-100 d-flex flex-column overflow-hidden">
-            <div className={`foto-proyecto ${TONOS[i % TONOS.length]}`} style={{ height: 160 }}>
+            <div className={`foto-proyecto ${TONOS[i % TONOS.length]}`}>
               {p.images?.[0] && <img src={p.images[0]} alt="" loading="lazy" />}
               <span className="foto-etiqueta">{logueada ? 'VER DEMO' : 'REQUIERE REGISTRO'}</span>
             </div>
